@@ -34,6 +34,15 @@ export default {
   },
 
   /**
+   * Agenda.js stuff
+   */
+  agenda: {
+    dbCollection: process.env.AGENDA_DB_COLLECTION,
+    pooltime: process.env.AGENDA_POOL_TIME,
+    concurrency: process.env.AGENDA_CONCURRENCY,
+  },
+
+  /**
    * API configs
    */
   api: {
