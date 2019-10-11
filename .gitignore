@@ -59,3 +59,27 @@ typings/
 
 # next.js build output
 .next
+
+/node_modules
+.DS_Store
+.env
+.nyc_output
+/build
+/coverage
+yarn-error.log
+package-lock.json
+src/**/**/__snapshots__/*.test.tsx.snap
+/vscode
+/.vscode
+.vscode
+.idea/
+/reports
+/tmp
+Dockerfile
+cypress/screenshots
+cypress/videos
+reports/
+tmp/
+/dist
+dist/
+.cache
