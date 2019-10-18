@@ -22,6 +22,11 @@ export default {
   databaseURL: process.env.MONGODB_URI,
 
   /**
+   * Firebase service account
+   */
+  serviceAccount: process.env.SERVICE_ACCOUNT,
+
+  /**
    * Your secret sauce
    */
   jwtSecret: process.env.JWT_SECRET,
@@ -37,7 +42,6 @@ export default {
    * Agenda.js stuff
    */
   agenda: {
-    dbCollection: process.env.AGENDA_DB_COLLECTION,
     pooltime: process.env.AGENDA_POOL_TIME,
     concurrency: process.env.AGENDA_CONCURRENCY,
   },

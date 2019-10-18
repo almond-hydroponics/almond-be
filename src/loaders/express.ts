@@ -4,6 +4,11 @@ import * as cors from 'cors';
 import routes from '../api';
 import config from '../config';
 
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://almond.com:3000'
+];
+
 export default ({ app }: { app: express.Application }) => {
   /**
    * Health Check endpoints
@@ -24,7 +29,24 @@ export default ({ app }: { app: express.Application }) => {
   // The magic package that prevents frontend developers going nuts
   // Alternate description:
   // Enable Cross Origin Resource Sharing to all origins by default
-  app.use(cors());
+  app.use(cors({
+    origin: function(origin, callback){
+      // allow requests with no origin
+      // (like mobile apps or curl requests)
+      if(!origin) return callback(null, true);
+      if(allowedOrigins.indexOf(origin) === -1){
+        const msg = 'The CORS policy for this site does not ' +
+          'allow access from the specified Origin.';
+        return callback(new Error(msg), false);
+      }
+      return callback(null, true);
+    }
+  }));
+
+  app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    next();
+  });
 
   // Some sauce that always add since 2014
   // "Lets you use HTTP verbs such as PUT or DELETE in places where the client doesn't support it."
