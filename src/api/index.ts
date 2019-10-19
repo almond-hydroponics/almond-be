@@ -1,7 +1,12 @@
 import { Router } from 'express';
 import schedules from './routes/schedule';
 
-const app = Router();
-schedules(app);
+// guaranteed to get dependencies
+export default () => {
+  const app = Router();
+  schedules(app);
+  // user(app);
+  // agendash(app);
 
-export default app;
+  return app
+}

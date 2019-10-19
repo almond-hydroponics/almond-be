@@ -1,8 +1,15 @@
-import * as express from 'express';
+import express from 'express';
 import * as bodyParser from 'body-parser';
 import * as cors from 'cors';
 import routes from '../api';
 import config from '../config';
+
+const options:cors.CorsOptions = {
+  origin: "*",
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  preflightContinue: false,
+  optionsSuccessStatus: 204
+};
 
 export default ({ app }: { app: express.Application }) => {
   /**
@@ -17,6 +24,10 @@ export default ({ app }: { app: express.Application }) => {
     res.status(200).end();
   });
 
+  // app.get('/', (req, res) => {
+  //   res.redirect('/schedules');
+  // });
+
   // Useful if you're behind a reverse proxy (Heroku, Bluemix, AWS ELB, Nginx, etc)
   // It shows the real origin IP in the heroku or Cloudwatch logs
   app.enable('trust proxy');
@@ -24,7 +35,7 @@ export default ({ app }: { app: express.Application }) => {
   // The magic package that prevents frontend developers going nuts
   // Alternate description:
   // Enable Cross Origin Resource Sharing to all origins by default
-  app.use(cors());
+  app.use(cors(options));
 
   // Some sauce that always add since 2014
   // "Lets you use HTTP verbs such as PUT or DELETE in places where the client doesn't support it."
@@ -33,9 +44,13 @@ export default ({ app }: { app: express.Application }) => {
 
   // Middleware that transforms the raw string of req.body into json
   app.use(bodyParser.json());
+  app.use(bodyParser.urlencoded({ extended: true }));
 
   // Load API routes
-  app.use(config.api.prefix, routes);
+  app.use(config.api.prefix, routes());
+
+  //enable pre-flight
+  app.options("*", cors(options));
 
   /// catch 404 and forward to error handler
   app.use((req, res, next) => {
@@ -52,7 +67,7 @@ export default ({ app }: { app: express.Application }) => {
     if (err.name === 'UnauthorizedError') {
       return res
         .status(err.status)
-        .send({message: err.message})
+        .send({ message: err.message })
         .end();
     }
     return next(err);

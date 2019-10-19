@@ -9,9 +9,13 @@ const route = Router();
 export default (app: Router) => {
   app.use('/', route);
 
-  // Get all schedules
+  /**
+   * @route GET api/schedules
+   * @description Get all schedules
+   * @access Private
+   */
   route.get(
-    '/schedule',
+    '/schedules',
     async (req: Request, res: Response, next: NextFunction) => {
       const logger = Container.get('logger');
       // @ts-ignore
@@ -28,7 +32,8 @@ export default (app: Router) => {
         }
         return res.status(404).send({
           success: false,
-          message: 'You have not created any time schedules.'
+          message: 'You have not created any time schedules.',
+          data: [],
         });
       } catch (e) {
         // @ts-ignore
@@ -37,8 +42,12 @@ export default (app: Router) => {
       }
   });
 
-  // Create a schedule
-  route.post('/schedule',
+  /**
+   * @route POST api/schedules
+   * @description Create a new schedule
+   * @access Private
+   */
+  route.post('/schedules',
     celebrate({
       body: Joi.object({
         schedule: Joi.string().required(),
@@ -60,13 +69,17 @@ export default (app: Router) => {
         // @ts-ignore
         logger.error('🔥 error: %o', e);
         const serverError = 'Server Error. Could not complete the request';
-        return res.status(500).json({serverError})
+        return res.json({serverError}).status(500);
       }
     }
   );
 
-  // Get schedule by it's id
-  route.get('/schedule/:id',
+  /**
+   * @route GET api/schedules/:id
+   * @description Get a schedule by id
+   * @access Private
+   */
+  route.get('/schedules/:id',
     async (req: Request, res: Response, next: NextFunction) => {
       const logger = Container.get('logger');
       // @ts-ignore
@@ -90,12 +103,16 @@ export default (app: Router) => {
         // @ts-ignore
         logger.error('🔥 error: %o', e);
         const serverError = 'Server Error. Could not complete the request';
-        return res.status(500).json({serverError});
+        return res.json({serverError}).status(500);
       }
   });
 
-  // Update a schedule
-  route.patch('/schedule/:id',
+  /**
+   * @route PATCH api/schedules/:id
+   * @description Edit a schedule
+   * @access Private
+   */
+  route.patch('/schedules/:id',
     celebrate({
       body: Joi.object({
         schedule: Joi.string().required(),
@@ -123,15 +140,21 @@ export default (app: Router) => {
       } catch (e) {
         // @ts-ignore
         logger.error('🔥 error: %o', e);
-        const serverError = 'Server Error. Could not complete the request';
-        return res.status(500).json({serverError})
+        return res.send({
+          success: false,
+          message: 'Server Error. Could not complete the request',
+        }).status(500)
       }
     }
     );
 
-  // Delete a schedule
+  /**
+   * @route DELETE api/schedules/:id
+   * @description Delete a schedule by id
+   * @access Private
+   */
   route.delete(
-    '/schedule/:id',
+    '/schedules/:id',
     async (req: Request, res: Response, next: NextFunction) => {
       const logger = Container.get('logger');
       // @ts-ignore
@@ -150,7 +173,7 @@ export default (app: Router) => {
         // @ts-ignore
         logger.error('🔥 error: %o', e);
         const serverError = 'Server Error. Could not complete the request';
-        return res.status(500).json({serverError});
+        return res.json({serverError}).status(500);
       }
   });
 }

@@ -10,6 +10,14 @@ if (!envFound) {
   throw new Error("⚠️  Couldn't find .env file  ⚠️");
 }
 
+const {
+  MONGO_USERNAME,
+  MONGO_PASSWORD,
+  MONGO_HOSTNAME,
+  MONGO_PORT,
+  MONGO_DB
+} = process.env;
+
 export default {
   /**
    * Your favorite port
@@ -20,6 +28,7 @@ export default {
    * That long string from mlab
    */
   databaseURL: process.env.MONGODB_URI,
+  // databaseURL: `mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOSTNAME}:${MONGO_PORT}/${MONGO_DB}?authSource=admin`,
 
   /**
    * Your secret sauce
@@ -39,7 +48,7 @@ export default {
   agenda: {
     dbCollection: process.env.AGENDA_DB_COLLECTION,
     pooltime: process.env.AGENDA_POOL_TIME,
-    concurrency: process.env.AGENDA_CONCURRENCY,
+    concurrency: parseInt(process.env.AGENDA_CONCURRENCY, 10),
   },
 
   /**
@@ -47,5 +56,13 @@ export default {
    */
   api: {
     prefix: '/api',
+  },
+
+  /**
+   * Agendash config
+   */
+  agendash: {
+    user: 'agendash',
+    password: '123456'
   },
 };
