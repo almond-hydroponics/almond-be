@@ -8,16 +8,22 @@ import Logger from './loaders/logger';
 
 async function startServer() {
   const app = express();
+  const PORT = process.env.PORT || 5000;
 
   await require('./loaders').default({ expressApp: app });
 
-  app.listen(config.port, err => {
+  // @ts-ignore
+  app.listen(PORT, (err: any) => {
     if (err) {
       Logger.error(err);
       process.exit(1);
       return;
     }
-    Logger.info(`Server listening to port: ${config.port}`);
+    Logger.info(`
+      ########################################
+      😎  Server listening on port: ${PORT} 😎
+      ########################################
+    `);
   })
 }
 

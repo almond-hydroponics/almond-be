@@ -5,14 +5,27 @@ import config from '../config';
 import * as argon2 from 'argon2';
 import { randomBytes } from 'crypto';
 import { IUser, IUserInputDTO } from '../interfaces/IUser';
+import * as googleAuth from 'google-auth-library';
+import {
+  EventDispatcher,
+  EventDispatcherInterface
+} from '../decorators/eventDispatcher';
+import events from '../subscribers/events';
+
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
+const GOOGLE_CALLBACK_URL = process.env.GOOGLE_CALLBACK;
+
 
 @Service()
 export default class AuthService {
   constructor(
-      @Inject('userModel') private userModel,
-      private mailer: MailerService,
-      @Inject('logger') private logger,
-    ) {}
+    @Inject('userModel') private userModel: Models.UserModel,
+    private mailer: MailerService,
+    @Inject('logger') private logger,
+    @EventDispatcher() private eventDispatcher: EventDispatcherInterface,
+  ) {
+  }
 
   public async SignUp(userInputDTO: IUserInputDTO): Promise<{ user: IUser; token: string }> {
     try {
@@ -45,11 +58,13 @@ export default class AuthService {
       this.logger.silly('Generating JWT');
       const token = this.generateToken(userRecord);
 
-      if (!userRecord) {
-        throw new Error('User cannot be created');
-      }
+      // if (!userRecord) {
+      //   throw new Error('User cannot be created');
+      // }
       this.logger.silly('Sending welcome email');
       await this.mailer.SendWelcomeEmail(userRecord);
+
+      this.eventDispatcher.dispatch(events.user.signUp, {user: userRecord});
 
       /**
        * @TODO This is not the best way to deal with this
@@ -94,7 +109,101 @@ export default class AuthService {
     }
   }
 
-  private generateToken(user) {
+  public async LoginAs(email): Promise<any> {
+    const userRecord = await this.userModel.findOne({ email });
+    this.logger.silly('Finding user record...');
+    if (!userRecord) {
+      throw new Error('User not found');
+    }
+    return {
+      user: {
+        email: userRecord.email,
+        name: userRecord.name,
+      },
+      token: this.generateToken(userRecord),
+    }
+  }
+
+  public async SocialLogin(userInputDTO: IUserInputDTO): Promise<{ user: IUser; token: string }> {
+    try {
+      const searchQuery = { email: userInputDTO.email };
+      const updates = {
+        name: userInputDTO.name,
+        photo: userInputDTO.photo,
+      };
+      const options = { upsert: true };
+      // const userRecord = await this.userModel.findOneAndUpdate();
+      const userRecord = await this.userModel.findOneAndUpdate(
+        searchQuery, updates, options, (err, user) => {
+          return user
+        }
+      );
+
+      this.logger.silly('Generating JWT');
+
+      const user = userRecord.toObject();
+      const token = this.generateToken(user);
+
+      return { user, token };
+    } catch (e) {
+      this.logger.error(e);
+      throw new Error(
+          'error while authenticating google user: ' + JSON.stringify(e)
+        );
+    }
+  }
+
+  // public async SocialAuth(idToken: string): Promise<any> {
+  //   this.logger.silly('Checking user token from service account');
+  //   console.log('Checking user token from service account');
+  //   const client = new googleAuth.OAuth2Client(
+  //     GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_CALLBACK_URL)
+  //   ;
+  //   console.log('Class: AuthService, Function: SocialLogin, Line 129 client():', client);
+  //   try {
+  //     const ticket = await client.verifyIdToken({
+  //       idToken: idToken,
+  //       audience: GOOGLE_CLIENT_ID
+  //     });
+  //     console.log('Class: AuthService, Function: SocialLogin, Line 134 ticket():', ticket);
+  //     const payload = ticket.getPayload();
+  //     const profile = {
+  //       name: payload['name'],
+  //       pic: payload['picture'],
+  //       id: payload['sub'],
+  //       email_verified: payload['email_verified'],
+  //       email: payload['email']
+  //     };
+  //
+  //     const searchQuery = { email: profile.email };
+  //     const options = { upsert: true };
+  //     // const userRecord = await this.userModel.findOneAndUpdate();
+  //     const userRecord = await this.userModel.findOneAndUpdate(
+  //       searchQuery, profile, options, (err, user) => {
+  //         return user
+  //       }
+  //     );
+  //
+  //     const user = userRecord.toObject();
+  //     const token = this.generateToken(user);
+  //     return { user, token }
+  //   } catch (e) {
+  //     throw new Error(
+  //         'error while authenticating google user: ' + JSON.stringify(e)
+  //       );
+  //   }
+  // }
+
+  public async deserializeUser(email: string) {
+    const userRecord = await this.userModel.findOne({ email });
+    this.logger.silly('Finding user record...');
+
+    if (!userRecord) throw new Error('User not found');
+
+    return userRecord;
+  }
+
+  public generateToken(user) {
     const today = new Date();
     const exp = new Date(today);
     exp.setDate(today.getDate() + 60);
@@ -114,7 +223,11 @@ export default class AuthService {
         _id: user._id, // We are gonna use this in the middleware 'isAuth'
         role: user.role,
         name: user.name,
+        photo: user.picture,
+        email: user.email,
+        isVerified: user.isVerified,
         exp: exp.getTime() / 1000,
+        iss: 'http://almond.com'
       },
       config.jwtSecret,
     );

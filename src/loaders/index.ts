@@ -3,10 +3,12 @@ import dependencyInjectorLoader from './dependencyInjector';
 import jobsLoader from './jobs';
 import mongooseLoader from './mongoose';
 import Logger from './logger';
+//We have to import at least all the events once so they can be triggered
+import './events';
 
 export default async ({expressApp}) => {
   const mongoConnection = await mongooseLoader();
-  Logger.info('✌️ DB loaded and connected!');
+  Logger.info('✌️ Database loaded and connected!');
 
   /**
    * We are injecting the mongoose models into the DI container.
@@ -20,12 +22,18 @@ export default async ({expressApp}) => {
     model: require('../models/schedule').default,
   };
 
+  const userModel = {
+    name: 'userModel',
+    // Notice the require syntax and the '.default'
+    model: require('../models/user').default,
+  };
+
   // It returns the agenda instance because it's needed in the subsequent loaders
   const { agenda } = await dependencyInjectorLoader({
     mongoConnection,
     models: [
       scheduleModel,
-      // userModel,
+      userModel,
       // whateverModel
     ],
   });

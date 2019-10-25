@@ -27,6 +27,11 @@ export default {
   jwtSecret: process.env.JWT_SECRET,
 
   /**
+   * Your session secret
+   */
+  sessionSecret: process.env.SESSION_SECRET,
+
+  /**
    * Used by winston logger
    */
   logs: {
@@ -39,7 +44,7 @@ export default {
   agenda: {
     dbCollection: process.env.AGENDA_DB_COLLECTION,
     pooltime: process.env.AGENDA_POOL_TIME,
-    concurrency: process.env.AGENDA_CONCURRENCY,
+    concurrency: parseInt(process.env.AGENDA_CONCURRENCY, 10),
   },
 
   /**
@@ -48,4 +53,25 @@ export default {
   api: {
     prefix: '/api',
   },
+
+  /**
+   * Agendash config
+   */
+  agendash: {
+    user: process.env.AGENDA_USER,
+    password: process.env.AGENDA_PASSWORD,
+  },
+
+  /**
+   * Mailgun email credentials
+   */
+  emails: {
+    apiKey: 'API key from mailgun when we will actually need this',
+    domain: 'Domain Name from mailgun'
+  },
+
+  /**
+   * Public url
+   */
+  clientUrl: process.env.PUBLIC_URL,
 };
