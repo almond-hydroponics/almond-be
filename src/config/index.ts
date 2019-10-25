@@ -10,14 +10,6 @@ if (!envFound) {
   throw new Error("⚠️  Couldn't find .env file  ⚠️");
 }
 
-const {
-  MONGO_USERNAME,
-  MONGO_PASSWORD,
-  MONGO_HOSTNAME,
-  MONGO_PORT,
-  MONGO_DB
-} = process.env;
-
 export default {
   /**
    * Your favorite port
@@ -28,12 +20,16 @@ export default {
    * That long string from mlab
    */
   databaseURL: process.env.MONGODB_URI,
-  // databaseURL: `mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOSTNAME}:${MONGO_PORT}/${MONGO_DB}?authSource=admin`,
 
   /**
    * Your secret sauce
    */
   jwtSecret: process.env.JWT_SECRET,
+
+  /**
+   * Your session secret
+   */
+  sessionSecret: process.env.SESSION_SECRET,
 
   /**
    * Used by winston logger
@@ -62,7 +58,20 @@ export default {
    * Agendash config
    */
   agendash: {
-    user: 'agendash',
-    password: '123456'
+    user: process.env.AGENDA_USER,
+    password: process.env.AGENDA_PASSWORD,
   },
+
+  /**
+   * Mailgun email credentials
+   */
+  emails: {
+    apiKey: 'API key from mailgun when we will actually need this',
+    domain: 'Domain Name from mailgun'
+  },
+
+  /**
+   * Public url
+   */
+  clientUrl: process.env.PUBLIC_URL,
 };

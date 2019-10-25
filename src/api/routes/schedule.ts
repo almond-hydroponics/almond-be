@@ -3,19 +3,27 @@ import { celebrate, Joi } from 'celebrate';
 import { Container } from 'typedi';
 import ScheduleService from '../../services/schedule';
 import { IScheduleInputDTO } from '../../interfaces/ISchedule';
+import middlewares from '../middlewares';
 
-const route = Router();
+const {
+  isAuth,
+  checkRole,
+  attachCurrentUser,
+} = middlewares;
+
+const schedule = Router();
 
 export default (app: Router) => {
-  app.use('/', route);
+  app.use('/', schedule);
 
-  /**
-   * @route GET api/schedules
+   /**
+   * @api {GET} api/schedules
    * @description Get all schedules
    * @access Private
    */
-  route.get(
+  schedule.get(
     '/schedules',
+    isAuth, attachCurrentUser,
     async (req: Request, res: Response, next: NextFunction) => {
       const logger = Container.get('logger');
       // @ts-ignore
@@ -43,11 +51,12 @@ export default (app: Router) => {
   });
 
   /**
-   * @route POST api/schedules
+   * @api {POST} api/schedules
    * @description Create a new schedule
    * @access Private
    */
-  route.post('/schedules',
+  schedule.post('/schedules',
+    isAuth, attachCurrentUser,
     celebrate({
       body: Joi.object({
         schedule: Joi.string().required(),
@@ -75,11 +84,12 @@ export default (app: Router) => {
   );
 
   /**
-   * @route GET api/schedules/:id
+   * @api {GET} api/schedules/:id
    * @description Get a schedule by id
    * @access Private
    */
-  route.get('/schedules/:id',
+  schedule.get('/schedules/:id',
+    isAuth, attachCurrentUser,
     async (req: Request, res: Response, next: NextFunction) => {
       const logger = Container.get('logger');
       // @ts-ignore
@@ -108,11 +118,12 @@ export default (app: Router) => {
   });
 
   /**
-   * @route PATCH api/schedules/:id
+   * @api {PATCH} api/schedules/:id
    * @description Edit a schedule
    * @access Private
    */
-  route.patch('/schedules/:id',
+  schedule.patch('/schedules/:id',
+    isAuth, attachCurrentUser,
     celebrate({
       body: Joi.object({
         schedule: Joi.string().required(),
@@ -149,12 +160,13 @@ export default (app: Router) => {
     );
 
   /**
-   * @route DELETE api/schedules/:id
+   * @api {DELETE} api/schedules/:id
    * @description Delete a schedule by id
    * @access Private
    */
-  route.delete(
+  schedule.delete(
     '/schedules/:id',
+    isAuth, attachCurrentUser,
     async (req: Request, res: Response, next: NextFunction) => {
       const logger = Container.get('logger');
       // @ts-ignore
