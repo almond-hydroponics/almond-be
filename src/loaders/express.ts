@@ -87,7 +87,7 @@ export default ({ app }: { app: express.Application }) => {
   app.use(passport.session());
 
   app.get('/', (req, res) => {
-    res.redirect('http://almond.com:3000');
+    res.redirect(config.clientUrl);
   });
 
   // Load API routes
@@ -116,6 +116,7 @@ export default ({ app }: { app: express.Application }) => {
     }
     return next(err);
   });
+
   app.use((err, req, res, next) => {
     res.status(err.status || 500);
     res.json({

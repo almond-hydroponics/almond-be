@@ -1,8 +1,7 @@
 import * as mongoose from 'mongoose';
 import { ISchedule } from '../interfaces/ISchedule'
 
-const Schedule = new mongoose.Schema(
-  {
+const Schedule = new mongoose.Schema({
     schedule: {
       type: String,
       required: [true, 'Kindly enter a time schedule'],
@@ -11,6 +10,11 @@ const Schedule = new mongoose.Schema(
       type: Date,
       required: true,
       default: Date.now
+    },
+    user: {
+      type:mongoose.Schema.Types.ObjectId,
+      ref:'User',
+      required: true,
     }
   }
 );

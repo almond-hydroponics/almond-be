@@ -1,11 +1,37 @@
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import middlewares from '../middlewares';
-const route = Router();
+import { Container } from "typedi";
+
+const {
+  isAuth,
+  attachCurrentUser,
+} = middlewares;
+
+const user = Router();
 
 export default (app: Router) => {
-  app.use('/users', route);
+  app.use('/', user);
 
-  route.get('/me', middlewares.isAuth, middlewares.attachCurrentUser, (req: Request, res: Response) => {
-    return res.json({ user: req.currentUser }).status(200);
+  /**
+   * @api {GET} api/me
+   * @description Get my personal details
+   * @access Private
+   */
+  user.get('/me', isAuth, attachCurrentUser,
+    async (req: Request, res: Response, next: NextFunction) => {
+    const logger = Container.get('logger');
+    // @ts-ignore
+    logger.debug('Calling GetUserDetails endpoint');
+    try {
+      return res.status(200).send({
+        success: true,
+        message: 'User details fetched successfully',
+        data: req.currentUser
+      })
+    } catch (e) {
+      // @ts-ignore
+      logger.error('🔥 error: %o', e);
+      return next(e)
+    }
   });
 };

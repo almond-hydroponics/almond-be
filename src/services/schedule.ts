@@ -8,12 +8,14 @@ export default class ScheduleService {
     @Inject('logger') private logger,
   ) {}
 
-  public async CreateSchedule(scheduleInputDTO: IScheduleInputDTO): Promise<{ schedule: ISchedule }> {
+  public async CreateSchedule(scheduleInputDTO: IScheduleInputDTO, user): Promise<{ schedule: ISchedule }> {
     try {
       this.logger.silly('Creating schedule db record');
-      const scheduleRecord = await this.scheduleModel.create({
+      const scheduleItem = {
         ...scheduleInputDTO,
-      });
+        user: user._id
+      };
+      const scheduleRecord = await this.scheduleModel.create(scheduleItem);
       const schedule = scheduleRecord.toObject();
       return { schedule: schedule };
     } catch (e) {
@@ -22,41 +24,49 @@ export default class ScheduleService {
     }
   }
 
-  public async GetSchedules() {
+  public async GetSchedules(user) {
     try {
-      return await this.scheduleModel.find();
+      return await this.scheduleModel
+        .find({ user: user._id })
+        .populate({ path: 'user' });
     } catch (e) {
       this.logger.error(e);
       throw e;
     }
   }
 
-  public async GetScheduleById(pk) {
+  public async GetScheduleById(scheduleId: string, user) {
     try {
-      return await this.scheduleModel.findById(pk)
+      return await this.scheduleModel
+        .findById({ _id: scheduleId, user: user._id  })
+        .populate({ path: 'user' });
     } catch (e) {
       this.logger.error(e);
       throw e;
     }
   }
 
-  public async DeleteScheduleById(pk) {
+  public async DeleteScheduleById(scheduleId, user) {
     try {
-      return await this.scheduleModel.deleteOne({ '_id': Object(pk) })
+      return await this.scheduleModel.remove({
+        '_id': Object(scheduleId), user: user._id }).exec();
     } catch (e) {
       this.logger.error(e);
       throw e;
     }
   }
 
-  public async EditSchedule(pk, scheduleInputDTO: IScheduleInputDTO): Promise<{ schedule: ISchedule }> {
+  public async EditSchedule(scheduleId, scheduleInputDTO: IScheduleInputDTO, user): Promise<{ schedule: ISchedule }> {
     try {
       this.logger.silly('Editing schedule db record');
-      await this.scheduleModel.updateOne(
-        { _id: pk },
-        { ...scheduleInputDTO }
-      );
-      return { schedule: await this.scheduleModel.findById(pk) };
+      const scheduleItem = {
+        ...scheduleInputDTO,
+        _id: scheduleId,
+        user: user._id
+      };
+      return await this.scheduleModel.findOneAndUpdate({
+        _id: scheduleId,  user: user._id }, scheduleItem, { new: true })
+        .populate({ path: 'user'  });
     } catch (e) {
       this.logger.error(e);
       throw e;

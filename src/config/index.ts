@@ -74,4 +74,17 @@ export default {
    * Public url
    */
   clientUrl: process.env.PUBLIC_URL,
+
+  /**
+   * Mqtt config
+   */
+  mqtt: {
+    user: process.env.MQTT_USER,
+    password: process.env.MQTT_PASSWORD,
+    host: process.env.MQTT_HOST,
+    port: process.env.MQTT_PORT,
+    protocol: process.env.MQTT_PROTOCOL,
+    server: process.env.MQTT_SERVER,
+    scheduleTopic: process.env.MQTT_PUMP_SCHEDULE,
+  },
 };

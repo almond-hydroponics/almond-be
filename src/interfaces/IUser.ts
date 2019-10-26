@@ -13,4 +13,5 @@ export interface IUserInputDTO {
   email: string;
   password?: string;
   photo?: string;
+  isVerified?: boolean;
 }
