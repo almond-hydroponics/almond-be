@@ -5,7 +5,6 @@ import config from '../config';
 import * as argon2 from 'argon2';
 import { randomBytes } from 'crypto';
 import { IUser, IUserInputDTO } from '../interfaces/IUser';
-import * as googleAuth from 'google-auth-library';
 import {
   EventDispatcher,
   EventDispatcherInterface
@@ -24,8 +23,7 @@ export default class AuthService {
     private mailer: MailerService,
     @Inject('logger') private logger,
     @EventDispatcher() private eventDispatcher: EventDispatcherInterface,
-  ) {
-  }
+  ) {}
 
   public async SignUp(userInputDTO: IUserInputDTO): Promise<{ user: IUser; token: string }> {
     try {
@@ -130,6 +128,7 @@ export default class AuthService {
       const updates = {
         name: userInputDTO.name,
         photo: userInputDTO.photo,
+        isVerified: userInputDTO.isVerified,
       };
       const options = { upsert: true };
       // const userRecord = await this.userModel.findOneAndUpdate();

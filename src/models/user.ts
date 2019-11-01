@@ -1,8 +1,7 @@
 import { IUser } from '../interfaces/IUser';
 import * as mongoose from 'mongoose';
 
-const User = new mongoose.Schema(
-  {
+const User = new mongoose.Schema({
     name: {
       type: String,
       required: [true, 'Please enter your full name'],

@@ -5,7 +5,6 @@ import {IUserInputDTO} from '../../interfaces/IUser';
 import middlewares from '../middlewares';
 import {celebrate, Joi} from 'celebrate';
 import * as passport from 'passport';
-import {google} from 'googleapis';
 import config from '../../config';
 
 const auth = Router();
@@ -129,9 +128,9 @@ export default (app: Router) => {
       try {
         const authServerInstance = Container.get(AuthService);
         // @ts-ignore
-        const { token } = await authServerInstance.SocialLogin(req.user);
+        const { user, token } = await authServerInstance.SocialLogin(req.user);
         res.cookie('jwt-token', token);
-        res.redirect('/');
+        res.redirect(`${config.clientUrl}?socialToken=${token}`);
       } catch (e) {
         // @ts-ignore
         logger.error('🔥 error: %o', e);
