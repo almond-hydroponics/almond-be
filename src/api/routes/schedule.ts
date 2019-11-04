@@ -68,6 +68,7 @@ export default (app: Router) => {
         const user = req.currentUser;
         const scheduleServiceInstance = Container.get(ScheduleService);
         const { schedule } = await scheduleServiceInstance.CreateSchedule(req.body as IScheduleInputDTO, user);
+        console.log('Class: , Function: , Line 71 schedule():', schedule);
         return res.status(201).send({
           success: true,
           message: 'Time schedule added successfully',
@@ -124,7 +125,8 @@ export default (app: Router) => {
   schedule.patch('/schedules/:id', isAuth, attachCurrentUser,
     celebrate({
       body: Joi.object({
-        schedule: Joi.string().required(),
+        schedule: Joi.string(),
+        enabled: Joi.boolean(),
       }),
     }),
     async (req: Request, res: Response) => {

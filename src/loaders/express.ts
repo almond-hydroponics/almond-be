@@ -6,6 +6,7 @@ import * as cookieParser from 'cookie-parser';
 import * as cookieSession from 'cookie-session';
 import * as session from 'express-session';
 import * as helmet from 'helmet';
+import * as cron from 'node-cron';
 import routes from '../api';
 import config from '../config';
 
@@ -50,6 +51,10 @@ export default ({ app }: { app: express.Application }) => {
     resave: true,
     saveUninitialized: true
   }));
+
+  cron.schedule('09 19 * * *', () => {
+    console.log('Class: , Function: , Line 56 masha():', 'masha');
+  });
 
   // app.use(cookieSession({
   //   name: 'session',

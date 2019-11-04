@@ -24,8 +24,12 @@ export default async ({expressApp}) => {
 
   const userModel = {
     name: 'userModel',
-    // Notice the require syntax and the '.default'
     model: require('../models/user').default,
+  };
+
+  const scheduleOverrideModel = {
+    name: 'scheduleOverrideModel',
+    model: require('../models/scheduleOverride').default,
   };
 
   // It returns the agenda instance because it's needed in the subsequent loaders
@@ -34,6 +38,7 @@ export default async ({expressApp}) => {
     models: [
       scheduleModel,
       userModel,
+      scheduleOverrideModel,
       // whateverModel
     ],
   });
