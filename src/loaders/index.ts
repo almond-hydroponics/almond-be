@@ -5,6 +5,7 @@ import mongooseLoader from './mongoose';
 import Logger from './logger';
 //We have to import at least all the events once so they can be triggered
 import './events';
+import MailerService from '../services/mailer';
 
 export default async ({expressApp}) => {
   const mongoConnection = await mongooseLoader();
@@ -47,6 +48,6 @@ export default async ({expressApp}) => {
   await jobsLoader({ agenda });
   Logger.info('✌️ Jobs loaded');
 
-  await expressLoader({app: expressApp});
+  await expressLoader({ app: expressApp, agendaInstance: agenda });
   Logger.info('✌️ Express loaded');
 };

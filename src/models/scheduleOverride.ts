@@ -1,6 +1,5 @@
 import * as mongoose from 'mongoose';
 import { IScheduleOverride } from '../interfaces/IScheduleOverride'
-import { uid } from '../utils/fancyGenerator';
 
 const ScheduleOverride = new mongoose.Schema({
     enabled: {

@@ -3,34 +3,22 @@ import * as bodyParser from 'body-parser';
 import * as cors from 'cors';
 import * as passport from 'passport';
 import * as cookieParser from 'cookie-parser';
-import * as cookieSession from 'cookie-session';
-import * as session from 'express-session';
+import * as expressSession from 'express-session';
 import * as helmet from 'helmet';
-import * as cron from 'node-cron';
 import routes from '../api';
 import config from '../config';
+import corsOptions from '../config/cors';
+import * as Agendash from 'agendash';
+import * as Agenda from 'agenda';
+import * as redis from 'redis';
 
-const allowedOrigins = [
-  'http://localhost:3000',
-  'http://almond.com:3000',
-  'https://almond-re-staging.herokuapp.com',
-  'https://accounts.google.com/o/oauth2/v2/',
-  'https://accounts.google.com/*',
-  'https://accounts.google.com/o/oauth2/v2/auth',
-  '*',
-];
-
-const options: cors.CorsOptions = {
-  origin: allowedOrigins,
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  preflightContinue: false,
-  optionsSuccessStatus: 204,
-  credentials: true,
-};
+import redisClient from '../loaders/redis';
 
 const expiryDate = new Date(Date.now() + 24 * 60 * 60 * 1000); // one day
 
-export default ({ app }: { app: express.Application }) => {
+export default ({ app, agendaInstance }: { app: express.Application; agendaInstance: Agenda }) => {
+  app.use(require('express-status-monitor')());
+
   // Health Check endpoints
   app.get('/status', (req, res) => {
     res.status(200).end();
@@ -40,51 +28,40 @@ export default ({ app }: { app: express.Application }) => {
     res.status(200).end();
   });
 
+  app.use('/agendash', Agendash(agendaInstance));
+
   // Useful if you're behind a reverse proxy (Heroku, Bluemix, AWS ELB, Nginx, etc)
   // It shows the real origin IP in the heroku or Cloudwatch logs
   app.enable('trust proxy');
 
-  // Configuration for cookie session
-  app.use(cookieParser());
-  app.use(session({
-    secret: config.sessionSecret,
-    resave: true,
-    saveUninitialized: true
-  }));
-
-  cron.schedule('09 19 * * *', () => {
-    console.log('Class: , Function: , Line 56 masha():', 'masha');
-  });
-
-  // app.use(cookieSession({
-  //   name: 'session',
-  //   keys: [config.jwtSecret],
-  //   maxAge: 24 * 60 * 60 * 1000,
-  //   cookie: {
-  //     secure: false,
-  //     httpOnly: true,
-  //     domain: 'almond.com:3000',
-  //     path: '/',
-  //     expires: expiryDate
-  //   }
-  // }));
-
   // The magic package that prevents frontend developers going nuts
   // Alternate description:
   // Enable Cross Origin Resource Sharing to all origins by default
-  app.use(cors(options));
+  app.use(cors(corsOptions));
 
   // Some sauce that always add since 2014
   // "Lets you use HTTP verbs such as PUT or DELETE in places where the client doesn't support it."
   // Maybe not needed anymore ?
   app.use(require('method-override')());
 
-  app.use(helmet());
-
   // Middleware that transforms the raw string of req.body into json
-  app.use(bodyParser.json());
+  app.use(bodyParser.json({ limit: '2mb' }));
   app.use(bodyParser.urlencoded({ extended: true }));
 
+  app.use(helmet());
+
+  const redisStore = require('connect-redis')(expressSession);
+
+  // Configuration for cookie expressSession
+  app.use(cookieParser());
+  app.use(expressSession({
+    secret: config.sessionSecret,
+    resave: true,
+    saveUninitialized: true,
+    cookie: { secure: false, domain: config.cookiesDomain },
+    // store: new redisStore({ url: config.redisURL }),
+    store: new redisStore({ client: redisClient }),
+  }));
 
   // Passport initialization
   require('../config/passport');
@@ -97,9 +74,6 @@ export default ({ app }: { app: express.Application }) => {
 
   // Load API routes
   app.use(config.api.prefix, routes());
-
-  // Enable pre-flight
-  app.options("*", cors(options));
 
   // Catch 404 and forward to error handler
   app.use((req, res, next) => {

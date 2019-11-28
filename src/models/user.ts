@@ -15,6 +15,7 @@ const User = new mongoose.Schema({
     },
     password: String,
     salt: String,
+    googleId: String,
     role: {
       type: String,
       default: 'user',
@@ -27,6 +28,7 @@ const User = new mongoose.Schema({
       type: Boolean,
       default: false,
     },
+    verificationToken: String,
   },
   {timestamps: true},
 );

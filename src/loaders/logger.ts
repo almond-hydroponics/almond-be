@@ -28,7 +28,7 @@ const LoggerInstance = winston.createLogger({
     winston.format.splat(),
     winston.format.json()
   ),
-  transports
+  transports,
 });
 
 export default LoggerInstance;

@@ -6,6 +6,8 @@ export interface IUser {
   salt?: string;
   photo?: string;
   isVerified?: boolean;
+  googleId?: string;
+  verificationToken?: string;
 }
 
 export interface IUserInputDTO {

@@ -1,11 +1,13 @@
-import {Inject, Service} from 'typedi';
-import {ISchedule, IScheduleInputDTO} from '../interfaces/ISchedule'
+import { Inject, Service } from 'typedi';
+import { ISchedule, IScheduleInputDTO } from '../interfaces/ISchedule';
+import redisClient from '../loaders/redis';
+import { Logger } from 'winston';
 
 @Service()
 export default class ScheduleService {
   constructor(
     @Inject('scheduleModel') private scheduleModel,
-    @Inject('logger') private logger,
+    @Inject('logger') private logger: Logger,
   ) {}
 
   public async CreateSchedule(scheduleInputDTO: IScheduleInputDTO, user): Promise<{ schedule: ISchedule }> {
