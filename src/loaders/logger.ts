@@ -1,34 +1,67 @@
-import * as winston from 'winston';
-import config from '../config';
+import { createLogger, format, Logger, transports } from 'winston';
+import { config } from '../config';
+const { combine, timestamp, printf } = format;
 
-const transports = [];
-if(process.env.NODE_ENV !== 'development') {
-  transports.push(
-    new winston.transports.Console()
-  )
-} else {
-  transports.push(
-    new winston.transports.Console({
-      format: winston.format.combine(
-        winston.format.cli(),
-        winston.format.splat(),
-      )
-    })
-  )
+export class AppLogger {
+  private logger: Logger;
+
+  constructor(label?: string) {
+    const options = {
+      file: {
+        level: 'info' || 'error',
+        filename: `${__dirname}/../../logs/app.log`,
+        handleExceptions: true,
+        json: true,
+        maxsize: 5242880, // 5MB
+        maxFiles: 5,
+        colorize: false,
+      },
+    };
+
+    this.logger = createLogger({
+      format: combine(
+        format.label({ label }),
+        timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+        format.splat(),
+        format.json(),
+        printf(({ level, message, label, timestamp }) => {
+          return `${timestamp} [${label}] ${level.toUpperCase()} - ${message}`;
+        })
+      ),
+      level: config.logs.level,
+      transports: [(process.env.NODE_ENV !== 'development')
+        ? new transports.File(options.file)
+        : new transports.Console({
+          format: format.combine(
+            format.cli(),
+            format.splat()
+          ),
+        }),
+      ],
+    });
+  }
+
+  error(message: string, trace: string) {
+    this.logger.error(message, trace);
+  }
+
+  warn(message: string) {
+    this.logger.warn(message);
+  }
+
+  log(message: string) {
+    this.logger.info(message);
+  }
+
+  verbose(message: string) {
+    this.logger.verbose(message);
+  }
+
+  debug(message: string) {
+    this.logger.debug(message);
+  }
+
+  silly(message: string) {
+    this.logger.silly(message);
+  }
 }
-
-const LoggerInstance = winston.createLogger({
-  level: config.logs.level,
-  levels: winston.config.npm.levels,
-  format: winston.format.combine(
-    winston.format.timestamp({
-      format: 'YYYY-MM-DD HH:mm:ss'
-    }),
-    winston.format.errors({ stack: true }),
-    winston.format.splat(),
-    winston.format.json()
-  ),
-  transports,
-});
-
-export default LoggerInstance;

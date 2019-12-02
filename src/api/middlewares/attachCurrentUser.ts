@@ -23,7 +23,7 @@ const attachCurrentUser = async (req, res, next) => {
     return next();
   } catch (e) {
     // @ts-ignore
-    Logger.error('🔥 Error attaching user to req: %o', e);
+    Logger.error('🔥 Error attaching user to req: %o', e.stack);
     return next(e);
   }
 };

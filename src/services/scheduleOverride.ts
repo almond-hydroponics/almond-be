@@ -1,11 +1,12 @@
 import {Inject, Service} from 'typedi';
 import {IScheduleOverride, IScheduleOverrideInputDTO} from '../interfaces/IScheduleOverride'
+import { AppLogger } from '../loaders/logger';
 
 @Service()
 export default class ScheduleOverrideService {
+  private logger = new AppLogger(ScheduleOverrideService.name);
   constructor(
     @Inject('scheduleOverrideModel') private scheduleOverrideModel,
-    @Inject('logger') private logger,
   ) {}
 
 
@@ -15,7 +16,7 @@ export default class ScheduleOverrideService {
         .find({ user: user._id  })
         .populate({ path: 'user' });
     } catch (e) {
-      this.logger.error(e);
+      this.logger.error(e.message, e.stack);
       throw e;
     }
   }
@@ -34,7 +35,7 @@ export default class ScheduleOverrideService {
         scheduleOverrideItem, options)
         .populate({ path: 'user'  });
     } catch (e) {
-      this.logger.error(e);
+      this.logger.error(e.message, e.stack);
       throw e;
     }
   }

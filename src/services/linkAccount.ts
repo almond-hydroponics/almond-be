@@ -1,15 +1,15 @@
 import { Service, Inject } from 'typedi';
 import { EventDispatcher, EventDispatcherInterface } from '../decorators/eventDispatcher';
+import { AppLogger } from '../loaders/logger';
 import redisClient from '../loaders/redis';
-import { Logger } from 'winston';
-import config from '../config';
+
 
 @Service()
 export default class LinkAccountService {
+  private logger = new AppLogger(LinkAccountService.name);
   constructor(
     @Inject('userModel') private userModel: Models.UserModel,
     @EventDispatcher() private eventDispatcher: EventDispatcherInterface,
-    @Inject('logger') private logger: Logger,
   ) {}
 
   public async ConfirmGoogleToken(token: string): Promise<string> {
@@ -19,12 +19,12 @@ export default class LinkAccountService {
       if (!userId) {
         const err = new Error('Invalid credentials');
         err['status'] = 400;
-        this.logger.error(err);
+        this.logger.error(err.message, err.stack);
       }
 
       return token;
     } catch (e) {
-      this.logger.error(e);
+      this.logger.error(e.message, e.stack);
       throw e;
     }
   }
@@ -36,7 +36,7 @@ export default class LinkAccountService {
       if (!userId) {
         const err = new Error('Invalid credentials');
         err['status'] = 400;
-        this.logger.error(err);
+        this.logger.error(err.message, err.stack);
       }
 
       const userRecord = await this.userModel.findOneAndUpdate(
@@ -45,14 +45,14 @@ export default class LinkAccountService {
       );
 
       if (!userRecord) {
-        this.logger.error("Couldn't link account");
+        this.logger.error("Couldn't link account", 'error');
       }
 
       await redisClient.del(`gLinkAccountToken::${token}`);
 
       return 'success';
     } catch (e) {
-      this.logger.error(e);
+      this.logger.error(e.message, e.stack);
       throw e;
     }
   }

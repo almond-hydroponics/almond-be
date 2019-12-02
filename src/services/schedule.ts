@@ -1,13 +1,12 @@
 import { Inject, Service } from 'typedi';
 import { ISchedule, IScheduleInputDTO } from '../interfaces/ISchedule';
-import redisClient from '../loaders/redis';
-import { Logger } from 'winston';
+import { AppLogger } from '../loaders/logger';
 
 @Service()
 export default class ScheduleService {
+  private logger = new AppLogger(ScheduleService.name);
   constructor(
     @Inject('scheduleModel') private scheduleModel,
-    @Inject('logger') private logger: Logger,
   ) {}
 
   public async CreateSchedule(scheduleInputDTO: IScheduleInputDTO, user): Promise<{ schedule: ISchedule }> {
@@ -21,7 +20,7 @@ export default class ScheduleService {
       const schedule = scheduleRecord.toObject();
       return { schedule: schedule };
     } catch (e) {
-      this.logger.error(e);
+      this.logger.error(e.message, e.stack);
       throw e;
     }
   }
@@ -32,7 +31,7 @@ export default class ScheduleService {
         .find({ user: user._id })
         .populate({ path: 'user' });
     } catch (e) {
-      this.logger.error(e);
+      this.logger.error(e.message, e.stack);
       throw e;
     }
   }
@@ -43,17 +42,17 @@ export default class ScheduleService {
         .findById({ _id: scheduleId, user: user._id  })
         .populate({ path: 'user' });
     } catch (e) {
-      this.logger.error(e);
+      this.logger.error(e.message, e.stack);
       throw e;
     }
   }
 
   public async DeleteScheduleById(scheduleId, user) {
     try {
-      return await this.scheduleModel.remove({
+      return await this.scheduleModel.deleteOne({
         '_id': Object(scheduleId), user: user._id }).exec();
     } catch (e) {
-      this.logger.error(e);
+      this.logger.error(e.message, e.stack);
       throw e;
     }
   }
@@ -70,7 +69,7 @@ export default class ScheduleService {
         _id: scheduleId,  user: user._id }, scheduleItem, { new: true })
         .populate({ path: 'user'  });
     } catch (e) {
-      this.logger.error(e);
+      this.logger.error(e.message, e.stack);
       throw e;
     }
   }

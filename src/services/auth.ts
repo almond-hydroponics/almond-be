@@ -1,26 +1,24 @@
 import { Service, Inject } from 'typedi';
 import * as jwt from 'jsonwebtoken';
-import Logger from '../loaders/logger';
+import { config } from '../config';
+import { AppLogger } from '../loaders/logger';
 import MailerService from './mailer';
-import config from '../config';
 import * as argon2 from 'argon2';
 import { randomBytes } from 'crypto';
-import * as cryptoRandomString from 'crypto-random-string';
 import { IUser, IUserInputDTO } from '../interfaces/IUser';
 import {
   EventDispatcher,
   EventDispatcherInterface
 } from '../decorators/eventDispatcher';
 import events from '../subscribers/events';
-import redisClient from '../loaders/redis';
 
 
 @Service()
 export default class AuthService {
+  private logger = new AppLogger(AuthService.name);
   constructor(
     @Inject('userModel') private userModel: Models.UserModel,
     private mailer: MailerService,
-    @Inject('logger') private logger,
     @EventDispatcher() private eventDispatcher: EventDispatcherInterface,
   ) {}
 
@@ -74,7 +72,7 @@ export default class AuthService {
       Reflect.deleteProperty(user, 'salt');
       return { user, token };
     } catch (e) {
-      this.logger.error(e);
+      this.logger.error(e.message, e.stack);
       throw e;
     }
   }
@@ -137,56 +135,14 @@ export default class AuthService {
         };
         userRecord = await this.userModel.create(userInfo);
       }
-      Logger.info(userRecord);
       return userRecord;
     } catch (e) {
-      this.logger.error(e);
+      this.logger.error(e.message, e.stack);
       throw new Error(
           'error while authenticating google user: ' + JSON.stringify(e)
         );
     }
   }
-
-  // public async SocialAuth(idToken: string): Promise<any> {
-  //   this.logger.silly('Checking user token from service account');
-  //   console.log('Checking user token from service account');
-  //   const client = new googleAuth.OAuth2Client(
-  //     GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_CALLBACK_URL)
-  //   ;
-  //   console.log('Class: AuthService, Function: SocialLogin, Line 129 client():', client);
-  //   try {
-  //     const ticket = await client.verifyIdToken({
-  //       idToken: idToken,
-  //       audience: GOOGLE_CLIENT_ID
-  //     });
-  //     console.log('Class: AuthService, Function: SocialLogin, Line 134 ticket():', ticket);
-  //     const payload = ticket.getPayload();
-  //     const profile = {
-  //       name: payload['name'],
-  //       pic: payload['picture'],
-  //       id: payload['sub'],
-  //       email_verified: payload['email_verified'],
-  //       email: payload['email']
-  //     };
-  //
-  //     const searchQuery = { email: profile.email };
-  //     const options = { upsert: true };
-  //     // const userRecord = await this.userModel.findOneAndUpdate();
-  //     const userRecord = await this.userModel.findOneAndUpdate(
-  //       searchQuery, profile, options, (err, user) => {
-  //         return user
-  //       }
-  //     );
-  //
-  //     const user = userRecord.toObject();
-  //     const token = this.generateToken(user);
-  //     return { user, token }
-  //   } catch (e) {
-  //     throw new Error(
-  //         'error while authenticating google user: ' + JSON.stringify(e)
-  //       );
-  //   }
-  // }
 
   public async deserializeUser(email: string) {
     const userRecord = await this.userModel.findOne({ email });

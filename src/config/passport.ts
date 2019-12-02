@@ -1,19 +1,20 @@
 import * as passport from 'passport';
 import * as pGoogle from 'passport-google-oauth2';
 import { Container } from 'typedi';
-import config from '.';
 import { IUser } from '../interfaces/IUser';
-import Logger from '../loaders/logger';
+import { AppLogger } from '../loaders/logger';
 import AuthService from '../services/auth';
+import { config } from './index';
 
+const logger = new AppLogger('Auth');
 const GoogleStrategy = pGoogle.Strategy;
 
 passport.use(
   new GoogleStrategy(
     {
-      clientID: config.googleClientID,
-      clientSecret: config.googleClientSecret,
-      callbackURL: config.googleCallbackUrl,
+      clientID: config.google.clientID,
+      clientSecret: config.google.clientSecret,
+      callbackURL: config.google.callbackUrl,
       passReqToCallback: true,
     },
     async (request, accessToken, refreshToken, profile, done) => {
@@ -23,7 +24,7 @@ passport.use(
 
         done(null, user);
       } catch (e) {
-        Logger.error('🔥 Passport Google error: ', e);
+        logger.error('🔥 Passport Google error: ', e.stack);
         done(e);
       }
     },
@@ -38,7 +39,7 @@ passport.deserializeUser(async (email: string, done) => {
     const user = await authServerInstance.deserializeUser(email);
     done(null, user);
   } catch (e) {
-    Logger.error('🔥 Passport deserializerUser error: ', e);
+    logger.error('🔥 Passport deserializerUser error: ', e.stack);
     done(e);
   }
 });

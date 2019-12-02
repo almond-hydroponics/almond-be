@@ -1,15 +1,16 @@
 import expressLoader from './express';
 import dependencyInjectorLoader from './dependencyInjector';
 import jobsLoader from './jobs';
+import { AppLogger } from './logger';
 import mongooseLoader from './mongoose';
-import Logger from './logger';
 //We have to import at least all the events once so they can be triggered
 import './events';
 import MailerService from '../services/mailer';
 
 export default async ({expressApp}) => {
+  const logger = new AppLogger('Loaders');
   const mongoConnection = await mongooseLoader();
-  Logger.info('✌️ Database loaded and connected!');
+  logger.log('✌️ Database loaded and connected!');
 
   /**
    * We are injecting the mongoose models into the DI container.
@@ -43,11 +44,11 @@ export default async ({expressApp}) => {
       // whateverModel
     ],
   });
-  Logger.info('✌️ Dependency Injector loaded');
+  logger.log('✌️ Dependency Injector loaded');
 
   await jobsLoader({ agenda });
-  Logger.info('✌️ Jobs loaded');
+  logger.log('✌️ Jobs loaded');
 
   await expressLoader({ app: expressApp, agendaInstance: agenda });
-  Logger.info('✌️ Express loaded');
+  logger.log('✌️ Express loaded');
 };

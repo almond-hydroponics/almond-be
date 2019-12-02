@@ -1,6 +1,7 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { celebrate, Joi } from 'celebrate';
 import { Container } from 'typedi';
+import { AppLogger } from '../../loaders/logger';
 import redisClient from '../../loaders/redis';
 import ScheduleService from '../../services/schedule';
 import { IScheduleInputDTO } from '../../interfaces/ISchedule';
@@ -8,6 +9,7 @@ import middlewares from '../middlewares';
 import * as CronJobManager from 'cron-job-manager';
 
 const manager = new CronJobManager();
+const logger = new AppLogger('Schedule');
 
 const {
   isAuth,
@@ -28,8 +30,6 @@ export default (app: Router) => {
    */
   schedule.get('/schedules', isAuth, attachCurrentUser,
     async (req: Request, res: Response, next: NextFunction) => {
-      const logger = Container.get('logger');
-      // @ts-ignore
       logger.debug('Calling GetAllSchedules endpoint');
       try {
         const user = req.currentUser;
@@ -59,8 +59,7 @@ export default (app: Router) => {
           data: [],
         });
       } catch (e) {
-        // @ts-ignore
-        logger.error('🔥 error: %o', e);
+        logger.error('🔥 error: %o', e.stack);
         return next(e)
       }
   });
@@ -77,9 +76,7 @@ export default (app: Router) => {
       }),
     }),
     async (req: Request, res: Response) => {
-      const logger = Container.get('logger');
-      // @ts-ignore
-      logger.debug('Calling CreateSchedule endpoint with body: %o', req.body);
+      logger.debug(`Calling CreateSchedule endpoint with body: ${JSON.stringify(req.body)}`);
       try {
         const user = req.currentUser;
         const scheduleServiceInstance = Container.get(ScheduleService);
@@ -96,7 +93,6 @@ export default (app: Router) => {
         }
 
         manager.add(`${schedule._id}`, `${minutes} ${hour} * * *`, () => {
-          // @ts-ignore
           logger.debug(`Pump time for ${schedule._id} running at ${hour}:${minutes}`)
         });
         manager.start(`${schedule._id}`);
@@ -107,8 +103,7 @@ export default (app: Router) => {
           data: schedule,
         })
       } catch (e) {
-        // @ts-ignore
-        logger.error('🔥 error: %o', e);
+        logger.error('🔥 error: %o', e.stack);
         const serverError = 'Server Error. Could not complete the request';
         return res.json({serverError}).status(500);
       }
@@ -122,8 +117,6 @@ export default (app: Router) => {
    */
   schedule.get('/schedules/:id', isAuth, attachCurrentUser,
     async (req: Request, res: Response, next: NextFunction) => {
-      const logger = Container.get('logger');
-      // @ts-ignore
       logger.debug('Calling GetAllScheduleById endpoint');
       try {
         const user = req.currentUser;
@@ -142,8 +135,7 @@ export default (app: Router) => {
           message: 'Time schedule does not exist',
         })
       } catch (e) {
-        // @ts-ignore
-        logger.error('🔥 error: %o', e);
+        logger.error('🔥 error: %o', e.stack);
         const serverError = 'Server Error. Could not complete the request';
         return res.json({serverError}).status(500);
       }
@@ -162,9 +154,7 @@ export default (app: Router) => {
       }),
     }),
     async (req: Request, res: Response) => {
-      const logger = Container.get('logger');
-      // @ts-ignore
-      logger.debug('Calling PatchSchedule endpoint with body: %o', req.body);
+      logger.debug(`Calling PatchSchedule endpoint with body: ${JSON.stringify(req.body)}`);
       try {
         const user = req.currentUser;
         const { params: { id } } = req;
@@ -182,8 +172,7 @@ export default (app: Router) => {
           message: 'Time schedule does not exist',
         });
       } catch (e) {
-        // @ts-ignore
-        logger.error('🔥 error: %o', e);
+        logger.error('🔥 error: %o', e.stack);
         return res.send({
           success: false,
           message: 'Server Error. Could not complete the request',
@@ -199,8 +188,6 @@ export default (app: Router) => {
    */
   schedule.delete('/schedules/:id', isAuth, attachCurrentUser,
     async (req: Request, res: Response, next: NextFunction) => {
-      const logger = Container.get('logger');
-      // @ts-ignore
       logger.debug('Calling DeleteScheduleById endpoint');
       try {
         const user = req.currentUser;
@@ -214,8 +201,7 @@ export default (app: Router) => {
         const error = 'Time schedule does not exist';
         return res.status(404).json({ error });
       } catch (e) {
-        // @ts-ignore
-        logger.error('🔥 error: %o', e);
+        logger.error('🔥 error: %o', e.stack);
         const serverError = 'Server Error. Could not complete the request';
         return res.json({serverError}).status(500);
       }

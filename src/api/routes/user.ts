@@ -1,12 +1,13 @@
 import { Router, Request, Response, NextFunction } from 'express';
+import { AppLogger } from '../../loaders/logger';
 import middlewares from '../middlewares';
-import { Container } from "typedi";
 
 const {
   isAuth,
   attachCurrentUser,
 } = middlewares;
 
+const logger = new AppLogger('User');
 const user = Router();
 
 export default (app: Router) => {
@@ -19,8 +20,6 @@ export default (app: Router) => {
    */
   user.get('/me', isAuth, attachCurrentUser,
     async (req: Request, res: Response, next: NextFunction) => {
-    const logger = Container.get('logger');
-    // @ts-ignore
     logger.debug('Calling GetUserDetails endpoint');
     try {
       return res.status(200).send({
@@ -29,8 +28,7 @@ export default (app: Router) => {
         data: req.currentUser
       })
     } catch (e) {
-      // @ts-ignore
-      logger.error('🔥 error: %o', e);
+      logger.error('🔥 error: %o', e.stack);
       return next(e)
     }
   });
