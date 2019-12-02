@@ -7,7 +7,6 @@ const whitelist = [
   'https://accounts.google.com/o/oauth2/v2/',
   'https://accounts.google.com/*',
   'https://accounts.google.com/o/oauth2/v2/auth',
-  'http://' + config.siteUrl,
   config.siteUrl
 ];
 

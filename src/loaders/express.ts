@@ -47,7 +47,7 @@ export default ({ app, agendaInstance }: { app: express.Application; agendaInsta
   app.use(bodyParser.json({ limit: '2mb' }));
   app.use(bodyParser.urlencoded({ extended: true }));
 
-  app.use(helmet());
+  // app.use(helmet());
 
   const redisStore = require('connect-redis')(expressSession);
 
@@ -57,7 +57,11 @@ export default ({ app, agendaInstance }: { app: express.Application; agendaInsta
     secret: config.sessionSecret,
     resave: true,
     saveUninitialized: true,
-    cookie: { secure: false, domain: config.cookiesDomain },
+    // cookie: {
+    //   secure: false,
+    //   domain: config.cookiesDomain,
+    //   sameSite: 'none',
+    // },
     // store: new redisStore({ url: config.redisURL }),
     store: new redisStore({ client: redisClient }),
   }));
