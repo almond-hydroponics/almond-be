@@ -1,38 +1,41 @@
 import { Service, Inject } from 'typedi';
 import { IUser } from '../interfaces/IUser';
+import smtpTransport from '../config/nodemailer';
+import { verificationEmail, recoverPasswordEmail } from '../mail';
+import { Logger } from 'winston';
+import cryptoRandomString = require('crypto-random-string');
+import redisClient from '../loaders/redis';
 
 @Service()
 export default class MailerService {
   constructor(
-    @Inject('emailClient') private emailClient
-  ) { }
+    @Inject('userModel') private userModel: Models.UserModel,
+    @Inject('logger') private logger: Logger
+  ) {}
 
-  public async SendWelcomeEmail(email) {
-    /**
-     * @TODO Call Mailchimp/Sendgrid or whatever
-     */
-    // Added example for sending mail from mailgun
-    const data = {
-      from: 'Excited User <me@samples.mailgun.org>',
-      to: email, //your email address
-      subject: 'Welcome to Almond',
-      text: 'Welcome to the great Almond Application'
-    };
+  public async SendWelcomeEmail(user: Partial<IUser>) {
+    try {
+      const messageStatus = await smtpTransport.sendMail({
+        from: '"Almond" <almond.noreply@gmail.com>',
+        to: user.email,
+        subject: 'Welcome to My Almond!!',
+        html: verificationEmail(user),
+      });
 
-    this.emailClient.messages().send(data);
-    return { delivered: 1, status: 'ok' };
-  }
-  public StartEmailSequence(sequence: string, user: Partial<IUser>) {
-    if (!user.email) {
-      throw new Error('No email provided');
+      return { delivered: 1, status: 'ok' };
+    } catch (e) {
+      this.logger.error(e);
     }
-    // @TODO Add example of an email sequence implementation
-    // Something like
-    // 1 - Send first email of the sequence
-    // 2 - Save the step of the sequence in database
-    // 3 - Schedule job for second email in 1-3 days or whatever
-    // Every sequence can have its own behavior so maybe
-    // the pattern Chain of Responsibility can help here.
+  }
+
+  public StartEmailSequence(sequence: string, user: Partial<IUser>) {
+    try {
+      if (!user.email) {
+        this.logger.error('No email provided');
+    }
     return { delivered: 1, status: 'ok' };
+    } catch (e) {
+      this.logger.error(e);
+    }
   }
 }

@@ -1,48 +1,44 @@
 import * as passport from 'passport';
-import * as pGoogle from 'passport-google-oauth';
+import * as pGoogle from 'passport-google-oauth2';
 import { Container } from 'typedi';
-import AuthService from '../services/auth';
+import config from '.';
 import { IUser } from '../interfaces/IUser';
-import config from '../config';
+import Logger from '../loaders/logger';
+import AuthService from '../services/auth';
 
-const GoogleStrategy = pGoogle.OAuth2Strategy;
+const GoogleStrategy = pGoogle.Strategy;
 
 passport.use(
-  new GoogleStrategy({
-      clientID: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: process.env.GOOGLE_CALLBACK,
+  new GoogleStrategy(
+    {
+      clientID: config.googleClientID,
+      clientSecret: config.googleClientSecret,
+      callbackURL: config.googleCallbackUrl,
+      passReqToCallback: true,
     },
-    (accessToken, refreshToken, profile, cb) => {
+    async (request, accessToken, refreshToken, profile, done) => {
       try {
-        const data = profile._json;
-        const user = {
-          id: data.sub,
-          name: data.name,
-          photo: data.picture,
-          email: data.email,
-          isVerified: data.email_verified,
-        };
-        // const authServerInstance = Container.get(AuthService);
-        // const { user, token } = await authServerInstance.SocialLogin(userData);
-        cb(null, user);
+        const authServerInstance = Container.get(AuthService);
+        const user = await authServerInstance.SocialLogin(profile);
+
+        done(null, user);
       } catch (e) {
-        console.log('🔥 error ', e);
-        cb(e);
+        Logger.error('🔥 Passport Google error: ', e);
+        done(e);
       }
     },
   ),
 );
 
-passport.serializeUser((user: IUser, cb) => cb(null, user));
+passport.serializeUser((user: IUser, done) => done(null, user.email));
 
-passport.deserializeUser(async (email: string, cb) => {
+passport.deserializeUser(async (email: string, done) => {
   try {
     const authServerInstance = Container.get(AuthService);
     const user = await authServerInstance.deserializeUser(email);
-    cb(null, user);
+    done(null, user);
   } catch (e) {
-    console.log('🔥 error ', e);
-    cb(e);
+    Logger.error('🔥 Passport deserializerUser error: ', e);
+    done(e);
   }
 });

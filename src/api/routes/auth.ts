@@ -110,7 +110,7 @@ export default (app: Router) => {
    * @access Public
    */
   auth.get(
-    '/google/login',
+    '/google',
     passport.authenticate('google', { scope: ['profile', 'email'] })
   );
 
@@ -123,14 +123,19 @@ export default (app: Router) => {
     '/google/callback',
     passport.authenticate('google', {
       failureRedirect: '/', session: false }),
-    async (req: Request, res, next: NextFunction) => {
+    async (req: Request, res: Response, next: NextFunction) => {
       const logger = Container.get('logger');
       try {
         const authServerInstance = Container.get(AuthService);
         // @ts-ignore
-        const { user, token } = await authServerInstance.SocialLogin(req.user);
-        res.cookie('jwt-token', token);
-        res.redirect(`${config.clientUrl}?socialToken=${token}`);
+        const token = await authServerInstance.generateToken(req.user);
+        // @ts-ignore
+        logger.debug(token);
+        res.cookie('jwt-token', token,
+          {
+            httpOnly: false,
+            domain: config.cookiesDomain,});
+        res.redirect(`${config.siteUrl}?socialToken=${token}`);
       } catch (e) {
         // @ts-ignore
         logger.error('🔥 error: %o', e);
@@ -145,7 +150,7 @@ export default (app: Router) => {
    * so the device stops receiving push notifications after logout.
    *
    * Another use case for advance/enterprise apps, you can store a record of the jwt token
-   * emitted for the session and add it to a black list.
+   * emitted for the expressSession and add it to a black list.
    * It's really annoying to develop that but if you had to, please use Redis as your data store
    */
   auth.post('/logout', middlewares.isAuth, (req: Request, res: Response, next: NextFunction) => {

@@ -1,14 +1,19 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { celebrate, Joi } from 'celebrate';
 import { Container } from 'typedi';
+import redisClient from '../../loaders/redis';
 import ScheduleService from '../../services/schedule';
 import { IScheduleInputDTO } from '../../interfaces/ISchedule';
 import middlewares from '../middlewares';
+import * as CronJobManager from 'cron-job-manager';
+
+const manager = new CronJobManager();
 
 const {
   isAuth,
   checkRole,
   attachCurrentUser,
+  cacheSchedules,
 } = middlewares;
 
 const schedule = Router();
@@ -30,14 +35,25 @@ export default (app: Router) => {
         const user = req.currentUser;
         const scheduleServiceInstance = Container.get(ScheduleService);
         const schedules = await scheduleServiceInstance.GetSchedules(user);
-        if (schedules.length > 0) {
+
+        const HASH_EXPIRATION_TIME = 60 * 60 * 24;
+
+        // set schedules data to redis
+        await redisClient.set(
+          'schedules',
+          JSON.stringify(schedules),
+          'EX',
+          HASH_EXPIRATION_TIME
+          );
+
+        if (schedules.length !== null) {
           return res.status(200).send({
             success: true,
             message: 'Time schedules fetched successfully',
             data: schedules,
           });
         }
-        return res.status(404).send({
+        return res.status(202).send({
           success: false,
           message: 'You have not created any time schedules.',
           data: [],
@@ -68,6 +84,23 @@ export default (app: Router) => {
         const user = req.currentUser;
         const scheduleServiceInstance = Container.get(ScheduleService);
         const { schedule } = await scheduleServiceInstance.CreateSchedule(req.body as IScheduleInputDTO, user);
+
+        const date = new Date(schedule.schedule);
+        const minutes = date.getMinutes();
+        const hour = date.getHours();
+
+        if (await manager.exists(`${schedule._id}`)) {
+          console.log("key exists");
+          manager.stop(`${schedule._id}`);
+          manager.deleteJob(`${schedule._id}`);
+        }
+
+        manager.add(`${schedule._id}`, `${minutes} ${hour} * * *`, () => {
+          // @ts-ignore
+          logger.debug(`Pump time for ${schedule._id} running at ${hour}:${minutes}`)
+        });
+        manager.start(`${schedule._id}`);
+
         return res.status(201).send({
           success: true,
           message: 'Time schedule added successfully',
@@ -124,7 +157,8 @@ export default (app: Router) => {
   schedule.patch('/schedules/:id', isAuth, attachCurrentUser,
     celebrate({
       body: Joi.object({
-        schedule: Joi.string().required(),
+        schedule: Joi.string(),
+        enabled: Joi.boolean(),
       }),
     }),
     async (req: Request, res: Response) => {

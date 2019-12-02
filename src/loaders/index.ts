@@ -5,6 +5,7 @@ import mongooseLoader from './mongoose';
 import Logger from './logger';
 //We have to import at least all the events once so they can be triggered
 import './events';
+import MailerService from '../services/mailer';
 
 export default async ({expressApp}) => {
   const mongoConnection = await mongooseLoader();
@@ -24,8 +25,12 @@ export default async ({expressApp}) => {
 
   const userModel = {
     name: 'userModel',
-    // Notice the require syntax and the '.default'
     model: require('../models/user').default,
+  };
+
+  const scheduleOverrideModel = {
+    name: 'scheduleOverrideModel',
+    model: require('../models/scheduleOverride').default,
   };
 
   // It returns the agenda instance because it's needed in the subsequent loaders
@@ -34,6 +39,7 @@ export default async ({expressApp}) => {
     models: [
       scheduleModel,
       userModel,
+      scheduleOverrideModel,
       // whateverModel
     ],
   });
@@ -42,6 +48,6 @@ export default async ({expressApp}) => {
   await jobsLoader({ agenda });
   Logger.info('✌️ Jobs loaded');
 
-  await expressLoader({app: expressApp});
+  await expressLoader({ app: expressApp, agendaInstance: agenda });
   Logger.info('✌️ Express loaded');
 };

@@ -27,4 +27,4 @@ async function startServer() {
   })
 }
 
-startServer();
+startServer().catch(err => Logger.error(err));

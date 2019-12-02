@@ -1,19 +1,18 @@
 import { Service, Inject } from 'typedi';
 import * as jwt from 'jsonwebtoken';
+import Logger from '../loaders/logger';
 import MailerService from './mailer';
 import config from '../config';
 import * as argon2 from 'argon2';
 import { randomBytes } from 'crypto';
+import * as cryptoRandomString from 'crypto-random-string';
 import { IUser, IUserInputDTO } from '../interfaces/IUser';
 import {
   EventDispatcher,
   EventDispatcherInterface
 } from '../decorators/eventDispatcher';
 import events from '../subscribers/events';
-
-const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
-const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
-const GOOGLE_CALLBACK_URL = process.env.GOOGLE_CALLBACK;
+import redisClient from '../loaders/redis';
 
 
 @Service()
@@ -122,28 +121,24 @@ export default class AuthService {
     }
   }
 
-  public async SocialLogin(userInputDTO: IUserInputDTO): Promise<{ user: IUser; token: string }> {
+  public async SocialLogin(profile): Promise<IUser> {
     try {
-      const searchQuery = { email: userInputDTO.email };
-      const updates = {
-        name: userInputDTO.name,
-        photo: userInputDTO.photo,
-        isVerified: userInputDTO.isVerified,
-      };
-      const options = { upsert: true };
-      // const userRecord = await this.userModel.findOneAndUpdate();
-      const userRecord = await this.userModel.findOneAndUpdate(
-        searchQuery, updates, options, (err, user) => {
-          return user
-        }
-      );
+      let userRecord = await this.userModel
+        .findOne({ email: profile.email });
 
-      this.logger.silly('Generating JWT');
-
-      const user = userRecord.toObject();
-      const token = this.generateToken(user);
-
-      return { user, token };
+      if (!userRecord) {
+        const data = profile._json;
+        const userInfo = {
+          googleId: profile.id,
+          name: data.name,
+          photo: data.picture,
+          email: data.email,
+          isVerified: data.email_verified,
+        };
+        userRecord = await this.userModel.create(userInfo);
+      }
+      Logger.info(userRecord);
+      return userRecord;
     } catch (e) {
       this.logger.error(e);
       throw new Error(
@@ -214,7 +209,6 @@ export default class AuthService {
      * Beware that the metadata is public and can be decoded without _the secret_
      * but the client cannot craft a JWT to fake a userId
      * because it doesn't have _the secret_ to sign it
-     * more information here: https://softwareontheroad.com/you-dont-need-passport
      */
     this.logger.silly(`Sign JWT for userId: ${user._id}`);
     return jwt.sign(

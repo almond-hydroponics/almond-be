@@ -1,0 +1,28 @@
+import * as config from '.';
+
+const whitelist = [
+  'http://localhost:3000',
+  'http://almond.com:3000',
+  'https://almond-re-staging.herokuapp.com',
+  'https://accounts.google.com/o/oauth2/v2/',
+  'https://accounts.google.com/*',
+  'https://accounts.google.com/o/oauth2/v2/auth',
+  'http://' + config.default.siteUrl,
+  config.default.siteUrl
+];
+
+const corsOptions = {
+  origin: function(origin, callback) {
+    if (whitelist.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  preflightContinue: false,
+  optionsSuccessStatus: 204,
+};
+
+export default corsOptions;

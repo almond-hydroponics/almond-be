@@ -1,4 +1,3 @@
-
 import * as mqtt from 'mqtt';
 import config from '../config';
 import {Inject, Service} from "typedi";
