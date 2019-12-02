@@ -1,20 +1,18 @@
 import { Router, Request, Response, NextFunction } from 'express';
+import { config } from '../../config';
 import { IScheduleOverrideInputDTO } from '../../interfaces/IScheduleOverride';
+import { AppLogger } from '../../loaders/logger';
 import ScheduleOverrideService from '../../services/scheduleOverride';
 import middlewares from '../middlewares';
 import {Container} from "typedi";
 import {celebrate, Joi} from "celebrate";
-import config from "../../config";
 import MqttService from "../../services/mqttService";
-
-const {
-  host, password, user, port, protocol
-} = config.mqtt;
 
 const {
   isAuth,
   attachCurrentUser,
 } = middlewares;
+const logger = new AppLogger('Device');
 
 const device = Router();
 
@@ -33,8 +31,6 @@ export default (app: Router) => {
       }),
     }),
     async (req: Request, res: Response, next: NextFunction) => {
-    const logger = Container.get('logger');
-    // @ts-ignore
     logger.debug('Calling Pump endpoint');
     try {
       const user = req.currentUser;
@@ -53,18 +49,13 @@ export default (app: Router) => {
 
       // save instance of the override
       const scheduleOverride = await scheduleOverrideInstance.EditScheduleOverride(req.body as IScheduleOverrideInputDTO, user);
-      // @ts-ignore
-      logger.debug(status);
-      // @ts-ignore
-      logger.debug(scheduleOverride);
       return res.status(200).send({
         success: true,
         message: `Manual Override ${enabled ? 'ON' : 'OFF'} successfully`,
         data: scheduleOverride,
       })
     } catch (e) {
-      // @ts-ignore
-      logger.error('🔥 error: %o', e);
+      logger.error('🔥 error: %o', e.stack);
       return next(e)
     }
   });
@@ -75,9 +66,7 @@ export default (app: Router) => {
    * @access Private
    */
   device.get('/pump', isAuth, attachCurrentUser,
-    async (req: Request, res: Response, next: NextFunction) => {
-      const logger = Container.get('logger');
-      // @ts-ignore
+    async (req: Request, res: Response) => {
       logger.debug('Calling GetPumpById endpoint');
       try {
         const user = req.currentUser;
@@ -95,7 +84,6 @@ export default (app: Router) => {
           message: 'ScheduleOverride does not exist',
         })
       } catch (e) {
-        // @ts-ignore
         logger.error('🔥 error: %o', e);
         const serverError = 'Server Error. Could not complete the request';
         return res.json({serverError}).status(500);

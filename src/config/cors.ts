@@ -1,4 +1,4 @@
-import * as config from '.';
+import { config } from './index';
 
 const whitelist = [
   'http://localhost:3000',
@@ -7,8 +7,8 @@ const whitelist = [
   'https://accounts.google.com/o/oauth2/v2/',
   'https://accounts.google.com/*',
   'https://accounts.google.com/o/oauth2/v2/auth',
-  'http://' + config.default.siteUrl,
-  config.default.siteUrl
+  'http://' + config.siteUrl,
+  config.siteUrl
 ];
 
 const corsOptions = {

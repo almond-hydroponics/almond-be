@@ -1,10 +1,9 @@
 import 'reflect-metadata';
 
-import config from './config';
-
 import * as express from 'express';
+import { AppLogger } from './loaders/logger';
 
-import Logger from './loaders/logger';
+const logger = new AppLogger('Start');
 
 async function startServer() {
   const app = express();
@@ -15,11 +14,11 @@ async function startServer() {
   // @ts-ignore
   app.listen(PORT, (err: any) => {
     if (err) {
-      Logger.error(err);
-      process.exit(1);
+      logger.error(err.message, err.stack);
+      // process.exit(1);
       return;
     }
-    Logger.info(`
+    logger.log(`
       ########################################
       😎  Server listening on port: ${PORT} 😎
       ########################################
@@ -27,4 +26,4 @@ async function startServer() {
   })
 }
 
-startServer().catch(err => Logger.error(err));
+startServer().catch(err => logger.error(err.message, err.stack));

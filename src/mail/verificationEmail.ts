@@ -1,5 +1,5 @@
+import { config } from '../config';
 import { IUser } from '../interfaces/IUser';
-import config from '../config';
 
 export default function verificationEmail(user: Partial<IUser>) {
   return `<!DOCTYPE html>

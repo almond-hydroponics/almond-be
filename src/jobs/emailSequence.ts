@@ -1,17 +1,18 @@
 import { Container } from 'typedi';
+import { AppLogger } from '../loaders/logger';
 import MailerService from '../services/mailer';
 
 export default class EmailSequenceJob {
   public async handler(job, done): Promise<void> {
-    const Logger: any = Container.get('logger');
+    const logger = new AppLogger('Schedule');
     try {
-      Logger.debug('✌️ Email Sequence Job triggered!');
+      logger.debug('✌️ Email Sequence Job triggered!');
       const { email, name }: { [key: string]: string } = job.data;
       const mailerServiceInstance = Container.get(MailerService);
       await mailerServiceInstance.StartEmailSequence('WelcomeSequence', { email, name });
       done();
     } catch (e) {
-      Logger.error('🔥 Error with Email Sequence Job: %o', e);
+      logger.error('🔥 Error with Email Sequence Job:', e.stack);
       done(e);
     }
   }

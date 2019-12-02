@@ -1,14 +1,13 @@
 import * as mqtt from 'mqtt';
-import config from '../config';
-import {Inject, Service} from "typedi";
-import {IMqttInputDTO} from "../interfaces/IMqtt";
+import {Service} from "typedi";
+import { config } from '../config';
+import { AppLogger } from '../loaders/logger';
 
 
 @Service()
 export default class MqttService {
-  // private mqttClient: null;
+  private logger = new AppLogger(MqttService.name);
   constructor(
-    @Inject('logger') private logger,
     private mqttClient = mqtt.connect(config.mqtt.server),
   ) {}
 
@@ -16,31 +15,25 @@ export default class MqttService {
     // connect mqtt with credentials (in case of needed, otherwise we can omit 2nd param)
 
     // Mqtt error callback
-    // @ts-ignore
     this.mqttClient.on('error', (err) => {
-      this.logger.error(err);
+      this.logger.error(err.message, err.stack);
       this.mqttClient.end();
     });
 
     // Connection callback
-    // @ts-ignore
     this.mqttClient.on('connect', () => {
       this.logger.debug(`mqtt client connected`);
     });
 
     // mqtt subscriptions
-    // @ts-ignore
     this.mqttClient.subscribe('almond/test', {qos: 0});
 
     // When a message arrives, console.log it
-    // @ts-ignore
-    this.mqttClient.on('message', function (topic, message) {
-      console.log(message.toString());
+    this.mqttClient.on('message', (topic, message) => {
+      this.logger.debug(message.toString());
     });
 
-    // @ts-ignore
     this.mqttClient.on('close', () => {
-      // @ts-ignore
       this.logger.debug(`mqtt client disconnected`);
     });
   }
@@ -48,10 +41,9 @@ export default class MqttService {
   // Sends a mqtt message to topic: almond
   public sendMessage(topic, message) {
     try {
-      // @ts-ignore
       this.mqttClient.publish(topic, message);
     } catch (e) {
-      this.logger.error(e);
+      this.logger.error(e.message, e.stack);
       throw e;
     }
   }

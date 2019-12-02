@@ -1,12 +1,14 @@
 import {NextFunction, Request, Response, Router} from 'express';
 import {Container} from 'typedi';
+import { config } from '../../config';
+import { AppLogger } from '../../loaders/logger';
 import AuthService from '../../services/auth';
 import {IUserInputDTO} from '../../interfaces/IUser';
 import middlewares from '../middlewares';
 import {celebrate, Joi} from 'celebrate';
 import * as passport from 'passport';
-import config from '../../config';
 
+const logger = new AppLogger('Auth');
 const auth = Router();
 
 const {
@@ -34,9 +36,7 @@ export default (app: Router) => {
       }),
     }),
     async (req: Request, res: Response, next: NextFunction) => {
-      const logger = Container.get('logger');
-      // @ts-ignore
-      logger.debug('Calling Sign-Up endpoint with body: %o', req.body);
+      logger.debug(`Calling Sign-Up endpoint with body: ${JSON.stringify(req.body)}`);
       try {
         const authServiceInstance = Container.get(AuthService);
         const {user, token} = await authServiceInstance.SignUp(req.body as IUserInputDTO);
@@ -46,8 +46,7 @@ export default (app: Router) => {
           data: {user, token}
         });
       } catch (e) {
-        // @ts-ignore
-        logger.error('🔥 error: %o', e);
+        logger.error('🔥 error: %o', e.stack);
         return next(e);
       }
     },
@@ -67,17 +66,14 @@ export default (app: Router) => {
       }),
     }),
     async (req: Request, res: Response, next: NextFunction) => {
-      const logger = Container.get('logger');
-      // @ts-ignore
-      logger.debug('Calling Sign-In endpoint with body: %o', req.body);
+      logger.debug(`Calling Sign-In endpoint with body: ${JSON.stringify(req.body)}`);
       try {
         const {email, password} = req.body;
         const authServiceInstance = Container.get(AuthService);
         const {user, token} = await authServiceInstance.SignIn(email, password);
         return res.json({user, token}).status(200);
       } catch (e) {
-        // @ts-ignore
-        logger.error('🔥 error: %o', e);
+        logger.error('🔥 error: %o', e.stack);
         return next(e);
       }
     },
@@ -91,15 +87,13 @@ export default (app: Router) => {
   auth.post(
     '/user/login-as', isAuth, attachCurrentUser, checkRole('admin'),
     async (req: Request, res: Response) => {
-      const logger = Container.get('logger');
       try {
         const email = req.body.user.email;
         const authServiceInstance = Container.get(AuthService);
         const {user, token} = await authServiceInstance.LoginAs(email);
         return res.status(200).json({user, token}).end();
       } catch (e) {
-        // @ts-ignore
-        logger.error('Error in login as user: ', e);
+        logger.error('Error in login as user: ', e.stack);
         return res.json(e).status(500).end();
       }
     });
@@ -124,21 +118,17 @@ export default (app: Router) => {
     passport.authenticate('google', {
       failureRedirect: '/', session: false }),
     async (req: Request, res: Response, next: NextFunction) => {
-      const logger = Container.get('logger');
       try {
         const authServerInstance = Container.get(AuthService);
         // @ts-ignore
         const token = await authServerInstance.generateToken(req.user);
-        // @ts-ignore
-        logger.debug(token);
         res.cookie('jwt-token', token,
           {
             httpOnly: false,
             domain: config.cookiesDomain,});
         res.redirect(`${config.siteUrl}?socialToken=${token}`);
       } catch (e) {
-        // @ts-ignore
-        logger.error('🔥 error: %o', e);
+        logger.error('🔥 error: %o', e.stack);
         return next(e);
       }
     }
@@ -154,14 +144,11 @@ export default (app: Router) => {
    * It's really annoying to develop that but if you had to, please use Redis as your data store
    */
   auth.post('/logout', middlewares.isAuth, (req: Request, res: Response, next: NextFunction) => {
-    const logger = Container.get('logger');
-    // @ts-ignore
-    logger.debug('Calling Sign-Out endpoint with body: %o', req.body);
+    logger.debug(`Calling Sign-Out endpoint with body: ${JSON.stringify(req.body)}`);
     try {
       //@TODO AuthService.Logout(req.user) do some clever stuff
       return res.status(200).end();
     } catch (e) {
-      // @ts-ignore
       logger.error('🔥 error %o', e);
       return next(e);
     }

@@ -1,11 +1,13 @@
 import { Container } from 'typedi';
 import { EventSubscriber, On } from 'event-dispatch';
+import { AppLogger } from '../loaders/logger';
 import events from './events';
 import { IUser } from '../interfaces/IUser';
 import * as mongoose from 'mongoose';
 
 @EventSubscriber()
 export default class UserSubscriber {
+  private logger = new AppLogger(UserSubscriber.name);
   /**
    * A great example of an event that you want to handle
    * save the last time a user signin, your boss will be pleased.
@@ -18,7 +20,6 @@ export default class UserSubscriber {
    */
   @On(events.user.signIn)
   public onUserSignIn({ _id }: Partial<IUser>) {
-    const Logger = Container.get('logger');
 
     try {
       const UserModel = Container.get('UserModel') as mongoose.Model<IUser & mongoose.Document>;
@@ -26,7 +27,7 @@ export default class UserSubscriber {
       UserModel.update({ _id }, { $set: { lastLogin: new Date() } });
     } catch (e) {
       // @ts-ignore
-      Logger.error(`🔥 Error on event ${events.user.signIn}: %o`, e);
+      this.logger.error(`🔥 Error on event ${events.user.signIn}:`, e.stack);
 
       // Throw the error so the process die (check src/app.ts)
       throw e;
@@ -34,7 +35,6 @@ export default class UserSubscriber {
   }
   @On(events.user.signUp)
   public onUserSignUp({ name, email, _id }: Partial<IUser>) {
-    const Logger = Container.get('logger');
 
     try {
       /**
@@ -47,7 +47,7 @@ export default class UserSubscriber {
       // MailService.startSequence('user.welcome', { email, name })
     } catch (e) {
       // @ts-ignore
-      Logger.error(`🔥 Error on event ${events.user.signUp}: %o`, e);
+      this.logger.error(`🔥 Error on event ${events.user.signUp}: %o`, e.stack);
 
       // Throw the error so the process dies (check src/app.ts)
       throw e;

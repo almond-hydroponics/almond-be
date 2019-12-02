@@ -1,4 +1,4 @@
-import config from '../config';
+import { config } from '../config';
 
 export default function recoverPasswordEmail(name: string, token: string, email: string) {
   return `<!DOCTYPE html>

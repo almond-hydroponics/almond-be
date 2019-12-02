@@ -1,16 +1,14 @@
 import { Service, Inject } from 'typedi';
 import { IUser } from '../interfaces/IUser';
 import smtpTransport from '../config/nodemailer';
+import { AppLogger } from '../loaders/logger';
 import { verificationEmail, recoverPasswordEmail } from '../mail';
-import { Logger } from 'winston';
-import cryptoRandomString = require('crypto-random-string');
-import redisClient from '../loaders/redis';
 
 @Service()
 export default class MailerService {
+  private logger = new AppLogger(MailerService.name);
   constructor(
     @Inject('userModel') private userModel: Models.UserModel,
-    @Inject('logger') private logger: Logger
   ) {}
 
   public async SendWelcomeEmail(user: Partial<IUser>) {
@@ -24,18 +22,18 @@ export default class MailerService {
 
       return { delivered: 1, status: 'ok' };
     } catch (e) {
-      this.logger.error(e);
+      this.logger.error(e.message, e.stack);
     }
   }
 
   public StartEmailSequence(sequence: string, user: Partial<IUser>) {
     try {
       if (!user.email) {
-        this.logger.error('No email provided');
+        this.logger.error('No email provided', 'error');
     }
     return { delivered: 1, status: 'ok' };
     } catch (e) {
-      this.logger.error(e);
+      this.logger.error(e.message, e.stack);
     }
   }
 }

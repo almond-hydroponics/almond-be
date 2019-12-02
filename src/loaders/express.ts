@@ -6,11 +6,10 @@ import * as cookieParser from 'cookie-parser';
 import * as expressSession from 'express-session';
 import * as helmet from 'helmet';
 import routes from '../api';
-import config from '../config';
+import { config } from '../config';
 import corsOptions from '../config/cors';
 import * as Agendash from 'agendash';
 import * as Agenda from 'agenda';
-import * as redis from 'redis';
 
 import redisClient from '../loaders/redis';
 
