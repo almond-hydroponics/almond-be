@@ -6,37 +6,14 @@ import * as cookieParser from 'cookie-parser';
 import * as expressSession from 'express-session';
 import * as helmet from 'helmet';
 import routes from '../api';
-<<<<<<< HEAD
 import { config } from '../config';
 import corsOptions from '../config/cors';
 import * as Agendash from 'agendash';
 import * as Agenda from 'agenda';
 
-import redisClient from '../loaders/redis';
-=======
-import config from '../config';
-
 // todo change to ES import syntax
 const requestIp = require('request-ip');
-
-const allowedOrigins = [
-  'http://localhost:3000',
-  'http://almond.com:3000',
-  'https://almond-re-staging.herokuapp.com',
-  'https://accounts.google.com/o/oauth2/v2/',
-  'https://accounts.google.com/*',
-  'https://accounts.google.com/o/oauth2/v2/auth',
-  '*',
-];
-
-const options: cors.CorsOptions = {
-  origin: allowedOrigins,
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  preflightContinue: false,
-  optionsSuccessStatus: 204,
-  credentials: true,
-};
->>>>>>> feat(Implementation): backend For a POST request on Schedules
+import redisClient from '../loaders/redis';
 
 const expiryDate = new Date(Date.now() + 24 * 60 * 60 * 1000); // one day
 
@@ -58,31 +35,7 @@ export default ({ app, agendaInstance }: { app: express.Application; agendaInsta
   // It shows the real origin IP in the heroku or Cloudwatch logs
   // todo check the effects on enabling trust proxy {{ IPs can be spoofed easily }} proposed lib request-ip middleware
   app.enable('trust proxy');
-<<<<<<< HEAD
-=======
   app.use(requestIp.mw());
-  // Configuration for cookie session
-  app.use(cookieParser());
-  app.use(session({
-    secret: config.sessionSecret,
-    resave: true,
-    saveUninitialized: true
-  }));
-
-  // app.use(cookieSession({
-  //   name: 'session',
-  //   keys: [config.jwtSecret],
-  //   maxAge: 24 * 60 * 60 * 1000,
-  //   cookie: {
-  //     secure: false,
-  //     httpOnly: true,
-  //     domain: 'almond.com:3000',
-  //     path: '/',
-  //     expires: expiryDate
-  //   }
-  // }));
->>>>>>> feat(Implementation): backend For a POST request on Schedules
-
   // The magic package that prevents frontend developers going nuts
   // Alternate description:
   // Enable Cross Origin Resource Sharing to all origins by default

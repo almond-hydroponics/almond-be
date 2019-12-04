@@ -1,5 +1,4 @@
 import 'reflect-metadata';
-
 import * as express from 'express';
 import { AppLogger } from './loaders/logger';
 const logger = new AppLogger('Start');

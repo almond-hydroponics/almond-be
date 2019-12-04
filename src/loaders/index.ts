@@ -29,15 +29,13 @@ export default async ({expressApp}) => {
     model: require('../models/user').default,
   };
 
-<<<<<<< HEAD
   const scheduleOverrideModel = {
     name: 'scheduleOverrideModel',
     model: require('../models/scheduleOverride').default,
-=======
+  };
   const activityLogModel = {
     name: 'activityLogModel',
     model: require('../models/activityLog').default,
->>>>>>> ActivityLog(Implementation): Scheduler Activity Logs
   };
 
   // It returns the agenda instance because it's needed in the subsequent loaders
@@ -46,11 +44,8 @@ export default async ({expressApp}) => {
     models: [
       scheduleModel,
       userModel,
-<<<<<<< HEAD
       scheduleOverrideModel,
-=======
       activityLogModel,
->>>>>>> ActivityLog(Implementation): Scheduler Activity Logs
       // whateverModel
     ],
   });

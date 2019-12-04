@@ -6,12 +6,10 @@ import redisClient from '../../loaders/redis';
 import ScheduleService from '../../services/schedule';
 import { IScheduleInputDTO } from '../../interfaces/ISchedule';
 import middlewares from '../middlewares';
-<<<<<<< HEAD
 import * as CronJobManager from 'cron-job-manager';
 
 const manager = new CronJobManager();
 const logger = new AppLogger('Schedule');
-=======
 import ActivityLogService from "../../services/activityLog";
 import {IActivityLogDto} from "../../interfaces/IActivityLog";
 
@@ -21,7 +19,6 @@ import {IActivityLogDto} from "../../interfaces/IActivityLog";
 // sniff client header request for the versions and client Os
 const geoIp = require('geoip-lite');
 const Sniffr = require('sniffr');
->>>>>>> feat(Implementation): backend For a POST request on Schedules
 
 const {
   isAuth,
@@ -39,14 +36,7 @@ export default (app: Router) => {
    */
   schedule.get('/schedules', isAuth, attachCurrentUser,
     async (req: Request, res: Response, next: NextFunction) => {
-<<<<<<< HEAD
       logger.debug('Calling GetAllSchedules endpoint');
-=======
-      const logger = Container.get('logger');
-
-      // @ts-ignore
-      logger.debug('Calling GetAllSchedules endpoint ');
->>>>>>> feat(Implementation): backend For a POST request on Schedules
       try {
         const user = req.currentUser;
         const scheduleServiceInstance = Container.get(ScheduleService);
@@ -97,7 +87,6 @@ export default (app: Router) => {
         const user = req.currentUser;
         const scheduleServiceInstance = Container.get(ScheduleService);
         const { schedule } = await scheduleServiceInstance.CreateSchedule(req.body as IScheduleInputDTO, user);
-<<<<<<< HEAD
 
         const date = new Date(schedule.schedule);
         const minutes = date.getMinutes();
@@ -114,7 +103,6 @@ export default (app: Router) => {
         });
         manager.start(`${schedule._id}`);
 
-=======
         if (schedule) {
           // update activity log
           const activityLogInstance = Container.get(ActivityLogService);
@@ -140,7 +128,6 @@ export default (app: Router) => {
             logger.error('🔥 error Creating Activity Log : %o', e);
           }
         }
->>>>>>> feat(Implementation): backend For a POST request on Schedules
         return res.status(201).send({
           success: true,
           message: 'Time schedule added successfully',

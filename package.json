@@ -67,7 +67,10 @@
     "redisscan": "^2.0.0",
     "reflect-metadata": "^0.1.13",
     "request-ip": "^2.1.3",
+<<<<<<< HEAD
     "sniffr": "^1.2.0",
+=======
+    >>>>>>> ActivityLog(Implementation): Scheduler Activity Logs
     "typedi": "^0.8.0",
     "winston": "^3.2.1"
   },
