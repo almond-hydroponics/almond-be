@@ -10,6 +10,15 @@ import * as CronJobManager from 'cron-job-manager';
 
 const manager = new CronJobManager();
 const logger = new AppLogger('Schedule');
+import ActivityLogService from "../../services/activityLog";
+import {IActivityLogDto} from "../../interfaces/IActivityLog";
+
+
+// todo change ES import syntax
+// get IP location for Public Ips Will not work for local Ips
+// sniff client header request for the versions and client Os
+const geoIp = require('geoip-lite');
+const Sniffr = require('sniffr');
 
 const {
   isAuth,
@@ -17,12 +26,9 @@ const {
   attachCurrentUser,
   cacheSchedules,
 } = middlewares;
-
 const schedule = Router();
-
 export default (app: Router) => {
   app.use('/', schedule);
-
    /**
    * @api {GET} api/schedules
    * @description Get all schedules
@@ -97,6 +103,31 @@ export default (app: Router) => {
         });
         manager.start(`${schedule._id}`);
 
+        if (schedule) {
+          // update activity log
+          const activityLogInstance = Container.get(ActivityLogService);
+          try {
+            const userAgent = req.headers["user-agent"];
+            const s = new Sniffr();
+            s.sniff(userAgent);
+            const os = s.os;
+            const browser = s.browser;
+            // @ts-ignore
+            const ip = req.clientIp;
+            const location = geoIp.lookup(ip);
+            const activityLogItems = <IActivityLogDto>{
+              action: 'Creating Schedule',
+              actionDesc: 'Time schedule added successfully',
+              actionType: 'SCHEDULER',
+              stationIp: ip,
+              stationOs: JSON.stringify({ip,os,browser,location})
+            };
+            await activityLogInstance.CreateActivityLog(activityLogItems, user);
+          } catch (e) {
+            // @ts-ignore
+            logger.error('🔥 error Creating Activity Log : %o', e);
+          }
+        }
         return res.status(201).send({
           success: true,
           message: 'Time schedule added successfully',
@@ -124,11 +155,30 @@ export default (app: Router) => {
         const scheduleServiceInstance = Container.get(ScheduleService);
         const schedule = await scheduleServiceInstance.GetScheduleById(id, user);
         if (schedule) {
+          // update activity log
+          const activityLogInstance = Container.get(ActivityLogService);
+          try{
+            // @ts-ignore
+            const activityLogItems = <IActivityLogDto>{
+              action : 'CreateSchedule',
+              actionDesc : 'Time schedule added successfully',
+              actionType: 'SCHEDULER',
+              // TODO pick userId from FrontEnd session {{Remove static}}
+              userId: '5de745b17e2a733c2cff7222',
+              stationIp: '1234556',
+              stationOs: '2222'
+            };
+            await activityLogInstance.CreateActivityLog(activityLogItems, user);
+          }catch (e) {
+            // @ts-ignore
+            logger.error('🔥 error Creating Activity Log : %o', e);
+          }
           return res.status(200).send({
-          success: true,
-          message: 'Time schedule has been fetched successfully',
-          data: schedule,
-        })
+            success: true,
+            message: 'Time schedule has been fetched successfully',
+            data: schedule,
+          })
+
         }
         return res.status(404).send({
           success: false,

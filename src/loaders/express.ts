@@ -11,6 +11,8 @@ import corsOptions from '../config/cors';
 import * as Agendash from 'agendash';
 import * as Agenda from 'agenda';
 
+// todo change to ES import syntax
+const requestIp = require('request-ip');
 import redisClient from '../loaders/redis';
 
 const expiryDate = new Date(Date.now() + 24 * 60 * 60 * 1000); // one day
@@ -31,8 +33,9 @@ export default ({ app, agendaInstance }: { app: express.Application; agendaInsta
 
   // Useful if you're behind a reverse proxy (Heroku, Bluemix, AWS ELB, Nginx, etc)
   // It shows the real origin IP in the heroku or Cloudwatch logs
+  // todo check the effects on enabling trust proxy {{ IPs can be spoofed easily }} proposed lib request-ip middleware
   app.enable('trust proxy');
-
+  app.use(requestIp.mw());
   // The magic package that prevents frontend developers going nuts
   // Alternate description:
   // Enable Cross Origin Resource Sharing to all origins by default

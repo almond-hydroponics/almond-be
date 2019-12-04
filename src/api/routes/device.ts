@@ -20,8 +20,8 @@ export default (app: Router) => {
   app.use('/', device);
 
   /**
-   * @api {POST} api/pump
-   * @description Get my personal details
+   * @api {PATCH} api/pump
+   * @description Edit pump status
    * @access Private
    */
   device.patch('/pump', isAuth, attachCurrentUser,

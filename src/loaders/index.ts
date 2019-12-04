@@ -33,6 +33,10 @@ export default async ({expressApp}) => {
     name: 'scheduleOverrideModel',
     model: require('../models/scheduleOverride').default,
   };
+  const activityLogModel = {
+    name: 'activityLogModel',
+    model: require('../models/activityLog').default,
+  };
 
   // It returns the agenda instance because it's needed in the subsequent loaders
   const { agenda } = await dependencyInjectorLoader({
@@ -41,6 +45,7 @@ export default async ({expressApp}) => {
       scheduleModel,
       userModel,
       scheduleOverrideModel,
+      activityLogModel,
       // whateverModel
     ],
   });
