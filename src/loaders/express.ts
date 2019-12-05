@@ -36,6 +36,10 @@ export default ({ app, agendaInstance }: { app: express.Application; agendaInsta
   // todo check the effects on enabling trust proxy {{ IPs can be spoofed easily }} proposed lib request-ip middleware
   app.enable('trust proxy');
   app.use(requestIp.mw());
+<<<<<<< HEAD
+=======
+
+>>>>>>> Fix: conflict on express.ts loader
   // The magic package that prevents frontend developers going nuts
   // Alternate description:
   // Enable Cross Origin Resource Sharing to all origins by default
