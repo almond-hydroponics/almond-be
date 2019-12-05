@@ -13,8 +13,7 @@ export default class ActivityLogService{
     try {
       this.logger.info('Creating Activity Log...');
       const activityLogItem = {
-        ...activityLogDto,
-        user: user._id
+        ...activityLogDto
       };
 
       // Create Activity log doc and return the activityLogObject  back

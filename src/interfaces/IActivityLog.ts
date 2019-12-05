@@ -13,6 +13,7 @@ export interface IActivityLogDto { // Data transfer
   actionType: string;
   actionDesc: string;
   action: string;
+  userId: string;
   stationIp: string;
   stationOs: string;
 }
