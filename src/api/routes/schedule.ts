@@ -36,7 +36,14 @@ export default (app: Router) => {
    */
   schedule.get('/schedules', isAuth, attachCurrentUser,
     async (req: Request, res: Response, next: NextFunction) => {
+<<<<<<< HEAD
       logger.debug('Calling GetAllSchedules endpoint');
+=======
+      const logger = Container.get('logger');
+
+      // @ts-ignore
+      logger.debug('Calling GetAllSchedules endpoint ');
+>>>>>>> feat(Implementation): backend For a POST request on Schedules
       try {
         const user = req.currentUser;
         const scheduleServiceInstance = Container.get(ScheduleService);
@@ -87,6 +94,7 @@ export default (app: Router) => {
         const user = req.currentUser;
         const scheduleServiceInstance = Container.get(ScheduleService);
         const { schedule } = await scheduleServiceInstance.CreateSchedule(req.body as IScheduleInputDTO, user);
+<<<<<<< HEAD
 
         const date = new Date(schedule.schedule);
         const minutes = date.getMinutes();
@@ -103,6 +111,8 @@ export default (app: Router) => {
         });
         manager.start(`${schedule._id}`);
 
+=======
+>>>>>>> feat(Implementation): backend For a POST request on Schedules
         if (schedule) {
           // update activity log
           const activityLogInstance = Container.get(ActivityLogService);
