@@ -1,10 +1,15 @@
+import Agenda from 'agenda';
 import { Router, Request, Response, NextFunction } from 'express';
 import { celebrate, Joi } from 'celebrate';
 import { Container } from 'typedi';
+import { config } from '../../config';
+import PumpScheduleJob from '../../jobs/pumpSchedule';
+import agenda from '../../loaders/agenda';
 import { AppLogger } from '../../loaders/logger';
 import redisClient from '../../loaders/redis';
 import ScheduleService from '../../services/schedule';
 import { IScheduleInputDTO } from '../../interfaces/ISchedule';
+import { createAgenda } from '../../utils/agendaJobManager';
 import middlewares from '../middlewares';
 import * as CronJobManager from 'cron-job-manager';
 
@@ -19,6 +24,7 @@ const {
 } = middlewares;
 
 const schedule = Router();
+const timeSchedules = [];
 
 export default (app: Router) => {
   app.use('/', schedule);
@@ -80,22 +86,26 @@ export default (app: Router) => {
       try {
         const user = req.currentUser;
         const scheduleServiceInstance = Container.get(ScheduleService);
+        const agendaInstance = Container.get('agendaInstance');
         const { schedule } = await scheduleServiceInstance.CreateSchedule(req.body as IScheduleInputDTO, user);
 
         const date = new Date(schedule.schedule);
         const minutes = date.getMinutes();
         const hour = date.getHours();
+        const cronTime = `${minutes} ${hour} * * *`;
+        timeSchedules.push(cronTime);
+        logger.debug(`${timeSchedules}`);
 
-        if (await manager.exists(`${schedule._id}`)) {
-          console.log("key exists");
-          manager.stop(`${schedule._id}`);
-          manager.deleteJob(`${schedule._id}`);
-        }
+        // @ts-ignore
+        // agenda.schedule(new Date(req.body.schedule), 'pump-schedules');
+        // agendaInstance.every(cronTime, 'pump-schedules');
+        // agendaInstance.define(
+        //   cronTime,
+        //   { priority: 'high', concurrency: config.agenda.concurrency },
+        //   new PumpScheduleJob().handler,
+        //   );
 
-        manager.add(`${schedule._id}`, `${minutes} ${hour} * * *`, () => {
-          logger.debug(`Pump time for ${schedule._id} running at ${hour}:${minutes}`)
-        });
-        manager.start(`${schedule._id}`);
+        createAgenda(cronTime, cronTime);
 
         return res.status(201).send({
           success: true,

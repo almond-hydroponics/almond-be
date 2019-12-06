@@ -8,7 +8,6 @@ import * as helmet from 'helmet';
 import routes from '../api';
 import { config } from '../config';
 import corsOptions from '../config/cors';
-import * as Agendash from 'agendash';
 import * as Agenda from 'agenda';
 
 import redisClient from '../loaders/redis';
@@ -26,8 +25,6 @@ export default ({ app, agendaInstance }: { app: express.Application; agendaInsta
   app.head('/status', (req, res) => {
     res.status(200).end();
   });
-
-  app.use('/agendash', Agendash(agendaInstance));
 
   // Useful if you're behind a reverse proxy (Heroku, Bluemix, AWS ELB, Nginx, etc)
   // It shows the real origin IP in the heroku or Cloudwatch logs

@@ -33,6 +33,7 @@ export class AppLogger {
         ? new transports.File(options.file)
         : new transports.Console({
           format: format.combine(
+            format.errors({ stack: true }),
             format.cli(),
             format.splat()
           ),
