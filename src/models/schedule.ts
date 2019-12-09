@@ -1,5 +1,5 @@
 import * as mongoose from 'mongoose';
-import { ISchedule } from '../interfaces/ISchedule'
+import { ISchedule } from '../interfaces/ISchedule';
 
 const Schedule = new mongoose.Schema({
     schedule: {
