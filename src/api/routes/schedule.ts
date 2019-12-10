@@ -7,7 +7,6 @@ import ScheduleService from '../../services/schedule';
 import { IScheduleInputDTO } from '../../interfaces/ISchedule';
 import middlewares from '../middlewares';
 import * as CronJobManager from 'cron-job-manager';
-
 const manager = new CronJobManager();
 const logger = new AppLogger('Schedule');
 import ActivityLogService from "../../services/activityLog";
@@ -122,7 +121,7 @@ export default (app: Router) => {
               stationIp: ip,
               stationOs: JSON.stringify({ip,os,browser,location})
             };
-            await activityLogInstance.CreateActivityLog(activityLogItems, user);
+            await activityLogInstance.createActivityLog(activityLogItems, user);
           } catch (e) {
             // @ts-ignore
             logger.error('🔥 error Creating Activity Log : %o', e);
@@ -155,24 +154,6 @@ export default (app: Router) => {
         const scheduleServiceInstance = Container.get(ScheduleService);
         const schedule = await scheduleServiceInstance.GetScheduleById(id, user);
         if (schedule) {
-          // update activity log
-          const activityLogInstance = Container.get(ActivityLogService);
-          try{
-            // @ts-ignore
-            const activityLogItems = <IActivityLogDto>{
-              action : 'CreateSchedule',
-              actionDesc : 'Time schedule added successfully',
-              actionType: 'SCHEDULER',
-              // TODO pick userId from FrontEnd session {{Remove static}}
-              userId: '5de745b17e2a733c2cff7222',
-              stationIp: '1234556',
-              stationOs: '2222'
-            };
-            await activityLogInstance.CreateActivityLog(activityLogItems, user);
-          }catch (e) {
-            // @ts-ignore
-            logger.error('🔥 error Creating Activity Log : %o', e);
-          }
           return res.status(200).send({
             success: true,
             message: 'Time schedule has been fetched successfully',
