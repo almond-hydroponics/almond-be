@@ -1,3 +1,5 @@
+import { IDevice } from './IDevice';
+
 export interface IUser {
   _id: string;
   name: string;
@@ -8,6 +10,8 @@ export interface IUser {
   isVerified?: boolean;
   googleId?: string;
   verificationToken?: string;
+  role?: string;
+  device: IDevice;
 }
 
 export interface IUserInputDTO {

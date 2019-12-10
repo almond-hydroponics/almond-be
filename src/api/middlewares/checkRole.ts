@@ -7,6 +7,6 @@ const checkRole = (requiredRole) => {
       return next();
     }
   }
-}
+};
 
 export default checkRole;

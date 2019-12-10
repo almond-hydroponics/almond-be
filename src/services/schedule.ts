@@ -1,5 +1,6 @@
 import { Inject, Service } from 'typedi';
 import { ISchedule, IScheduleInputDTO } from '../interfaces/ISchedule';
+import { IUser } from '../interfaces/IUser';
 import { AppLogger } from '../loaders/logger';
 
 @Service()
@@ -9,7 +10,7 @@ export default class ScheduleService {
     @Inject('scheduleModel') private scheduleModel,
   ) {}
 
-  public async CreateSchedule(scheduleInputDTO: IScheduleInputDTO, user): Promise<{ schedule: ISchedule }> {
+  public async CreateSchedule(scheduleInputDTO: IScheduleInputDTO, user: IUser): Promise<{ schedule: ISchedule }> {
     try {
       this.logger.silly('Creating schedule db record');
       const scheduleItem = {
@@ -65,8 +66,8 @@ export default class ScheduleService {
         _id: scheduleId,
         user: user._id
       };
-      return await this.scheduleModel.findOneAndUpdate({
-        _id: scheduleId,  user: user._id }, scheduleItem, { new: true })
+      return await this.scheduleModel.findOneAndUpdate(
+        {_id: scheduleId,  user: user._id }, scheduleItem, { new: true })
         .populate({ path: 'user'  });
     } catch (e) {
       this.logger.error(e.message, e.stack);

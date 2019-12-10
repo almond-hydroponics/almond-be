@@ -29,6 +29,23 @@ const User = new mongoose.Schema({
       default: false,
     },
     verificationToken: String,
+    device: [
+      {
+        id: {
+          type: String,
+          required: true,
+          unique: true,
+        },
+        verified: {
+          type: Boolean,
+          default: false,
+        },
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'User',
+        },
+      },
+    ]
   },
   {timestamps: true},
 );

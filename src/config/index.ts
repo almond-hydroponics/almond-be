@@ -13,6 +13,7 @@ interface Config {
   databaseURL: string;
   redisURL: string;
   siteUrl: string;
+  redirectUrl: string;
   serverUrl: string;
   clientUrl: string;
   jwtSecret: string;
@@ -85,6 +86,8 @@ export const config: Config = {
   siteUrl: process.env.NODE_ENV === 'development' ? process.env.DEVELOPMENT_SITE_URL : process.env.PRODUCTION_SITE_URL,
   serverUrl:
     process.env.NODE_ENV === 'development' ? process.env.DEVELOPMENT_SERVER_URL : process.env.PRODUCTION_SERVER_URL,
+  redirectUrl:
+    process.env.NODE_ENV === 'development' ? process.env.DEVELOPMENT_REDIRECT_URL : process.env.PRODUCTION_REDIRECT_URL,
   jwtSecret: process.env.JWT_SECRET,
   sessionSecret: process.env.SESSION_SECRET,
   cookiesDomain: process.env.NODE_ENV === 'development' ? 'almond.com' : process.env.COOKIES_DOMAIN,
