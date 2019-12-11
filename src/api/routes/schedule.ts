@@ -18,6 +18,7 @@ import {IActivityLogDto} from "../../interfaces/IActivityLog";
 // sniff client header request for the versions and client Os
 const geoIp = require('geoip-lite');
 const Sniffr = require('sniffr');
+const logActivity = require('../middlewares/logActivity');
 
 const {
   isAuth,
@@ -106,22 +107,8 @@ export default (app: Router) => {
           // update activity log
           const activityLogInstance = Container.get(ActivityLogService);
           try {
-            const userAgent = req.headers["user-agent"];
-            const s = new Sniffr();
-            s.sniff(userAgent);
-            const os = s.os;
-            const browser = s.browser;
-            // @ts-ignore
-            const ip = req.clientIp;
-            const location = geoIp.lookup(ip);
-            const activityLogItems = <IActivityLogDto>{
-              action: 'Creating Schedule',
-              actionDesc: 'Time schedule added successfully',
-              actionType: 'SCHEDULER',
-              stationIp: ip,
-              stationOs: JSON.stringify({ip,os,browser,location})
-            };
-            await activityLogInstance.createActivityLog(activityLogItems, user);
+            const logActivityItems = logActivity.createScheduleActivityLogItem(req);
+            await activityLogInstance.createActivityLog(logActivityItems, user);
           } catch (e) {
             // @ts-ignore
             logger.error('🔥 error Creating Activity Log : %o', e);
@@ -226,6 +213,15 @@ export default (app: Router) => {
         const scheduleServiceInstance = Container.get(ScheduleService);
         const schedule = await scheduleServiceInstance.DeleteScheduleById(id, user);
         if (schedule.n > 0) {
+          // update activity log
+          const activityLogInstance = Container.get(ActivityLogService);
+          try {
+            const logActivityItems = logActivity.deleteScheduleActivityLogItem(req);
+            await activityLogInstance.createActivityLog(logActivityItems, user);
+          } catch (e) {
+            // @ts-ignore
+            logger.error('🔥 error Creating Activity Log : %o', e);
+          }
           const message = 'Time schedule deleted successfully';
           return res.status(200).json({ message });
         }
