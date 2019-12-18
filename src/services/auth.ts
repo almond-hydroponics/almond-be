@@ -1,7 +1,8 @@
-import { Service, Inject } from 'typedi';
+import { Service, Inject, Container } from 'typedi';
 import * as jwt from 'jsonwebtoken';
 import { config } from '../config';
 import { AppLogger } from '../loaders/logger';
+import DeviceService from './device';
 import MailerService from './mailer';
 import * as argon2 from 'argon2';
 import { randomBytes } from 'crypto';
@@ -22,7 +23,7 @@ export default class AuthService {
     @EventDispatcher() private eventDispatcher: EventDispatcherInterface,
   ) {}
 
-  public async SignUp(userInputDTO: IUserInputDTO): Promise<{ user: IUser; token: string }> {
+  public async SignUp(userInputDTO: IUserInputDTO): Promise<{ user: IUser; token: Promise<string> }> {
     try {
       const salt = randomBytes(32);
 
@@ -132,6 +133,7 @@ export default class AuthService {
           photo: data.picture,
           email: data.email,
           isVerified: data.email_verified,
+          role: 'user',
         };
         userRecord = await this.userModel.create(userInfo);
       }
@@ -153,7 +155,7 @@ export default class AuthService {
     return userRecord;
   }
 
-  public generateToken(user) {
+  public generateToken(user: IUser) {
     const today = new Date();
     const exp = new Date(today);
     exp.setDate(today.getDate() + 60);
@@ -172,9 +174,10 @@ export default class AuthService {
         _id: user._id, // We are gonna use this in the middleware 'isAuth'
         role: user.role,
         name: user.name,
-        photo: user.picture,
+        photo: user.photo,
         email: user.email,
         isVerified: user.isVerified,
+        deviceVerified: (user.device.verified === undefined) ? false : true,
         exp: exp.getTime() / 1000,
         iss: 'http://almond.com'
       },
