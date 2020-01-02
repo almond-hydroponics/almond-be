@@ -24,7 +24,7 @@ const {
   isAuth,
   checkRole,
   attachCurrentUser,
-  cacheSchedules,
+  checkCacheSchedules,
 } = middlewares;
 const schedule = Router();
 export default (app: Router) => {
@@ -34,23 +34,13 @@ export default (app: Router) => {
    * @description Get all schedules
    * @access Private
    */
-  schedule.get('/schedules', isAuth, attachCurrentUser,
+  schedule.get('/schedules', isAuth, attachCurrentUser, checkCacheSchedules,
     async (req: Request, res: Response, next: NextFunction) => {
       logger.debug('Calling GetAllSchedules endpoint');
       try {
         const user = req.currentUser;
         const scheduleServiceInstance = Container.get(ScheduleService);
         const schedules = await scheduleServiceInstance.GetSchedules(user);
-
-        const HASH_EXPIRATION_TIME = 60 * 60 * 24;
-
-        // set schedules data to redis
-        await redisClient.set(
-          'schedules',
-          JSON.stringify(schedules),
-          'EX',
-          HASH_EXPIRATION_TIME
-          );
 
         if (schedules.length !== null) {
           return res.status(200).send({
@@ -59,6 +49,11 @@ export default (app: Router) => {
             data: schedules,
           });
         }
+
+        // set schedules data to redis
+        const HASH_EXPIRATION_TIME = 60 * 60 * 24;
+        redisClient.setex('schedules', HASH_EXPIRATION_TIME, JSON.stringify(schedules));
+
         return res.status(202).send({
           success: false,
           message: 'You have not created any time schedules.',
@@ -134,7 +129,7 @@ export default (app: Router) => {
    */
   schedule.get('/schedules/:id', isAuth, attachCurrentUser,
     async (req: Request, res: Response, next: NextFunction) => {
-      logger.debug('Calling GetAllScheduleById endpoint');
+      logger.debug('Calling GetScheduleById endpoint');
       try {
         const user = req.currentUser;
         const { params: { id } } = req;

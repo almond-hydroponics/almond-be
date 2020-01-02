@@ -1,14 +1,14 @@
-import { Router, Request, Response, NextFunction } from 'express';
+import { celebrate, Joi } from 'celebrate';
+import { NextFunction, Request, Response, Router } from 'express';
+import { Container } from 'typedi';
 import { config } from '../../config';
 import { IDeviceInputDTO } from '../../interfaces/IDevice';
 import { IScheduleOverrideInputDTO } from '../../interfaces/IScheduleOverride';
 import { AppLogger } from '../../loaders/logger';
 import DeviceService from '../../services/device';
+import MqttService from '../../services/mqttService';
 import ScheduleOverrideService from '../../services/scheduleOverride';
 import middlewares from '../middlewares';
-import {Container} from "typedi";
-import {celebrate, Joi} from "celebrate";
-import MqttService from "../../services/mqttService";
 
 const {
   isAuth,
@@ -76,15 +76,19 @@ export default (app: Router) => {
         const scheduleOverride = await scheduleOverrideServiceInstance.GetScheduleOverride(user);
         if (scheduleOverride) {
           return res.status(200).send({
-          success: true,
-          message: 'Time schedule has been fetched successfully',
-          data: scheduleOverride,
-        })
+                                        success: true,
+                                        message: 'Time schedule has been fetched successfully',
+                                        data: scheduleOverride,
+                                      });
         }
+
+        // set pump details to redis
+        const HASH_EXPIRATION_TIME = 60 * 60 * 24;
+        // redisClient.setex()
         return res.status(404).send({
-          success: false,
-          message: 'ScheduleOverride does not exist',
-        })
+                                      success: false,
+                                      message: 'ScheduleOverride does not exist',
+                                    });
       } catch (e) {
         logger.error('🔥 error: %o', e);
         const serverError = 'Server Error. Could not complete the request';

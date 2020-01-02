@@ -1,11 +1,11 @@
 import attachCurrentUser from './attachCurrentUser';
+import { checkCacheSchedules } from './checkCacheSchedules';
 import isAuth from './isAuth';
 import checkRole from './checkRole';
-import cacheSchedules from './cacheSchedules';
 
 export default {
   attachCurrentUser,
   isAuth,
   checkRole,
-  cacheSchedules,
+  checkCacheSchedules,
 };
