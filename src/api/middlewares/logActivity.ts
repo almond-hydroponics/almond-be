@@ -1,12 +1,13 @@
 import {IActivityLogDto} from "../../interfaces/IActivityLog";
 import {IActionTypes, IClientInfoDto} from "../../interfaces/IClientInfo";
+
 const geoIp = require('geoip-lite');
 const Sniffer = require('sniffr');
 
 //global
 let ip = '', os = '', browser = '', location = '';
 
-const getClientInformation =  function(request) {
+const getClientInformation = function (request) {
   let userAgent, sniffer, clientOs, clientLocation, clientBrowser, ip;
   userAgent = request.headers["user-agent"];
   sniffer = new Sniffer();
@@ -32,6 +33,7 @@ const initializeClientInfo = function (request) {
 };
 
   function createScheduleActivityLogItem (request) {
+
     initializeClientInfo(request);
     return <IActivityLogDto>{
       action: 'Creating Schedule',
@@ -81,27 +83,8 @@ const initializeClientInfo = function (request) {
       stationIp: ip,
       stationOs: JSON.stringify({ip, os, browser, location})
     }
-  },
-
-  connectionActive : function (request) {
-    initializeClientInfo(request);
-    return <IActivityLogDto>{
-      action: 'Device Status OFF',
-      actionDesc: 'Device Turned off successfully',
-      actionType: IActionTypes._OFF,
-      stationIp: ip,
-      stationOs: JSON.stringify({ip,os,browser,location})
-    }
-  },
-  internetConnectionStatus : function () {
-    return <IActivityLogDto>{
-      action: 'No Internet',
-      actionDesc: 'Internet Connectivity is Unavailable',
-      actionType: IActionTypes.OFFLINE,
-      stationIp: '',
-      stationOs: JSON.stringify({})
-    }
   }
+
   function deviceConnectionStatus (request, msg) {
     initializeClientInfo(request);
     return <IActivityLogDto>{
