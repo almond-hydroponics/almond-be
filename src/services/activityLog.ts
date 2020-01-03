@@ -14,6 +14,7 @@ export default class ActivityLogService{
       this.logger.log('Creating Activity Log...');
       const activityLogItem = {
         ...activityLogDto,
+        user: user._id
       };
       const activityLogDoneDeal = await this.activityLogModel.create(activityLogItem);
       const activityLog = activityLogDoneDeal.toObject();
