@@ -23,6 +23,7 @@ export default class MqttService {
     this.mqttClient.on('error', (err) => {
       this.logger.error(err.message, err.stack);
       this.deviceConnectivityLog(activityLogInstance, req, `Device Connection Error `);
+
       this.mqttClient.end();
     });
 
@@ -30,6 +31,7 @@ export default class MqttService {
     this.mqttClient.on('connect', (success) => {
       this.logger.debug(`mqtt client connected`);
       this.deviceConnectivityLog(activityLogInstance, req, `Device Connection Successful`);
+
     });
 
     // mqtt subscriptions
@@ -43,17 +45,20 @@ export default class MqttService {
     this.mqttClient.on('close', (close) => {
       this.logger.debug(`mqtt client disconnected`);
       this.deviceConnectivityLog(activityLogInstance, req, `Device Disconnected` );
+
     });
   }
 
   public async deviceConnectivityLog(activityLogInstance: ActivityLogService, req: Request, msg: string) {
     try {
+      // @ts-ignore
       const user = req.currentUser;
       const logActivityItems = logActivity.deviceConnectionStatus(req, msg);
       await activityLogInstance.createActivityLog(logActivityItems, user);
     } catch (e) {
       // @ts-ignore
       this.logger.error('🔥 Error Creating Activity Log : %o', e);
+
     }
   }
 
