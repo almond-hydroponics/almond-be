@@ -20,7 +20,7 @@ export default class ConnectivityWorker{
       status().then(
         () => {
           if(!connectivity){
-            logger.log('Internet Connection Available');
+            logger.log('Internet Connection Unavailable');
             const activityLogInstance = Container.get(ActivityLogService);
             try {
               const logActivityItems = logActivity.internetConnectionStatus();
@@ -37,7 +37,6 @@ export default class ConnectivityWorker{
               logger.error('🔥 error Creating Activity Log : %o', e);
             }
           }
-          console.log('Connected ' + connectivity);
         },
         (err) => {
           console.log('Worker Encountered an Error');

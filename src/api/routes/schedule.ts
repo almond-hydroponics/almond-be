@@ -12,12 +12,6 @@ const logger = new AppLogger('Schedule');
 import ActivityLogService from "../../services/activityLog";
 import {IActivityLogDto} from "../../interfaces/IActivityLog";
 
-
-// todo change ES import syntax
-// get IP location for Public Ips Will not work for local Ips
-// sniff client header request for the versions and client Os
-const geoIp = require('geoip-lite');
-const Sniffr = require('sniffr');
 const logActivity = require('../middlewares/logActivity');
 
 const {
