@@ -21,6 +21,7 @@ export default class ConnectivityWorker{
         () => {
           if(!connectivity){
             logger.log('Internet Connection Unavailable');
+
             const activityLogInstance = Container.get(ActivityLogService);
             try {
               const logActivityItems = logActivity.internetConnectionStatus();
