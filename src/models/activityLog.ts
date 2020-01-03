@@ -1,5 +1,5 @@
 import * as mongoose from 'mongoose';
-import {IActivityLog} from "../interfaces/IActivityLog";
+import {IActivityLog, User} from "../interfaces/IActivityLog";
 
 const ActivityLog = new mongoose.Schema({
     actionType: {
@@ -19,6 +19,11 @@ const ActivityLog = new mongoose.Schema({
     },
     stationOs: {
       type: String
+    },
+    user: {
+      type:mongoose.Schema.Types.ObjectId,
+      ref:'User',
+      required: true,
     },
     dateCreated: {
       type: Date,
