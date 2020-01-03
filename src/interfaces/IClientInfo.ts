@@ -10,4 +10,5 @@ export enum IActionTypes {
   REMOVE = "DELETED SCHEDULER",
   _ON = "PUMP ON",
   _OFF = "PUMP OFF",
+  OFFLINE = "NO INTERNET",
 }
