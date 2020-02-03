@@ -137,7 +137,9 @@ export default (app: Router) => {
     async (req: Request, res: Response, next: NextFunction) => {
       logger.debug('Calling GetAllScheduleById endpoint');
       try {
+        // @ts-ignore
         const user = req.currentUser;
+        // @ts-ignore
         const { params: { id } } = req;
         const scheduleServiceInstance = Container.get(ScheduleService);
         const schedule = await scheduleServiceInstance.GetScheduleById(id, user);
@@ -175,7 +177,9 @@ export default (app: Router) => {
     async (req: Request, res: Response) => {
       logger.debug(`Calling PatchSchedule endpoint with body: ${JSON.stringify(req.body)}`);
       try {
+        // @ts-ignore
         const user = req.currentUser;
+        // @ts-ignore
         const { params: { id } } = req;
         const scheduleServiceInstance = Container.get(ScheduleService);
         const { schedule } = await scheduleServiceInstance.EditSchedule(id, req.body as IScheduleInputDTO, user);
@@ -209,7 +213,9 @@ export default (app: Router) => {
     async (req: Request, res: Response, next: NextFunction) => {
       logger.debug('Calling DeleteScheduleById endpoint');
       try {
+        // @ts-ignore
         const user = req.currentUser;
+        // @ts-ignore
         const { params: { id } } = req;
         const scheduleServiceInstance = Container.get(ScheduleService);
         const schedule = await scheduleServiceInstance.DeleteScheduleById(id, user);
