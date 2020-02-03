@@ -24,4 +24,13 @@ export default class ActivityLogService{
       throw e;
     }
   }
+
+  public async GetActivityLogs(user) {
+    try {
+      return await this.activityLogModel.find({ user: user._id});
+    } catch (e) {
+      this.logger.error(e.message, e.stack);
+      throw e;
+    }
+  }
 }

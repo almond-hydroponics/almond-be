@@ -103,6 +103,12 @@ export default (app: Router) => {
           try {
             const logActivityItems = logActivity.createScheduleActivityLogItem(req);
             await activityLogInstance.createActivityLog(logActivityItems, user);
+            activityLogInstance.GetActivityLogs(user).then(
+              (success) => {
+                logger.warn(' *** >>> >>> >>> *** ' + JSON.stringify(success));
+              }
+            );
+
           } catch (e) {
             // @ts-ignore
             logger.error('🔥 error Creating Activity Log : %o', e);
