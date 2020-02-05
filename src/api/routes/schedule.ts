@@ -103,12 +103,9 @@ export default (app: Router) => {
           try {
             const logActivityItems = logActivity.createScheduleActivityLogItem(req);
             await activityLogInstance.createActivityLog(logActivityItems, user);
-            activityLogInstance.GetActivityLogs(user).then(
-              (success) => {
-                logger.warn(' *** >>> >>> >>> *** ' + JSON.stringify(success));
-              }
-            );
-
+            activityLogInstance.GetActivityLogs(user).then(res => {
+              schedule.activityHistory = res
+            });
           } catch (e) {
             // @ts-ignore
             logger.error('🔥 error Creating Activity Log : %o', e);
@@ -118,6 +115,7 @@ export default (app: Router) => {
           success: true,
           message: 'Time schedule added successfully',
           data: schedule,
+
         })
       } catch (e) {
         logger.error('🔥 error: %o', e.stack);
