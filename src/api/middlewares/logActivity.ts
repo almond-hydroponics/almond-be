@@ -32,8 +32,7 @@ const initializeClientInfo = function (request) {
   location = clientInfo.ipLocation;
 };
 
-module.exports = {
-  createScheduleActivityLogItem: function (request) {
+  function createScheduleActivityLogItem (request) {
     initializeClientInfo(request);
     return <IActivityLogDto>{
       action: 'Creating Schedule',
@@ -42,9 +41,8 @@ module.exports = {
       stationIp: ip,
       stationOs: JSON.stringify({ip, os, browser, location})
     }
-  },
-
-  deleteScheduleActivityLogItem: function (request) {
+  }
+  function deleteScheduleActivityLogItem (request) {
     initializeClientInfo(request);
     return <IActivityLogDto>{
       action: 'Deleting Schedule',
@@ -53,9 +51,8 @@ module.exports = {
       stationIp: ip,
       stationOs: JSON.stringify({ip, os, browser, location})
     }
-  },
-
-  manualOverrideActivityLog: function (request, status) {
+  }
+  function manualOverrideActivityLog (request, status) {
     initializeClientInfo(request);
     return <IActivityLogDto>{
       action: 'Device Manual Override Status',
@@ -64,9 +61,8 @@ module.exports = {
       stationIp: ip,
       stationOs: JSON.stringify({ip, os, browser, location})
     }
-  },
-
-  addDeviceActivityLog: function (request, desc) {
+  }
+  function addDeviceActivityLog (request, desc) {
     initializeClientInfo(request);
     return <IActivityLogDto>{
       action: 'Add Device',
@@ -75,9 +71,8 @@ module.exports = {
       stationIp: ip,
       stationOs: JSON.stringify({ip, os, browser, location})
     }
-  },
-
-  deviceConfigurationActivityLog: function (request, desc) {
+  }
+  function deviceConfigurationActivityLog (request, desc) {
     initializeClientInfo(request);
     return <IActivityLogDto>{
       action: 'Device Configuration',
@@ -86,9 +81,8 @@ module.exports = {
       stationIp: ip,
       stationOs: JSON.stringify({ip, os, browser, location})
     }
-  },
-
-  deviceConnectionStatus: function (request, msg) {
+  }
+  function deviceConnectionStatus (request, msg) {
     initializeClientInfo(request);
     return <IActivityLogDto>{
       action: 'Device Connection Status',
@@ -97,8 +91,8 @@ module.exports = {
       stationIp: ip,
       stationOs: JSON.stringify({ip, os, browser, location})
     }
-  },
-  internetConnectionStatus: function () {
+  }
+  function internetConnectionStatus () {
     return <IActivityLogDto>{
       action: 'No Internet',
       actionDesc: 'Internet Connectivity is Unavailable',
@@ -107,5 +101,15 @@ module.exports = {
       stationOs: JSON.stringify({})
     }
   }
-};
+
+export {
+  createScheduleActivityLogItem,
+  deleteScheduleActivityLogItem,
+  manualOverrideActivityLog,
+  addDeviceActivityLog,
+  deviceConfigurationActivityLog,
+  deviceConnectionStatus,
+  internetConnectionStatus
+}
+;
 

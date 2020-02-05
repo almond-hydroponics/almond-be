@@ -3,6 +3,7 @@ export interface ISchedule {
   schedule: string;
   user: string;
   enabled: boolean;
+  activityHistory: any
 }
 
 export interface IScheduleInputDTO {

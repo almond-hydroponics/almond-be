@@ -1,4 +1,4 @@
-import {NextFunction, Request, Response, Router} from 'express';
+import {NextFunction, Request, response, Response, Router} from 'express';
 import {config} from '../../config';
 import {IDeviceInputDTO} from '../../interfaces/IDevice';
 import {IScheduleOverrideInputDTO} from '../../interfaces/IScheduleOverride';
@@ -54,7 +54,7 @@ export default (app: Router) => {
           async () => {
             try {
               const logActivityItems = logActivity.manualOverrideActivityLog(req, enabled);
-              await activityLogInstance.createActivityLog(logActivityItems, user);
+              return await activityLogInstance.createActivityLog(logActivityItems, user);
             } catch (e) {
               // @ts-ignore
               logger.error('🔥 Error Creating Activity Log : %o', e);

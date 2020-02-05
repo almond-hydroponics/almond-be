@@ -22,14 +22,14 @@ export default class MqttService {
     // Mqtt error callback
     this.mqttClient.on('error', (err) => {
       this.logger.error(err.message, err.stack);
-      this.deviceConnectivityLog(activityLogInstance, req, ' Device Connection Error ' + err.toString());
+      this.deviceConnectivityLog(activityLogInstance, req, `Device Connection Error ${err.toString()}`);
       this.mqttClient.end();
     });
 
     // Connection callback
     this.mqttClient.on('connect', (success) => {
       this.logger.debug(`mqtt client connected`);
-      this.deviceConnectivityLog(activityLogInstance, req, ' Device Connection Successful ' + success.toString());
+      this.deviceConnectivityLog(activityLogInstance, req, `Device Connection Successful ${success.toString()}`);
     });
 
     // mqtt subscriptions
@@ -42,7 +42,7 @@ export default class MqttService {
 
     this.mqttClient.on('close', (close) => {
       this.logger.debug(`mqtt client disconnected`);
-      this.deviceConnectivityLog(activityLogInstance, req, ' Device Disconnected ' + close.toString());
+      this.deviceConnectivityLog(activityLogInstance, req, `Device Disconnected ${close.toString()}` );
     });
   }
 
@@ -53,7 +53,7 @@ export default class MqttService {
       await activityLogInstance.createActivityLog(logActivityItems, user);
     } catch (e) {
       // @ts-ignore
-      logger.error('🔥 Error Creating Activity Log : %o', e);
+      this.logger.error('🔥 Error Creating Activity Log : %o', e);
     }
   }
 
@@ -61,10 +61,10 @@ export default class MqttService {
   public sendMessage(topic, message, activityLogInstance, req) {
     try {
       this.mqttClient.publish(topic, message);
-      this.deviceConnectivityLog(activityLogInstance, req, ' Message Published ');
+      this.deviceConnectivityLog(activityLogInstance, req, `Message Published`);
     } catch (e) {
       this.logger.error(e.message, e.stack);
-      this.deviceConnectivityLog(activityLogInstance, req, ' Error while publish Message ');
+      this.deviceConnectivityLog(activityLogInstance, req, `Error while publish Message `);
       throw e;
     }
   }
