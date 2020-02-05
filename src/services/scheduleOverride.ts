@@ -33,9 +33,16 @@ export default class ScheduleOverrideService {
         user: user._id
       };
       const options = { upsert: true, new: true, setDefaultsOnInsert: true };
+      let response: any = '';
+      await this.activityLogInstance.GetActivityLogs(user).then(
+        res => {
+          response = res;
+        }
+      );
+
       return await this.scheduleOverrideModel.findOneAndUpdate(
         { user: user._id },
-        scheduleOverrideItem, options)
+        scheduleOverrideItem, response, options)
         .populate({ path: 'user'  });
     } catch (e) {
       this.logger.error(e.message, e.stack);
