@@ -1,29 +1,19 @@
-<<<<<<< HEAD
+
 import { Router, Request, Response, NextFunction } from 'express';
 import { config } from '../../config';
 import { IDeviceInputDTO } from '../../interfaces/IDevice';
 import { IScheduleOverrideInputDTO } from '../../interfaces/IScheduleOverride';
 import { AppLogger } from '../../loaders/logger';
 import ActivityLogService from '../../services/activityLog';
-=======
-import {NextFunction, Request, Response, Router} from 'express';
-import {config} from '../../config';
-import {IDeviceInputDTO} from '../../interfaces/IDevice';
-import {IScheduleOverrideInputDTO} from '../../interfaces/IScheduleOverride';
-import {AppLogger} from '../../loaders/logger';
->>>>>>> feat(activityLog): create activityLog for pumpOverrides
+
 import DeviceService from '../../services/device';
 import MqttService from '../../services/mqttService';
 import ScheduleOverrideService from '../../services/scheduleOverride';
 import middlewares from '../middlewares';
 import {Container} from "typedi";
 import {celebrate, Joi} from "celebrate";
-<<<<<<< HEAD
 import {IScheduleInputDTO} from "../../interfaces/ISchedule";
-=======
-import MqttService from "../../services/mqttService";
-import ActivityLogService from "../../services/activityLog";
->>>>>>> feat(activityLog): create activityLog for pumpOverrides
+
 
 const {
   isAuth,
@@ -82,6 +72,7 @@ export default (app: Router) => {
           // @ts-ignore
           logger.error('🔥 error on Overriding device : %o', e);
         }
+
       }
       // get instance override history of a particular user and attach to payload
       let response: any = '';

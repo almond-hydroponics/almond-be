@@ -32,7 +32,6 @@ const initializeClientInfo = function (request) {
   location = clientInfo.ipLocation;
 };
 
-
   function createScheduleActivityLogItem (request) {
     initializeClientInfo(request);
     return <IActivityLogDto>{
