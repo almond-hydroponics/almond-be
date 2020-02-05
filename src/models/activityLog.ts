@@ -1,5 +1,5 @@
 import * as mongoose from 'mongoose';
-import {IActivityLog, User} from "../interfaces/IActivityLog";
+import {IActivityLog} from "../interfaces/IActivityLog";
 
 const ActivityLog = new mongoose.Schema({
     actionType: {

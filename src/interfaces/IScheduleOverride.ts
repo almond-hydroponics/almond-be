@@ -3,9 +3,11 @@ export interface IScheduleOverride {
   user: string;
   enabled: boolean;
   activityHistory: [];
+
 }
 
 export interface IScheduleOverrideInputDTO {
   enabled: boolean;
   activityHistory: [];
+
 }

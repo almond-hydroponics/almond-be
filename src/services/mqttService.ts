@@ -45,7 +45,6 @@ export default class MqttService {
     this.mqttClient.on('close', (close) => {
       this.logger.debug(`mqtt client disconnected`);
       this.deviceConnectivityLog(activityLogInstance, req, `Device Disconnected` );
-
     });
   }
 
