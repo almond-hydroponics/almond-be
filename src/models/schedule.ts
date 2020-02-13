@@ -1,5 +1,5 @@
 import * as mongoose from 'mongoose';
-import {ISchedule} from '../interfaces/ISchedule'
+import { ISchedule } from '../interfaces/ISchedule';
 
 const Schedule = new mongoose.Schema({
     schedule: {
@@ -20,6 +20,11 @@ const Schedule = new mongoose.Schema({
       type: Boolean,
       default: true,
     },
+    device: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Device',
+      required: true,
+    }
   }
 );
 

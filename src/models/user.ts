@@ -1,5 +1,5 @@
-import { IUser } from '../interfaces/IUser';
 import * as mongoose from 'mongoose';
+import { IUser } from '../interfaces/IUser';
 
 const User = new mongoose.Schema({
     name: {
@@ -16,9 +16,15 @@ const User = new mongoose.Schema({
     password: String,
     salt: String,
     googleId: String,
-    role: {
-      type: String,
-      default: 'user',
+    roles: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Role',
+      },
+    ],
+    currentRole: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Role',
     },
     photo: {
       type: String,
@@ -29,23 +35,16 @@ const User = new mongoose.Schema({
       default: false,
     },
     verificationToken: String,
-    device: [
+    devices: [
       {
-        id: {
-          type: String,
-          required: true,
-          unique: true,
-        },
-        verified: {
-          type: Boolean,
-          default: false,
-        },
-        user: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: 'User',
-        },
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Device',
       },
-    ]
+    ],
+    activeDevice: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Device',
+    },
   },
   {timestamps: true},
 );
