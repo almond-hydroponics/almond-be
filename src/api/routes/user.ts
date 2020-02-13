@@ -25,11 +25,11 @@ export default (app: Router) => {
    */
   user.get('/me', isAuth, attachCurrentUser,
     async (req: Request, res: Response, next: NextFunction) => {
-    logger.debug('Calling GetUserDetails endpoint');
+    logger.debug('Calling My Profile Details endpoint');
     try {
       return res.status(200).send({
         success: true,
-        message: 'User details fetched successfully',
+        message: 'Profile details fetched successfully',
         data: req.currentUser
       })
     } catch (e) {
@@ -37,4 +37,74 @@ export default (app: Router) => {
       return next(e)
     }
   });
+
+  user.get('/people/:id', isAuth, attachCurrentUser, checkRole('User'),
+    async (req: Request, res: Response, next: NextFunction) => {
+      logger.debug('Calling GetUserDetails endpoint');
+      try {
+        const { params: { id } } = req;
+        const userService = Container.get(AuthService);
+        const user = await userService.UserProfile(id);
+
+        return res.status(200).send({
+          success: true,
+          message: 'User details fetched successfully',
+          data: user
+        })
+      } catch (e) {
+       logger.error('🔥 error: %o', e.stack);
+       return next(e)
+      }
+    });
+
+  user.get('/people', isAuth, attachCurrentUser, checkRole('User'),
+     async (req: Request, res: Response, next: NextFunction) => {
+       logger.debug('Calling FetchingAllUsers endpoint');
+       try {
+         const userService = Container.get(AuthService);
+         const users = await userService.GetUsers();
+
+         return res.status(200).send({
+           success: true,
+           message: 'User fetched successfully',
+           data: users
+         })
+       } catch (e) {
+         logger.error('🔥 error: %o', e.stack);
+         return next(e)
+       }
+     });
+
+  /**
+   * @api {PATCH} api/role/:id
+   * @description Edit a role
+   * @access Private
+   */
+  user.patch('/people/:id', isAuth, attachCurrentUser, checkRole('User'),
+    // celebrate({
+    //   body: Joi.object({
+    //     userDetails: Joi.string(),
+    //     roleId: Joi.string().required(),
+    //   }),
+    // }),
+    async (req: Request, res: Response) => {
+     logger.debug(`Calling PatchUserDetails endpoint with body: ${JSON.stringify(req.body)}`);
+     try {
+       const { params: { id } } = req;
+       const userService = Container.get(AuthService);
+       const user = await userService.UpdateCurrentUserRole(id, req.body as IUserInputDTO);
+       return res.status(200).send({
+         success: true,
+         message: 'User role has been updated successfully',
+         data: user,
+       });
+     } catch (e) {
+       logger.error('🔥 error: %o', e.stack);
+       return res.send({
+         success: false,
+         message: 'Server Error. Could not complete the request',
+       }).status(500)
+     }
+    }
+  );
 };

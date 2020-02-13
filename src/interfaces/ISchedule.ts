@@ -1,9 +1,12 @@
+import { IDevice } from './IDevice';
+
 export interface ISchedule {
   _id: string;
   schedule: string;
   user: string;
   enabled: boolean;
   activityHistory: any
+  device: IDevice;
 }
 
 export interface IScheduleInputDTO {
@@ -11,4 +14,5 @@ export interface IScheduleInputDTO {
   enabled: string;
   user: any;
   activityHistory:any
+  deviceId: string;
 }
