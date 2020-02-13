@@ -1,6 +1,7 @@
 import {Container, Inject, Service} from 'typedi';
 import {IScheduleOverride, IScheduleOverrideInputDTO} from '../interfaces/IScheduleOverride'
-import {AppLogger} from '../loaders/logger';
+import { IUser } from '../interfaces/IUser';
+import { AppLogger } from '../loaders/logger';
 import ActivityLogService from "./activityLog";
 
 @Service()
@@ -13,10 +14,13 @@ export default class ScheduleOverrideService {
   ) {}
 
 
-  public async GetScheduleOverride(user) {
+  public async GetScheduleOverride(user: IUser, device: string) {
     try {
       return await this.scheduleOverrideModel
-        .find({ user: user._id  })
+        .find({
+          user: user._id,
+          device: device,
+        })
         .populate({ path: 'user' });
     } catch (e) {
       this.logger.error(e.message, e.stack);
@@ -40,13 +44,14 @@ export default class ScheduleOverrideService {
         ...scheduleInputOverrideDTO,
         user: user._id,
         activityHistory: response
+        // device: scheduleInputOverrideDTO.deviceId
       };
 
       const options = { upsert: true, new: true, setDefaultsOnInsert: true };
       return await this.scheduleOverrideModel.findOneAndUpdate(
-        {user: user._id},
+        { user: user._id, device: scheduleInputOverrideDTO.deviceId },
         scheduleOverrideItem, options)
-        .populate({path: 'user'});
+        .populate({ path: 'user' });
     } catch (e) {
       this.logger.error(`Error  ${e.Message}`, e.stack);
       throw `Error  ${e.toString()}`;

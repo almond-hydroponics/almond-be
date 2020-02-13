@@ -80,7 +80,7 @@ interface Config {
 }
 
 export const config: Config = {
-  port: parseInt(process.env.PORT, 10),
+  port: +process.env.PORT,
   databaseURL: process.env.MONGODB_URI,
   redisURL: process.env.REDIS_URL,
   siteUrl: process.env.NODE_ENV === 'development' ? process.env.DEVELOPMENT_SITE_URL : process.env.PRODUCTION_SITE_URL,
