@@ -1,0 +1,37 @@
+[
+  {
+    "_id": {
+      "$oid": "5e4a57ffa04a6d8445b5885b"
+    },
+    "id": "ABC123",
+    "verified": false
+  },
+  {
+    "_id": {
+      "$oid": "5e4a580ea04a6d8445b5885c"
+    },
+    "id": "DEF123",
+    "verified": false
+  },
+  {
+    "_id": {
+      "$oid": "5e4a5815a04a6d8445b5885d"
+    },
+    "id": "GHI123",
+    "verified": false
+  },
+  {
+    "_id": {
+      "$oid": "5e4a581ba04a6d8445b5885e"
+    },
+    "id": "JKL123",
+    "verified": false
+  },
+  {
+    "_id": {
+      "$oid": "5e4a582ca04a6d8445b5885f"
+    },
+    "id": "MNP123",
+    "verified": false
+  }
+]

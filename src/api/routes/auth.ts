@@ -119,9 +119,9 @@ export default (app: Router) => {
       failureRedirect: '/', session: false }),
     async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const authServerInstance = Container.get(AuthService);
+        const authServiceInstance = Container.get(AuthService);
         // @ts-ignore
-        const token = await authServerInstance.generateToken(req.user);
+        const token = await authServiceInstance.generateToken(req.user);
         res.cookie('jwt-token', token,
           {
             httpOnly: false,
