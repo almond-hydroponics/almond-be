@@ -1,10 +1,12 @@
 import 'reflect-metadata';
 import * as express from 'express';
+import { config } from './config';
 import { AppLogger } from './loaders/logger';
 const logger = new AppLogger('Start');
+
 async function startServer() {
   const app = express();
-  const PORT = process.env.PORT || 5000;
+  const PORT = config.port || 5000;
   await require('./loaders').default({ expressApp: app });
 
   // @ts-ignore
