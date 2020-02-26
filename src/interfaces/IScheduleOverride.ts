@@ -2,10 +2,10 @@ export interface IScheduleOverride {
   id: string;
   user: string;
   enabled: boolean;
-  activityHistory: any;
+  activityHistory: [];
 }
 
 export interface IScheduleOverrideInputDTO {
   enabled: boolean;
-  activityHistory: any;
+  activityHistory: [];
 }

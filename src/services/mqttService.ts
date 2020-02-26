@@ -22,14 +22,14 @@ export default class MqttService {
     // Mqtt error callback
     this.mqttClient.on('error', (err) => {
       this.logger.error(err.message, err.stack);
-      this.deviceConnectivityLog(activityLogInstance, req, `Device Connection Error ${err.toString()}`);
+      this.deviceConnectivityLog(activityLogInstance, req, `Device Connection Error `);
       this.mqttClient.end();
     });
 
     // Connection callback
     this.mqttClient.on('connect', (success) => {
       this.logger.debug(`mqtt client connected`);
-      this.deviceConnectivityLog(activityLogInstance, req, `Device Connection Successful ${JSON.stringify(success)}`);
+      this.deviceConnectivityLog(activityLogInstance, req, `Device Connection Successful`);
     });
 
     // mqtt subscriptions
@@ -42,7 +42,7 @@ export default class MqttService {
 
     this.mqttClient.on('close', (close) => {
       this.logger.debug(`mqtt client disconnected`);
-      this.deviceConnectivityLog(activityLogInstance, req, `Device Disconnected ${JSON.stringify(close)}` );
+      this.deviceConnectivityLog(activityLogInstance, req, `Device Disconnected` );
     });
   }
 
