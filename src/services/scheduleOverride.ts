@@ -1,6 +1,6 @@
 import {Container, Inject, Service} from 'typedi';
 import {IScheduleOverride, IScheduleOverrideInputDTO} from '../interfaces/IScheduleOverride'
-import { AppLogger } from '../loaders/logger';
+import {AppLogger} from '../loaders/logger';
 import ActivityLogService from "./activityLog";
 
 @Service()
@@ -28,25 +28,28 @@ export default class ScheduleOverrideService {
     scheduleInputOverrideDTO: IScheduleOverrideInputDTO, user): Promise<{ scheduleOverride: IScheduleOverride }> {
     try {
       this.logger.silly('Editing schedule override db record');
-      const scheduleOverrideItem = {
-        ...scheduleInputOverrideDTO,
-        user: user._id
-      };
-      const options = { upsert: true, new: true, setDefaultsOnInsert: true };
       let response: any = '';
       await this.activityLogInstance.GetActivityLogs(user).then(
         res => {
-          response = res;
+          response = JSON.stringify(res);
+          this.logger.warn(response);
         }
       );
 
+      const scheduleOverrideItem = {
+        ...scheduleInputOverrideDTO,
+        user: user._id,
+        activityHistory: response
+      };
+
+      const options = { upsert: true, new: true, setDefaultsOnInsert: true };
       return await this.scheduleOverrideModel.findOneAndUpdate(
-        { user: user._id },
-        scheduleOverrideItem, response, options)
-        .populate({ path: 'user'  });
+        {user: user._id},
+        scheduleOverrideItem, options)
+        .populate({path: 'user'});
     } catch (e) {
-      this.logger.error(e.message, e.stack);
-      throw e;
+      this.logger.error(`Error  ${e.Message}`, e.stack);
+      throw `Error  ${e.toString()}`;
     }
   }
 }

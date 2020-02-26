@@ -1,5 +1,6 @@
 import * as mongoose from 'mongoose';
 import { IScheduleOverride } from '../interfaces/IScheduleOverride'
+import {array} from "joi";
 
 const ScheduleOverride = new mongoose.Schema({
     enabled: {
