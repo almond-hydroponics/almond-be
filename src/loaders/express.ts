@@ -36,6 +36,7 @@ export default ({ app, agendaInstance }: { app: express.Application; agendaInsta
   // todo check the effects on enabling trust proxy {{ IPs can be spoofed easily }} proposed lib request-ip middleware
   app.enable('trust proxy');
   app.use(requestIp.mw());
+
   // The magic package that prevents frontend developers going nuts
   // Alternate description:
   // Enable Cross Origin Resource Sharing to all origins by default
@@ -61,7 +62,6 @@ export default ({ app, agendaInstance }: { app: express.Application; agendaInsta
     resave: true,
     saveUninitialized: true,
     cookie: { secure: false, domain: config.cookiesDomain },
-    // store: new redisStore({ url: config.redisURL }),
     store: new redisStore({ client: redisClient }),
   }));
 

@@ -38,11 +38,11 @@ export default (app: Router) => {
    */
   device.patch('/pump', isAuth, attachCurrentUser,
     celebrate({
-                body: Joi.object({
-                                   enabled: Joi.boolean(),
-                                   deviceId: Joi.string(),
-                                 }),
-              }),
+      body: Joi.object({
+        enabled: Joi.boolean(),
+        deviceId: Joi.string(),
+      }),
+    }),
     async (req: Request, res: Response, next: NextFunction) => {
       logger.debug('Calling Pump endpoint');
       try {
@@ -119,10 +119,10 @@ export default (app: Router) => {
         const scheduleOverride = await scheduleOverrideServiceInstance.GetScheduleOverride(user, deviceId);
         if (scheduleOverride) {
           return res.status(200).send({
-                                        success: true,
-                                        message: 'Time schedule has been fetched successfully',
-                                        data: scheduleOverride,
-                                      });
+            success: true,
+            message: 'Time schedule has been fetched successfully',
+            data: scheduleOverride,
+          });
         }
         return res.status(404).send({
           success: false,
@@ -141,26 +141,26 @@ export default (app: Router) => {
    * @access Private
    */
   device.post('/devices', isAuth, attachCurrentUser, checkRole('User'),
-              celebrate({
-                          body: Joi.object({
-                                             id: Joi.string().required(),
-                                           })
-                        }),
-              async (req: Request, res: Response) => {
-                logger.debug('Calling PostDevices endpoint');
-                try {
-                  const user = req.currentUser;
-                  const deviceServiceInstance = Container.get(DeviceService);
-                  const {device} = await deviceServiceInstance.AddDevice(req.body as IDeviceInputDTO, user);
+    celebrate({
+      body: Joi.object({
+         id: Joi.string().required(),
+       })
+    }),
+    async (req: Request, res: Response) => {
+      logger.debug('Calling PostDevices endpoint');
+      try {
+        const user = req.currentUser;
+        const deviceServiceInstance = Container.get(DeviceService);
+        const {device} = await deviceServiceInstance.AddDevice(req.body as IDeviceInputDTO, user);
 
-                  if (device) {
-                    let desc = 'Device added successfully';
-                    try {
-                      const activityLogInstance = Container.get(ActivityLogService);
-                      const logActivityItems = logActivity.addDeviceActivityLog(req, desc);
-                      await activityLogInstance.createActivityLog(logActivityItems, user);
-                    } catch (e) {
-                      // @ts-ignore
+        if (device) {
+          let desc = 'Device added successfully';
+          try {
+            const activityLogInstance = Container.get(ActivityLogService);
+            const logActivityItems = logActivity.addDeviceActivityLog(req, desc);
+            await activityLogInstance.createActivityLog(logActivityItems, user);
+          } catch (e) {
+            // @ts-ignore
             logger.error('🔥 error Creating Activity Log : %o', e);
           }
           return res.status(201).send({
