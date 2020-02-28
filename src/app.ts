@@ -1,3 +1,4 @@
+require('newrelic');
 import 'reflect-metadata';
 import * as express from 'express';
 import { config } from './config';
@@ -9,13 +10,16 @@ async function startServer() {
   const PORT = config.port || 5000;
   await require('./loaders').default({ expressApp: app });
 
-  // @ts-ignore
   app.listen(PORT, (err: any) => {
     if (err) {
       logger.error(err.message, err.stack);
-      // process.exit(1);
+      process.exit(1);
       return;
     }
+    process.on('unhandledRejection', (reason, p) => {
+      logger.error(`Unhandled Rejection at: ${p}`, `reason:, ${reason}`);
+      process.exit(1)
+    });
     logger.log(`
       ########################################
       😎  Server listening on port: ${PORT} 😎

@@ -73,7 +73,7 @@ src/**/**/__snapshots__/*.test.tsx.snap
 .idea/
 /reports
 /tmp
-Dockerfile
+#Dockerfile
 cypress/screenshots
 cypress/videos
 reports/
