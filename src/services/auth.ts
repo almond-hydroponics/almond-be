@@ -55,6 +55,8 @@ export default class AuthService {
         .populate({ path: 'roles', select: 'title' })
         .execPopulate();
 
+      this.logger.debug(JSON.stringify(userRecord));
+
       this.logger.silly('Generating JWT');
       const token = this.generateToken(userRecord);
 
@@ -197,7 +199,6 @@ export default class AuthService {
     try {
       this.logger.debug('Updating user role');
       let userRecord;
-      // Check if role exists on user record
       userRecord = await this.userModel.findOne({ _id: { $eq: id } });
 
       const roleExists = userRecord.roles.includes(userDetails.role);
