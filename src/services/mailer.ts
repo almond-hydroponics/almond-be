@@ -1,6 +1,6 @@
 import { Service, Inject } from 'typedi';
+import { mail } from '../config/nodemailer';
 import { IUser } from '../interfaces/IUser';
-import smtpTransport from '../config/nodemailer';
 import { AppLogger } from '../loaders/logger';
 import { verificationEmail, recoverPasswordEmail } from '../mail';
 
@@ -13,8 +13,7 @@ export default class MailerService {
 
   public async SendWelcomeEmail(user: Partial<IUser>) {
     try {
-      const messageStatus = await smtpTransport.sendMail({
-        from: '"Almond" <almond.noreply@gmail.com>',
+      const messageStatus = await mail({
         to: user.email,
         subject: 'Welcome to My Almond!!',
         html: verificationEmail(user),
@@ -26,7 +25,7 @@ export default class MailerService {
     }
   }
 
-  public StartEmailSequence(sequence: string, user: Partial<IUser>) {
+  public async StartEmailSequence(sequence: string, user: Partial<IUser>) {
     try {
       if (!user.email) {
         this.logger.error('No email provided', 'error');
