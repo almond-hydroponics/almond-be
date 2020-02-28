@@ -52,6 +52,9 @@ interface Config {
     mailClientSecret: string;
     mailRefreshToken: string;
   };
+  mail: {
+    from: string;
+  };
 
   saltRounds: string;
 
@@ -126,6 +129,10 @@ export const config: Config = {
     mailClientId: process.env.GOOGLE_MAIL_CLIENT_ID,
     mailClientSecret: process.env.GOOGLE_MAIL_CLIENT_SECRET,
     mailRefreshToken: process.env.GOOGLE_MAIL_REFRESH_TOKEN,
+  },
+
+  mail: {
+    from: process.env.MAIL_FROM,
   },
 
   saltRounds: process.env.SALT_ROUNDS,

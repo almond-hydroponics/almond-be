@@ -103,20 +103,14 @@ export default (app: Router) => {
    * @description Social authentication with google
    * @access Public
    */
-  auth.get(
-    '/google',
-    passport.authenticate('google', { scope: ['profile', 'email'] })
-  );
+  auth.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
   /**
    * @api {GET} api/auth/google/callback
    * @description Google callback redirect url
    * @access Public on request
    */
-  auth.get(
-    '/google/callback',
-    passport.authenticate('google', {
-      failureRedirect: '/', session: false }),
+  auth.get('/google/callback', passport.authenticate('google', { failureRedirect: '/', session: false }),
     async (req: Request, res: Response, next: NextFunction) => {
       try {
         const authServiceInstance = Container.get(AuthService);
