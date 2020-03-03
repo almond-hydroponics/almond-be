@@ -24,7 +24,7 @@
   "license": "MIT",
   "private": false,
   "dependencies": {
-    "agenda": "^2.1.0",
+    "agenda": "^2.3.0",
     "agendash": "^1.0.0",
     "argon2": "^0.21.0",
     "bluebird": "^3.7.1",

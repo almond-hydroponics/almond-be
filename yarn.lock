@@ -924,7 +924,7 @@ after@0.8.2:
   resolved "https://registry.yarnpkg.com/after/-/after-0.8.2.tgz#fedb394f9f0e02aa9768e702bda23b505fae7e1f"
   integrity sha1-/ts5T58OAqqXaOcCvaI7UF+ufh8=
 
-agenda@^2.0.0, agenda@^2.1.0:
+agenda@^2.0.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/agenda/-/agenda-2.2.0.tgz#ce88be99fd6742bb216e808d72dee091260fe718"
   integrity sha512-HPaAgTezbMRvqQP30cr/vYuukBOVeCJw8EwdwAOzZbotOpkcvw2u1KBE8inOUQD8GySDdvbX9B8YCxUil0YHYA==
@@ -935,6 +935,18 @@ agenda@^2.0.0, agenda@^2.1.0:
     human-interval "~1.0.0"
     moment-timezone "~0.5.26"
     mongodb "~3.3.0"
+
+agenda@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/agenda/-/agenda-2.3.0.tgz#192c69a01a4cf1c2ccd504c262096169aacc47ae"
+  integrity sha512-0RnozNC6Dy1lvaY3/BQt0IKlQrU5vSjBZ9fSG+5I31bNvU7VrzrZFNNuoBmsd99z5GwXzOIWVUkbddvj/VlfBg==
+  dependencies:
+    cron "~1.7.2"
+    date.js "~0.3.3"
+    debug "~4.1.1"
+    human-interval "~1.0.0"
+    moment-timezone "~0.5.27"
+    mongodb "~3.4.0"
 
 agendash@^1.0.0:
   version "1.0.0"
@@ -5169,6 +5181,13 @@ moment-timezone@^0.5.26, moment-timezone@^0.5.x, moment-timezone@~0.5.26:
   dependencies:
     moment ">= 2.9.0"
 
+moment-timezone@~0.5.27:
+  version "0.5.28"
+  resolved "https://registry.yarnpkg.com/moment-timezone/-/moment-timezone-0.5.28.tgz#f093d789d091ed7b055d82aa81a82467f72e4338"
+  integrity sha512-TDJkZvAyKIVWg5EtVqRzU97w0Rb0YVbfpqyjgu6GwXCAohVRqwZjf4fOzDE6p1Ch98Sro/8hQQi65WDXW5STPw==
+  dependencies:
+    moment ">= 2.9.0"
+
 "moment@>= 2.9.0", moment@^2.24.0:
   version "2.24.0"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.24.0.tgz#0d055d53f5052aa653c9f6eb68bb5d12bf5c2b5b"
@@ -5178,6 +5197,17 @@ mongodb@3.3.5, mongodb@~3.3.0:
   version "3.3.5"
   resolved "https://registry.yarnpkg.com/mongodb/-/mongodb-3.3.5.tgz#38d531013afede92b0dd282e3b9f3c08c9bdff3b"
   integrity sha512-6NAv5gTFdwRyVfCz+O+KDszvjpyxmZw+VlmqmqKR2GmpkeKrKFRv/ZslgTtZba2dc9JYixIf99T5Gih7TIWv7Q==
+  dependencies:
+    bson "^1.1.1"
+    require_optional "^1.0.1"
+    safe-buffer "^5.1.2"
+  optionalDependencies:
+    saslprep "^1.0.0"
+
+mongodb@~3.4.0:
+  version "3.4.1"
+  resolved "https://registry.yarnpkg.com/mongodb/-/mongodb-3.4.1.tgz#0d15e57e0ea0fc85b7a4fb9291b374c2e71652dc"
+  integrity sha512-juqt5/Z42J4DcE7tG7UdVaTKmUC6zinF4yioPfpeOSNBieWSK6qCY+0tfGQcHLKrauWPDdMZVROHJOa8q2pWsA==
   dependencies:
     bson "^1.1.1"
     require_optional "^1.0.1"
