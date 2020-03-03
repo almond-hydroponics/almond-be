@@ -55,7 +55,7 @@
     "method-override": "^3.0.0",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.26",
-    "mongoose": "^5.7.7",
+    "mongoose": "^5.8.11",
     "morgan": "^1.9.1",
     "mqtt": "^3.0.0",
     "node-cron": "^2.0.3",
