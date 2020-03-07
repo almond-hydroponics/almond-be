@@ -12,12 +12,6 @@ const logger = new AppLogger('Schedule');
 import ActivityLogService from "../../services/activityLog";
 import {IActivityLogDto} from "../../interfaces/IActivityLog";
 
-
-// todo change ES import syntax
-// get IP location for Public Ips Will not work for local Ips
-// sniff client header request for the versions and client Os
-const geoIp = require('geoip-lite');
-const Sniffr = require('sniffr');
 const logActivity = require('../middlewares/logActivity');
 
 const {
@@ -109,6 +103,9 @@ export default (app: Router) => {
           try {
             const logActivityItems = logActivity.createScheduleActivityLogItem(req);
             await activityLogInstance.createActivityLog(logActivityItems, user);
+            activityLogInstance.GetActivityLogs(user).then(res => {
+              schedule.activityHistory = res
+            });
           } catch (e) {
             // @ts-ignore
             logger.error('🔥 error Creating Activity Log : %o', e);
@@ -118,6 +115,7 @@ export default (app: Router) => {
           success: true,
           message: 'Time schedule added successfully',
           data: schedule,
+
         })
       } catch (e) {
         logger.error('🔥 error: %o', e.stack);

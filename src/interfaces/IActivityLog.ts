@@ -7,6 +7,7 @@ export interface IActivityLog {
   userId: string;
   stationIp: string;
   stationOs: string;
+  user: string;
 }
 
 export interface IActivityLogDto { // Data transfer

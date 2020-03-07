@@ -1,11 +1,13 @@
-import { Inject, Service } from 'typedi';
+import {Container, Inject, Service} from 'typedi';
 import { ISchedule, IScheduleInputDTO } from '../interfaces/ISchedule';
 import { IUser } from '../interfaces/IUser';
 import { AppLogger } from '../loaders/logger';
+import ActivityLogService from "./activityLog";
 
 @Service()
 export default class ScheduleService {
   private logger = new AppLogger(ScheduleService.name);
+  private activityLogInstance = Container.get(ActivityLogService);
   constructor(
     @Inject('scheduleModel') private scheduleModel,
   ) {}
@@ -17,8 +19,15 @@ export default class ScheduleService {
         ...scheduleInputDTO,
         user: user._id
       };
+      let response: any = '';
       const scheduleRecord = await this.scheduleModel.create(scheduleItem);
       const schedule = scheduleRecord.toObject();
+      await this.activityLogInstance.GetActivityLogs(user).then(
+        res => {
+          response = res
+        }
+      );
+      schedule.activityHistory = response;
       return { schedule: schedule };
     } catch (e) {
       this.logger.error(e.message, e.stack);

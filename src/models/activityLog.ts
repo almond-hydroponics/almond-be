@@ -20,6 +20,11 @@ const ActivityLog = new mongoose.Schema({
     stationOs: {
       type: String
     },
+    user: {
+      type:mongoose.Schema.Types.ObjectId,
+      ref:'User',
+      required: true,
+    },
     dateCreated: {
       type: Date,
       required: true,
