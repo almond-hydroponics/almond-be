@@ -1,0 +1,10 @@
+{"_id":{"$oid":"5db373445e38b20ae991710b"},"schedule":"2019-10-25T22:12:18.305Z","dateCreated":{"$date":"2019-10-25T22:12:20.733Z"},"__v":0}
+{"_id":{"$oid":"5db3736e5e38b20ae991710c"},"schedule":"2019-10-25T22:13:00.673Z","dateCreated":{"$date":"2019-10-25T22:13:02.616Z"},"__v":0}
+{"_id":{"$oid":"5db373875e38b20ae991710d"},"schedule":"2019-10-26T08:55:20.691Z","dateCreated":{"$date":"2019-10-25T22:13:27.855Z"},"__v":0}
+{"_id":{"$oid":"5db42955b21bb9ce0cd93f25"},"schedule":"2019-10-26T11:09:07.721Z","user":{"$oid":"5db373d6169d644d72e9f466"},"dateCreated":{"$date":"2019-10-26T11:09:09.213Z"},"__v":0}
+{"_id":{"$oid":"5e16d15fffb6541b5b909d3e"},"enabled":false,"schedule":"2020-01-09T07:15:13.843Z","user":{"$oid":"5db36e9e169d644d72e9f27e"},"dateCreated":{"$date":"2020-01-09T07:08:15.223Z"},"__v":0}
+{"_id":{"$oid":"5e439ea3fd05da507ca0161a"},"enabled":false,"schedule":"2020-02-11T21:00:40.481Z","user":{"$oid":"5db36e9e169d644d72e9f27e"},"dateCreated":{"$date":"2020-02-12T06:43:47.1Z"},"__v":0}
+{"_id":{"$oid":"5e439ed9fd05da507ca0161c"},"enabled":true,"schedule":"2020-02-12T03:30:35.965Z","user":{"$oid":"5db36e9e169d644d72e9f27e"},"dateCreated":{"$date":"2020-02-12T06:44:41.565Z"},"__v":0}
+{"_id":{"$oid":"5e439f32fd05da507ca0161e"},"enabled":false,"schedule":"2020-02-12T12:15:02.732Z","user":{"$oid":"5db36e9e169d644d72e9f27e"},"dateCreated":{"$date":"2020-02-12T06:46:10.543Z"},"__v":0}
+{"_id":{"$oid":"5e44f86b2eeeee195403efcb"},"enabled":true,"schedule":"2020-02-13T09:30:58.329Z","user":{"$oid":"5db36e9e169d644d72e9f27e"},"dateCreated":{"$date":"2020-02-13T07:19:07.912Z"},"__v":0}
+{"_id":{"$oid":"5e456d694df0c437590ebc3e"},"enabled":true,"schedule":"2019-07-02T07:54:31.199486+00:00","user":{"$oid":"5db36e9e169d644d72e9f27e"},"dateCreated":{"$date":"2020-02-13T15:38:17.379Z"},"__v":0}

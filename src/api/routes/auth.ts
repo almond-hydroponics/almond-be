@@ -103,25 +103,19 @@ export default (app: Router) => {
    * @description Social authentication with google
    * @access Public
    */
-  auth.get(
-    '/google',
-    passport.authenticate('google', { scope: ['profile', 'email'] })
-  );
+  auth.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
   /**
    * @api {GET} api/auth/google/callback
    * @description Google callback redirect url
    * @access Public on request
    */
-  auth.get(
-    '/google/callback',
-    passport.authenticate('google', {
-      failureRedirect: '/', session: false }),
+  auth.get('/google/callback', passport.authenticate('google', { failureRedirect: '/', session: false }),
     async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const authServerInstance = Container.get(AuthService);
+        const authServiceInstance = Container.get(AuthService);
         // @ts-ignore
-        const token = await authServerInstance.generateToken(req.user);
+        const token = await authServiceInstance.generateToken(req.user);
         res.cookie('jwt-token', token,
           {
             httpOnly: false,
