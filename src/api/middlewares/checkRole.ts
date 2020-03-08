@@ -1,9 +1,18 @@
+import { AppLogger } from '../../loaders/logger';
+
+const logger = new AppLogger('Schedule');
+
 const checkRole = (requiredRole) => {
   return (req, res, next) => {
-    if(req.currentUser.role !== requiredRole) {
-      return res.status(401).end();
+    const role = req.currentUser.roles.some(role => role.title === requiredRole);
+
+    if(!role) {
+      return res.status(401).send({
+        success: false,
+        message: 'You are not authorized to perform this action.',
+      }).end();
     } else {
-      console.log('User meet required role, going to next middleware');
+      logger.debug('User met the required role, going to next middleware');
       return next();
     }
   }

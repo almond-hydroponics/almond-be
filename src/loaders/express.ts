@@ -2,7 +2,6 @@ import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import * as cors from 'cors';
 import * as passport from 'passport';
-import * as cookieParser from 'cookie-parser';
 import * as expressSession from 'express-session';
 import * as helmet from 'helmet';
 import routes from '../api';
@@ -36,6 +35,7 @@ export default ({ app, agendaInstance }: { app: express.Application; agendaInsta
   // todo check the effects on enabling trust proxy {{ IPs can be spoofed easily }} proposed lib request-ip middleware
   app.enable('trust proxy');
   app.use(requestIp.mw());
+
   // The magic package that prevents frontend developers going nuts
   // Alternate description:
   // Enable Cross Origin Resource Sharing to all origins by default
@@ -55,13 +55,14 @@ export default ({ app, agendaInstance }: { app: express.Application; agendaInsta
   const redisStore = require('connect-redis')(expressSession);
 
   // Configuration for cookie expressSession
-  app.use(cookieParser());
   app.use(expressSession({
     secret: config.sessionSecret,
     resave: true,
     saveUninitialized: true,
-    cookie: { secure: false, domain: config.cookiesDomain },
-    // store: new redisStore({ url: config.redisURL }),
+    cookie: {
+      secure: false,
+      domain: config.cookiesDomain
+    },
     store: new redisStore({ client: redisClient }),
   }));
 

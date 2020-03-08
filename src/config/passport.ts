@@ -14,13 +14,17 @@ passport.use(
     {
       clientID: config.google.clientID,
       clientSecret: config.google.clientSecret,
-      callbackURL: config.google.callbackUrl,
+      callbackURL: 'https://almond-be.herokuapp.com/api/auth/google/callback',
       passReqToCallback: true,
     },
     async (request, accessToken, refreshToken, profile, done) => {
       try {
         const authServerInstance = Container.get(AuthService);
         const user = await authServerInstance.SocialLogin(profile);
+
+        if (typeof user === 'string') {
+          return request.res.redirect(`${config.siteUrl}/link/google/${user}/${profile.email}`);
+        }
 
         done(null, user);
       } catch (e) {

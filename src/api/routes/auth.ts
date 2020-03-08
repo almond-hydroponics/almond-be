@@ -103,10 +103,7 @@ export default (app: Router) => {
    * @description Social authentication with google
    * @access Public
    */
-  auth.get(
-    '/google',
-    passport.authenticate('google', { scope: ['profile', 'email'] })
-  );
+  auth.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
   /**
    * @api {GET} api/auth/google/callback
@@ -119,14 +116,15 @@ export default (app: Router) => {
       failureRedirect: '/', session: false }),
     async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const authServerInstance = Container.get(AuthService);
+        const authServiceInstance = Container.get(AuthService);
         // @ts-ignore
-        const token = await authServerInstance.generateToken(req.user);
-        res.cookie('jwt-token', token,
+        const token = await authServiceInstance.generateToken(req.user);
+        await res.cookie('jwt-token', token,
           {
-            httpOnly: false,
-            domain: config.cookiesDomain,});
-        res.redirect(`${config.siteUrl}?socialToken=${token}`);
+          httpOnly: false,
+          domain: config.cookiesDomain,});
+        res.redirect(`https://almond-re.herokuapp.com?socialToken=${token}`);
+        // res.redirect(config.siteUrl);
       } catch (e) {
         logger.error('🔥 error: %o', e.stack);
         return next(e);

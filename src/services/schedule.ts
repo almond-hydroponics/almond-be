@@ -14,10 +14,11 @@ export default class ScheduleService {
 
   public async CreateSchedule(scheduleInputDTO: IScheduleInputDTO, user: IUser): Promise<{ schedule: ISchedule }> {
     try {
-      this.logger.silly('Creating schedule db record');
+      this.logger.debug('Creating schedule db record');
       const scheduleItem = {
         ...scheduleInputDTO,
-        user: user._id
+        user: user._id,
+        device: scheduleInputDTO.deviceId
       };
       let response: any = '';
       const scheduleRecord = await this.scheduleModel.create(scheduleItem);
@@ -35,11 +36,13 @@ export default class ScheduleService {
     }
   }
 
-  public async GetSchedules(user) {
+  public async GetSchedules(user: IUser, device: string) {
     try {
       return await this.scheduleModel
-        .find({ user: user._id })
-        .populate({ path: 'user' });
+        .find({
+          user: user._id,
+          device: device,
+        })
     } catch (e) {
       this.logger.error(e.message, e.stack);
       throw e;
@@ -49,8 +52,11 @@ export default class ScheduleService {
   public async GetScheduleById(scheduleId: string, user) {
     try {
       return await this.scheduleModel
-        .findById({ _id: scheduleId, user: user._id  })
-        .populate({ path: 'user' });
+        .findById({
+          _id: scheduleId,
+          user: user._id
+        })
+        .populate({ path: 'device' })
     } catch (e) {
       this.logger.error(e.message, e.stack);
       throw e;
@@ -73,11 +79,15 @@ export default class ScheduleService {
       const scheduleItem = {
         ...scheduleInputDTO,
         _id: scheduleId,
-        user: user._id
+        user: user._id,
+        device: scheduleInputDTO.deviceId
       };
-      return await this.scheduleModel.findOneAndUpdate(
-        {_id: scheduleId,  user: user._id }, scheduleItem, { new: true })
-        .populate({ path: 'user'  });
+      const scheduleRecord = await this.scheduleModel.findOneAndUpdate(
+        {_id: scheduleId,  user: user._id },
+        scheduleItem,
+        { new: true });
+      const schedule = scheduleRecord.toObject();
+      return { schedule: schedule };
     } catch (e) {
       this.logger.error(e.message, e.stack);
       throw e;

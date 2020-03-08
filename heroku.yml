@@ -1,0 +1,11 @@
+setup:
+  addons:
+    - plan: mongolab
+      as: MONGO_URI
+    - plan: heroku-redis
+      as: REDIS
+build:
+  docker:
+    web: Dockerfile
+#run:
+#  web:  npm config set unsafe-perm true && yarn start
