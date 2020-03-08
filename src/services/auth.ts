@@ -1,24 +1,20 @@
-import { Service, Inject, Container } from 'typedi';
-import * as jwt from 'jsonwebtoken';
-import { config } from '../config';
-import { AppLogger } from '../loaders/logger';
-import DeviceService from './device';
-import MailerService from './mailer';
 import * as argon2 from 'argon2';
 import { randomBytes } from 'crypto';
+import * as jwt from 'jsonwebtoken';
+import { Inject, Service } from 'typedi';
+import { config } from '../config';
+import { EventDispatcher, EventDispatcherInterface } from '../decorators/eventDispatcher';
 import { IUser, IUserInputDTO } from '../interfaces/IUser';
-import {
-  EventDispatcher,
-  EventDispatcherInterface
-} from '../decorators/eventDispatcher';
+import { AppLogger } from '../loaders/logger';
 import events from '../subscribers/events';
-
+import MailerService from './mailer';
 
 @Service()
 export default class AuthService {
   private logger = new AppLogger(AuthService.name);
   constructor(
     @Inject('userModel') private userModel: Models.UserModel,
+    @Inject('roleModel') private roleModel: Models.RoleModel,
     private mailer: MailerService,
     @EventDispatcher() private eventDispatcher: EventDispatcherInterface,
   ) {}
@@ -46,11 +42,21 @@ export default class AuthService {
       this.logger.silly('Hashing password');
       const hashedPassword = await argon2.hash(userInputDTO.password, { salt });
       this.logger.silly('Creating user db record');
-      const userRecord = await this.userModel.create({
+      let userRecord = await this.userModel.create({
         ...userInputDTO,
         salt: salt.toString('hex'),
         password: hashedPassword,
+        roles: ['5e4703d62faee61d8ede2d65'],
+        currentRole: '5e4703d62faee61d8ede2d65',
       });
+
+      // populate user role
+      userRecord = await userRecord
+        .populate({ path: 'roles', select: 'title' })
+        .execPopulate();
+
+      this.logger.debug(JSON.stringify(userRecord));
+
       this.logger.silly('Generating JWT');
       const token = this.generateToken(userRecord);
 
@@ -68,7 +74,7 @@ export default class AuthService {
        * that transforms data from layer to layer
        * but that's too over-engineering for now
        */
-      const user = userRecord.toObject();
+      const user = userRecord.populate({ path: 'roles' }).toObject();
       Reflect.deleteProperty(user, 'password');
       Reflect.deleteProperty(user, 'salt');
       return { user, token };
@@ -79,7 +85,13 @@ export default class AuthService {
   }
 
   public async SignIn(email: string, password: string): Promise<{ user: IUser; token: string }> {
-    const userRecord = await this.userModel.findOne({ email });
+    let userRecord = await this.userModel.findOne({ email });
+
+    // populate user role
+    userRecord = await userRecord
+      .populate({ path: 'roles', select: 'title' })
+      .execPopulate();
+
     if (!userRecord) {
       throw new Error('User not registered');
     }
@@ -123,7 +135,9 @@ export default class AuthService {
   public async SocialLogin(profile): Promise<IUser> {
     try {
       let userRecord = await this.userModel
-        .findOne({ email: profile.email });
+        .findOne({ email: profile.email })
+        .populate({ path: 'roles', select: 'title' })
+        .exec();
 
       if (!userRecord) {
         const data = profile._json;
@@ -133,9 +147,19 @@ export default class AuthService {
           photo: data.picture,
           email: data.email,
           isVerified: data.email_verified,
-          role: 'user',
+          roles: ['5e4703d62faee61d8ede2d65'],
+          currentRole: '5e4703d62faee61d8ede2d65',
         };
         userRecord = await this.userModel.create(userInfo);
+        userRecord = await userRecord
+          .populate({ path: 'roles', select: 'title' })
+          .execPopulate();
+
+        await this.roleModel.findOneAndUpdate(
+          { _id: userRecord.roles },
+          { $inc: { userCount: 1 } },
+          { new: true }
+        ).exec();
       }
       return userRecord;
     } catch (e) {
@@ -143,6 +167,78 @@ export default class AuthService {
       throw new Error(
           'error while authenticating google user: ' + JSON.stringify(e)
         );
+    }
+  }
+
+  public async UserProfile(id: string): Promise<IUser> {
+    try {
+      this.logger.debug('Fetching user details');
+      const userRecord = await this.userModel
+        .findById(id)
+        .populate({
+          path: 'roles',
+          select: '_id title description resourceAccessLevels',
+          populate: { path: 'resourceAccessLevels.resource resourceAccessLevels.permissions' },
+        })
+        .populate({ path: 'activeDevice' })
+        .populate({ path: 'currentRole', select: 'title' })
+        .populate({ path: 'devices' }).exec();
+
+      const user = userRecord.toObject();
+      Reflect.deleteProperty(user, 'password');
+      Reflect.deleteProperty(user, 'salt');
+
+      return user;
+    } catch (e) {
+      this.logger.error(e.message, e.stack);
+      throw e;
+    }
+  }
+
+  public async UpdateCurrentUserRole(id: string, userDetails: IUserInputDTO): Promise<IUser> {
+    try {
+      this.logger.debug('Updating user role');
+      let userRecord;
+      userRecord = await this.userModel.findOne({ _id: { $eq: id } });
+
+      const roleExists = userRecord.roles.includes(userDetails.role);
+      if (!roleExists) {
+        await this.userModel.findByIdAndUpdate(
+          id,
+          { $push: { roles: { $each: [userDetails.role] } } },
+          { new: true });
+      }
+
+      userRecord = await this.userModel.findByIdAndUpdate(
+        id,
+        { currentRole: userDetails.role },
+        { new: true })
+        .populate({ path: 'currentRole', select: 'title' });
+
+      // Check when a user role is removed????
+      await this.roleModel.findOneAndUpdate(
+        { _id: userRecord.roles },
+        { $inc: { userCount: 1 } },
+        { new: true }
+      ).exec();
+
+      return userRecord;
+    } catch (e) {
+      this.logger.error(e.message, e.stack);
+      throw e;
+    }
+  }
+
+  public async GetUsers(): Promise<IUser[]> {
+    try {
+      this.logger.debug('Fetching all user from record');
+      return this.userModel
+        .find()
+        .populate({ path: 'roles', select: 'title' })
+        .populate({ path: 'currentRole', select: 'title' });
+    } catch (e) {
+      this.logger.error(e.message, e.stack);
+      throw e;
     }
   }
 
@@ -168,18 +264,26 @@ export default class AuthService {
      * but the client cannot craft a JWT to fake a userId
      * because it doesn't have _the secret_ to sign it
      */
-    this.logger.silly(`Sign JWT for userId: ${user._id}`);
+    const role = user.roles.reduce((obj, role) => Object.assign(obj, { [role.title]: role._id }), {});
+
+    const userData = {
+      role,
+      _id: user._id, // We are gonna use this in the middleware 'isAuth'
+      name: user.name,
+      photo: user.photo,
+      email: user.email,
+      isVerified: user.isVerified,
+      deviceVerified: ((user.devices.length >= 1) ? user.devices[0].verified : false),
+      activeDevice: user.activeDevice,
+    };
+
     return jwt.sign(
       {
-        _id: user._id, // We are gonna use this in the middleware 'isAuth'
-        role: user.role,
-        name: user.name,
-        photo: user.photo,
-        email: user.email,
-        isVerified: user.isVerified,
-        deviceVerified: (user.device.verified === undefined) ? false : true,
+        userData,
+        iat: Date.now(),
         exp: exp.getTime() / 1000,
-        iss: 'http://almond.com'
+        iss: 'almond.com',
+        aud: 'almond users'
       },
       config.jwtSecret,
     );

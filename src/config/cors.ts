@@ -1,15 +1,17 @@
 import { config } from './index';
 
-const whitelist = [
-  'http://localhost:3000',
-  'http://almond.com:3000',
-  'https://almond-re-staging.herokuapp.com',
-  'https://accounts.google.com/o/oauth2/v2/',
-  'https://accounts.google.com/*',
-  'https://accounts.google.com/o/oauth2/v2/auth',
-  'http://' + config.siteUrl,
-  config.siteUrl
-];
+// const whitelist = [
+//   'http://localhost:3000',
+//   'http://almond.com:3000',
+//   'https://almond-re-staging.herokuapp.com',
+//   'https://accounts.google.com/o/oauth2/v2/',
+//   'https://accounts.google.com/*',
+//   'https://accounts.google.com/o/oauth2/v2/auth',
+//   'http://' + config.siteUrl,
+//   config.siteUrl
+// ];
+
+const whitelist = ['http://froyo.almond:3000', 'http://' + config.siteUrl, config.siteUrl];
 
 const corsOptions = {
   origin: function(origin, callback) {

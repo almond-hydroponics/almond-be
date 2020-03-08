@@ -9,9 +9,14 @@ const ScheduleOverride = new mongoose.Schema({
     },
     user: {
       type:mongoose.Schema.Types.ObjectId,
-      ref:'User',
+      ref: 'User',
       required: true,
     },
+    device: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Device',
+      required: true,
+    }
   }
 );
 

@@ -7,6 +7,7 @@ import ScheduleService from '../../services/schedule';
 import { IScheduleInputDTO } from '../../interfaces/ISchedule';
 import middlewares from '../middlewares';
 import * as CronJobManager from 'cron-job-manager';
+
 const manager = new CronJobManager();
 const logger = new AppLogger('Schedule');
 import ActivityLogService from "../../services/activityLog";
@@ -21,8 +22,10 @@ const {
   cacheSchedules,
 } = middlewares;
 const schedule = Router();
+
 export default (app: Router) => {
   app.use('/', schedule);
+
    /**
    * @api {GET} api/schedules
    * @description Get all schedules
@@ -33,8 +36,10 @@ export default (app: Router) => {
       logger.debug('Calling GetAllSchedules endpoint');
       try {
         const user = req.currentUser;
+        const deviceId = req.query.device;
         const scheduleServiceInstance = Container.get(ScheduleService);
-        const schedules = await scheduleServiceInstance.GetSchedules(user);
+        const schedules = await scheduleServiceInstance.GetSchedules(
+          user, deviceId.toString());
 
         const HASH_EXPIRATION_TIME = 60 * 60 * 24;
 
@@ -73,6 +78,7 @@ export default (app: Router) => {
     celebrate({
       body: Joi.object({
         schedule: Joi.string().required(),
+        deviceId: Joi.string().required(),
       }),
     }),
     async (req: Request, res: Response) => {
@@ -167,6 +173,7 @@ export default (app: Router) => {
       body: Joi.object({
         schedule: Joi.string(),
         enabled: Joi.boolean(),
+        deviceId: Joi.string().required(),
       }),
     }),
     async (req: Request, res: Response) => {
