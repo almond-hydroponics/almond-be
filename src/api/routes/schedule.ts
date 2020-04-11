@@ -13,6 +13,12 @@ const logger = new AppLogger('Schedule');
 import ActivityLogService from "../../services/activityLog";
 import {IActivityLogDto} from "../../interfaces/IActivityLog";
 
+
+// todo change ES import syntax
+// get IP location for Public Ips Will not work for local Ips
+// sniff client header request for the versions and client Os
+const geoIp = require('geoip-lite');
+const Sniffr = require('sniffr');
 const logActivity = require('../middlewares/logActivity');
 
 const {
@@ -36,9 +42,8 @@ export default (app: Router) => {
       logger.debug('Calling GetAllSchedules endpoint');
       try {
         const user = req.currentUser;
-        const deviceId = req.query.device;
         const scheduleServiceInstance = Container.get(ScheduleService);
-        const schedules = await scheduleServiceInstance.GetSchedules(user, deviceId);
+        const schedules = await scheduleServiceInstance.GetSchedules(user);
 
         const HASH_EXPIRATION_TIME = 60 * 60 * 24;
 
@@ -77,7 +82,6 @@ export default (app: Router) => {
     celebrate({
       body: Joi.object({
         schedule: Joi.string().required(),
-        deviceId: Joi.string().required(),
       }),
     }),
     async (req: Request, res: Response) => {
@@ -174,7 +178,6 @@ export default (app: Router) => {
       body: Joi.object({
         schedule: Joi.string(),
         enabled: Joi.boolean(),
-        deviceId: Joi.string().required(),
       }),
     }),
     async (req: Request, res: Response) => {

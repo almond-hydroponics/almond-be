@@ -52,9 +52,6 @@ interface Config {
     mailClientSecret: string;
     mailRefreshToken: string;
   };
-  mail: {
-    from: string;
-  };
 
   saltRounds: string;
 
@@ -83,7 +80,7 @@ interface Config {
 }
 
 export const config: Config = {
-  port: +process.env.PORT,
+  port: parseInt(process.env.PORT, 10),
   databaseURL: process.env.MONGODB_URI,
   redisURL: process.env.REDIS_URL,
   siteUrl: process.env.NODE_ENV === 'development' ? process.env.DEVELOPMENT_SITE_URL : process.env.PRODUCTION_SITE_URL,
@@ -129,10 +126,6 @@ export const config: Config = {
     mailClientId: process.env.GOOGLE_MAIL_CLIENT_ID,
     mailClientSecret: process.env.GOOGLE_MAIL_CLIENT_SECRET,
     mailRefreshToken: process.env.GOOGLE_MAIL_REFRESH_TOKEN,
-  },
-
-  mail: {
-    from: process.env.MAIL_FROM,
   },
 
   saltRounds: process.env.SALT_ROUNDS,
