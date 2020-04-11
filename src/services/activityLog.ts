@@ -12,7 +12,6 @@ export default class ActivityLogService{
   public async createActivityLog(activityLogDto: IActivityLogDto, user): Promise<{
     activityLog: IActivityLog }> {
     try {
-      this.logger.log('Creating Activity Log...');
       const activityLogItem = {
         ...activityLogDto,
         user: user._id

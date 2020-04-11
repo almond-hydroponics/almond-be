@@ -55,7 +55,7 @@ const initializeClientInfo = function (request) {
     initializeClientInfo(request);
     return <IActivityLogDto>{
       action: 'Device Manual Override Status',
-      actionDesc: `Manual Override ${status ? 'ON' : 'OFF'} successfully`,
+      actionDesc: `Manual Override turned ${status ? 'ON' : 'OFF'} successfully`,
       actionType: `${status ? IActionTypes._ON : IActionTypes._OFF }`,
       stationIp: ip,
       stationOs: JSON.stringify({ip, os, browser, location})

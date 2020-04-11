@@ -28,14 +28,6 @@ export default class ScheduleOverrideService {
     scheduleInputOverrideDTO: IScheduleOverrideInputDTO, user): Promise<{ scheduleOverride: IScheduleOverride }> {
     try {
       this.logger.silly('Editing schedule override db record');
-      let response: any = '';
-      await this.activityLogInstance.GetActivityLogs(user).then(
-        res => {
-          response = JSON.stringify(res);
-          this.logger.warn(response);
-        }
-      );
-
       const scheduleOverrideItem = {
         ...scheduleInputOverrideDTO,
         user: user._id
