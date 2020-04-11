@@ -8,7 +8,6 @@ export interface IScheduleOverride {
 
 export interface IScheduleOverrideInputDTO {
   enabled: boolean;
-  deviceId: string;
   activityHistory: [];
 
 }

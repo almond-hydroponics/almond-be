@@ -1,6 +1,5 @@
 import {Container, Inject, Service} from 'typedi';
 import {IScheduleOverride, IScheduleOverrideInputDTO} from '../interfaces/IScheduleOverride'
-import { IUser } from '../interfaces/IUser';
 import { AppLogger } from '../loaders/logger';
 import ActivityLogService from "./activityLog";
 
@@ -14,13 +13,10 @@ export default class ScheduleOverrideService {
   ) {}
 
 
-  public async GetScheduleOverride(user: IUser, device: string) {
+  public async GetScheduleOverride(user) {
     try {
       return await this.scheduleOverrideModel
-        .find({
-          user: user._id,
-          device: device,
-        })
+        .find({ user: user._id  })
         .populate({ path: 'user' });
     } catch (e) {
       this.logger.error(e.message, e.stack);
@@ -42,19 +38,16 @@ export default class ScheduleOverrideService {
 
       const scheduleOverrideItem = {
         ...scheduleInputOverrideDTO,
-        user: user._id,
-        activityHistory: response
-        // device: scheduleInputOverrideDTO.deviceId
+        user: user._id
       };
-
       const options = { upsert: true, new: true, setDefaultsOnInsert: true };
       return await this.scheduleOverrideModel.findOneAndUpdate(
-        { user: user._id, device: scheduleInputOverrideDTO.deviceId },
+        { user: user._id },
         scheduleOverrideItem, options)
-        .populate({ path: 'user' });
+        .populate({ path: 'user'  });
     } catch (e) {
-      this.logger.error(`Error  ${e.Message}`, e.stack);
-      throw `Error  ${e.toString()}`;
+      this.logger.error(e.message, e.stack);
+      throw e;
     }
   }
 }

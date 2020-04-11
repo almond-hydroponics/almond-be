@@ -43,21 +43,6 @@ export default async ({expressApp}) => {
     model: require('../models/device').default,
   };
 
-  const roleModel = {
-    name: 'roleModel',
-    model: require('../models/role').default,
-  };
-
-  const resourceModel = {
-    name: 'resourceModel',
-    model: require('../models/resource').default,
-  };
-
-  const permissionsModel = {
-    name: 'permissionsModel',
-    model: require('../models/permissions').default,
-  };
-
   // It returns the agenda instance because it's needed in the subsequent loaders
   const { agenda } = await dependencyInjectorLoader({
     mongoConnection,
@@ -67,9 +52,6 @@ export default async ({expressApp}) => {
       scheduleOverrideModel,
       deviceModel,
       activityLogModel,
-      roleModel,
-      resourceModel,
-      permissionsModel,
       // whateverModel
     ],
   });

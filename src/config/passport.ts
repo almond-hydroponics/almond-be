@@ -22,10 +22,6 @@ passport.use(
         const authServerInstance = Container.get(AuthService);
         const user = await authServerInstance.SocialLogin(profile);
 
-        if (typeof user === 'string') {
-          return request.res.redirect(`${config.siteUrl}/link/google/${user}/${profile.email}`);
-        }
-
         done(null, user);
       } catch (e) {
         logger.error('🔥 Passport Google error: ', e.stack);
