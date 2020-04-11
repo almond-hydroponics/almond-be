@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import role from './routes/role';
 import schedules from './routes/schedule';
 import auth from './routes/auth';
 import user from './routes/user';
@@ -16,7 +15,6 @@ export default () => {
   agendash(app);
   device(app);
   linkAccount(app);
-  role(app);
 
   return app
 }

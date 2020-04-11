@@ -13,8 +13,7 @@ export default async (): Promise<Db> => {
     useFindAndModify: false
   });
   connection.set('debug', function (collectionName, method, query, doc, options) {
-    logger.log(`mongo collection: ${collectionName} - method: ${method}`)
+    logger.log(`mongo collection: ${collectionName} - method: ${method}}`)
   });
-
   return connection.connection.db;
 };
