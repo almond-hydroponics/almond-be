@@ -1,6 +1,4 @@
-import { celebrate, Joi } from 'celebrate';
-import { NextFunction, Request, Response, Router } from 'express';
-import { Container } from 'typedi';
+import { Router, Request, Response, NextFunction } from 'express';
 import { config } from '../../config';
 import { IDeviceInputDTO } from '../../interfaces/IDevice';
 import { IScheduleOverrideInputDTO } from '../../interfaces/IScheduleOverride';
@@ -10,6 +8,8 @@ import DeviceService from '../../services/device';
 import MqttService from '../../services/mqttService';
 import ScheduleOverrideService from '../../services/scheduleOverride';
 import middlewares from '../middlewares';
+import {Container} from "typedi";
+import {celebrate, Joi} from "celebrate";
 
 const {
   isAuth,

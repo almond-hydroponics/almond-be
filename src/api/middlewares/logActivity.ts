@@ -1,13 +1,12 @@
 import {IActivityLogDto} from "../../interfaces/IActivityLog";
 import {IActionTypes, IClientInfoDto} from "../../interfaces/IClientInfo";
-
 const geoIp = require('geoip-lite');
 const Sniffer = require('sniffr');
 
 //global
 let ip = '', os = '', browser = '', location = '';
 
-const getClientInformation = function (request) {
+const getClientInformation =  function(request) {
   let userAgent, sniffer, clientOs, clientLocation, clientBrowser, ip;
   userAgent = request.headers["user-agent"];
   sniffer = new Sniffer();

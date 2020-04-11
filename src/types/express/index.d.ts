@@ -1,6 +1,4 @@
 import { Document, Model } from 'mongoose';
-import { IPermissions } from '../../interfaces/IPermissions';
-import { IRole } from '../../interfaces/IRole';
 import { IUser } from '../../interfaces/IUser';
 
 declare global {
@@ -12,8 +10,6 @@ declare global {
 
   namespace Models {
     export type UserModel = Model<IUser & Document>;
-    export type RoleModel = Model<IRole & Document>;
-    export type PermissionsModel = Model<IPermissions & Document>;
   }
 }
 

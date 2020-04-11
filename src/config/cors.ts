@@ -11,8 +11,6 @@ const whitelist = [
   config.siteUrl
 ];
 
-// const whitelist = ['http://almond:3000', 'http://' + config.siteUrl, config.siteUrl];
-
 const corsOptions = {
   origin: function(origin, callback) {
     if (whitelist.indexOf(origin) !== -1 || !origin) {
