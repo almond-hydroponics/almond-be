@@ -9,4 +9,6 @@ export interface ISchedule {
 export interface IScheduleInputDTO {
   schedule: string;
   enabled: string;
+  user: any;
+  activityHistory:any
 }
