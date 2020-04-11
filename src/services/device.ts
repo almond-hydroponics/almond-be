@@ -100,6 +100,7 @@ export default class DeviceService {
       throw e;
     }
   }
+
 }
 
 // const deviceRecord = await this.userModel.findOneAndUpdate(
