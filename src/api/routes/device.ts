@@ -1,4 +1,3 @@
-
 import { Router, Request, Response, NextFunction } from 'express';
 import { config } from '../../config';
 import { IDeviceInputDTO } from '../../interfaces/IDevice';
