@@ -93,7 +93,7 @@ export const config: Config = {
     process.env.NODE_ENV === 'development' ? process.env.DEVELOPMENT_REDIRECT_URL : process.env.PRODUCTION_REDIRECT_URL,
   jwtSecret: process.env.JWT_SECRET,
   sessionSecret: process.env.SESSION_SECRET,
-  cookiesDomain: process.env.NODE_ENV === 'development' ? 'almond.com' : process.env.COOKIES_DOMAIN,
+  cookiesDomain: process.env.NODE_ENV === 'development' ? '.almond.com' : process.env.COOKIES_DOMAIN,
   nodeMailer: {
     username: process.env.NODEMAILER_USERNAME,
     password: process.env.NODEMAILER_PASSWORD,

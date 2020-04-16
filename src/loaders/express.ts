@@ -2,7 +2,6 @@ import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import * as cors from 'cors';
 import * as passport from 'passport';
-import * as cookieParser from 'cookie-parser';
 import * as expressSession from 'express-session';
 import * as helmet from 'helmet';
 import routes from '../api';
@@ -56,12 +55,14 @@ export default ({ app, agendaInstance }: { app: express.Application; agendaInsta
   const redisStore = require('connect-redis')(expressSession);
 
   // Configuration for cookie expressSession
-  app.use(cookieParser());
   app.use(expressSession({
     secret: config.sessionSecret,
     resave: true,
     saveUninitialized: true,
-    cookie: { secure: false, domain: config.cookiesDomain },
+    cookie: {
+      secure: false,
+      domain: config.cookiesDomain
+    },
     store: new redisStore({ client: redisClient }),
   }));
 

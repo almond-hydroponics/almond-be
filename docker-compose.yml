@@ -1,14 +1,29 @@
 version: '3'
-volumes:
-  almond_data:
-    external: true
-  node_modules:
-
-networks:
-  app-network:
-    driver: bridge
 
 services:
+  app:
+    restart: always
+    container_name: almond
+    image: almond
+    build:
+      context: .
+      dockerfile: Dockerfile
+    links:
+      - mongo
+      - redis
+    volumes:
+      - node_modules:/home/node/app/node_modules
+      - ../../:/home/node/app
+    environment:
+      - PORT=8080
+      - MONGODB_URI=mongodb://mongo:27017/almond
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - redis
+      - mongo
+    networks:
+      - app-network
+
   mongo:
     restart: always
     image: mongo:4.1.8-xenial
@@ -23,39 +38,58 @@ services:
       - '27017:27017'
 
   redis:
+    restart: always
     container_name: redis
-    image: redis
+    image: redis:alpine
     networks:
       - app-network
     ports:
       - '6379:6379'
 
-  app:
+  webserver:
+    image: nginx:1.17.6-alpine
+    container_name: webserver
     restart: always
-    container_name: almond
-    image: almond
-    build:
-      context: ../../
-      dockerfile: Dockerfile
-    links:
-      - mongo
-      - redis
-    volumes:
-      - node_modules:/usr/app/node_modules
-      - ../../:/usr/app
-    environment:
-      - PORT=5000
-      - MONGODB_URI=$MONGODB_URI
-      - REDIS_URL=redis://redis:6379
     ports:
-      - '5000:5000'
+      - "80:80"
+      - "443:443"
+    volumes:
+      - web-root:/var/www/html
+      - ./nginx-conf:/etc/nginx/conf.d
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
+      - dhparam:/etc/ssl/certs
     depends_on:
-      - redis
-      - mongo
-    entrypoint:
-      - /usr/app/entrypoint.sh
-    expose:
-      - 5000
+      - app
     networks:
       - app-network
-#    command: ./wait-for.sh db:27017 -- /home/node/app/node_modules/.bin/nodemon app.js
+
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
+      - web-root:/var/www/html
+    depends_on:
+      - webserver
+    command: certonly --webroot --webroot-path=/var/www/html --email almond.froyo@gmail.com --agree-tos --no-eff-email --staging -d almondhydroponics.com  -d www.almondhydroponics.com
+
+volumes:
+  almond_data:
+    external: true
+  node_modules:
+  certbot-etc:
+  certbot-var:
+  web-root:
+    driver: local
+  dhparam:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/masha/almond-be/dhparam/
+      o: bind
+
+networks:
+  app-network:
+    driver: bridge

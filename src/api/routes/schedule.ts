@@ -38,7 +38,8 @@ export default (app: Router) => {
         const user = req.currentUser;
         const deviceId = req.query.device;
         const scheduleServiceInstance = Container.get(ScheduleService);
-        const schedules = await scheduleServiceInstance.GetSchedules(user, deviceId);
+        const schedules = await scheduleServiceInstance.GetSchedules(
+          user, deviceId.toString());
 
         const HASH_EXPIRATION_TIME = 60 * 60 * 24;
 

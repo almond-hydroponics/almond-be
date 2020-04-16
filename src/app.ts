@@ -7,7 +7,7 @@ const logger = new AppLogger('Start');
 
 async function startServer() {
   const app = express();
-  const PORT = config.port || 5000;
+  const PORT = config.port || 8080;
   await require('./loaders').default({ expressApp: app });
 
   app.listen(PORT, (err: any) => {

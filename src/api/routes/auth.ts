@@ -110,16 +110,20 @@ export default (app: Router) => {
    * @description Google callback redirect url
    * @access Public on request
    */
-  auth.get('/google/callback', passport.authenticate('google', { failureRedirect: '/', session: false }),
+  auth.get(
+    '/google/callback',
+    passport.authenticate('google', {
+      failureRedirect: '/', session: false }),
     async (req: Request, res: Response, next: NextFunction) => {
       try {
         const authServiceInstance = Container.get(AuthService);
         // @ts-ignore
         const token = await authServiceInstance.generateToken(req.user);
-        res.cookie('jwt-token', token,
+        await res.cookie('jwt-token', token,
           {
-            httpOnly: false,
-            domain: config.cookiesDomain,});
+          httpOnly: false,
+          domain: config.cookiesDomain,});
+        // res.redirect(`https://almond-re.herokuapp.com?socialToken=${token}`);
         res.redirect(`${config.siteUrl}?socialToken=${token}`);
       } catch (e) {
         logger.error('🔥 error: %o', e.stack);

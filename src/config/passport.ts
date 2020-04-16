@@ -14,7 +14,7 @@ passport.use(
     {
       clientID: config.google.clientID,
       clientSecret: config.google.clientSecret,
-      callbackURL: config.google.callbackUrl,
+      callbackURL: 'https://almond-be.herokuapp.com/api/auth/google/callback',
       passReqToCallback: true,
     },
     async (request, accessToken, refreshToken, profile, done) => {

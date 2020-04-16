@@ -1,2 +1,2 @@
 release: chmod u+x ./release.sh && ./release.sh
-web: node build/app.js
+web: node build/app.ts

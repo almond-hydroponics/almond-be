@@ -26,6 +26,8 @@
   ],
   "exclude": [
     "node_modules",
-    "tests"
+    "tests",
+    "dist",
+    "**/*.test.tsx"
   ]
 }
