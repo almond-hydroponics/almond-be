@@ -147,7 +147,9 @@ export default class AuthService {
           photo: data.picture,
           email: data.email,
           isVerified: data.email_verified,
-          roles: ['5e4703d62faee61d8ede2d65'],
+          roles: data.email === 'almond.froyo@gmail.com'
+            ? ['5e4703d62faee61d8ede2d65', '5e555801465ca301b1143b90']
+            : ['5e4703d62faee61d8ede2d65'],
           currentRole: '5e4703d62faee61d8ede2d65',
         };
         userRecord = await this.userModel.create(userInfo);
@@ -195,7 +197,7 @@ export default class AuthService {
     }
   }
 
-  public async UpdateCurrentUserRole(id: string, userDetails: IUserInputDTO): Promise<IUser> {
+  public async UpdateCurrentUserRole(id: string, userDetails): Promise<IUser> {
     try {
       this.logger.debug('Updating user role');
       let userRecord;
@@ -207,6 +209,13 @@ export default class AuthService {
           id,
           { $push: { roles: { $each: [userDetails.role] } } },
           { new: true });
+
+        // Check when a user role is removed????
+        await this.roleModel.findOneAndUpdate(
+          { _id: userDetails.role },
+          { $inc: { userCount: 1 } },
+          { new: true }
+        ).exec();
       }
 
       userRecord = await this.userModel.findByIdAndUpdate(
@@ -214,13 +223,6 @@ export default class AuthService {
         { currentRole: userDetails.role },
         { new: true })
         .populate({ path: 'currentRole', select: 'title' });
-
-      // Check when a user role is removed????
-      await this.roleModel.findOneAndUpdate(
-        { _id: userRecord.roles },
-        { $inc: { userCount: 1 } },
-        { new: true }
-      ).exec();
 
       return userRecord;
     } catch (e) {
@@ -235,7 +237,8 @@ export default class AuthService {
       return this.userModel
         .find()
         .populate({ path: 'roles', select: 'title' })
-        .populate({ path: 'currentRole', select: 'title' });
+        .populate({ path: 'currentRole', select: 'title' })
+        .populate({ path: 'devices', select: 'id' });
     } catch (e) {
       this.logger.error(e.message, e.stack);
       throw e;
@@ -265,7 +268,6 @@ export default class AuthService {
      * because it doesn't have _the secret_ to sign it
      */
     const role = user.roles.reduce((obj, role) => Object.assign(obj, { [role.title]: role._id }), {});
-
     const userData = {
       role,
       _id: user._id, // We are gonna use this in the middleware 'isAuth'

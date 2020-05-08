@@ -54,6 +54,7 @@ export default class DeviceService {
       const userRecord: IUser = await this.userModel
         .findByIdAndUpdate(
           user._id,
+          // @ts-ignore
           { $push: { devices: { $each: [_id] } }},
           { new: true })
         .populate({ path: 'devices' })
@@ -61,7 +62,7 @@ export default class DeviceService {
 
       const device = userRecord.devices[userRecord.devices.length - 1];
 
-      this.UpdateCurrentDevice(device._id, user);
+      await this.UpdateCurrentDevice(device._id, user);
 
       if (!userRecord) {
         throw new Error('Could not add new device');

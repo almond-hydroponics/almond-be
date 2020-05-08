@@ -63,10 +63,10 @@ export default (app: Router) => {
     async (req: Request, res: Response, next: NextFunction) => {
       logger.debug('Calling GetAllRoles endpoint');
       try {
-        let query_strings: Array<string> = [];
-        let additional_data = {};
-        let include = req.query.include;
-        query_strings.push(include);
+        // let query_strings: Array<string> = [];
+        // let additional_data = {};
+        // let include = req.query.include;
+        // query_strings.push(include);
 
         const roleServiceInstance = Container.get(RoleService);
         const resourceServiceInstance = Container.get(ResourceService);

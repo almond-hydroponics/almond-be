@@ -1,3 +1,5 @@
+import {IRole} from "./IRole";
+
 export interface IUser {
   _id: string;
   name: string;
@@ -31,5 +33,5 @@ export interface IUserInputDTO {
   password?: string;
   photo?: string;
   isVerified?: boolean;
-  role?: string;
+  role?: IRole;
 }
