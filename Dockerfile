@@ -28,7 +28,7 @@ RUN apk add mongodb
 RUN apk add mongodb-tools
 
 RUN npm config set unsafe-perm true
-RUN npm install yarn@1.21.x && rm -rf package-lock.json
+RUN npm install yarn@1.22.x && rm -rf package-lock.json
 #COPY package.json yarn.lock /usr/app/
 #COPY src/ /usr/app/
 

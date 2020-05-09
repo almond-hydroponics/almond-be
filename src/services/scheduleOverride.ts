@@ -14,7 +14,7 @@ export default class ScheduleOverrideService {
   ) {}
 
 
-  public async GetScheduleOverride(user: IUser, device: string) {
+  public async GetScheduleOverride(user: IUser, device: string | any) {
     try {
       return await this.scheduleOverrideModel
         .find({

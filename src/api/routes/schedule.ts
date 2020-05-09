@@ -19,7 +19,7 @@ const {
   isAuth,
   checkRole,
   attachCurrentUser,
-  cacheSchedules,
+  getCache,
 } = middlewares;
 const schedule = Router();
 
@@ -44,12 +44,7 @@ export default (app: Router) => {
         const HASH_EXPIRATION_TIME = 60 * 60 * 24;
 
         // set schedules data to redis
-        await redisClient.set(
-          'schedules',
-          JSON.stringify(schedules),
-          'EX',
-          HASH_EXPIRATION_TIME
-          );
+        redisClient.set(req.route.path, JSON.stringify(schedules), 'EX', HASH_EXPIRATION_TIME);
 
         if (schedules.length !== null) {
           return res.status(200).send({
