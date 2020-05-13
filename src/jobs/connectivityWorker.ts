@@ -21,10 +21,6 @@ export default class ConnectivityWorker{
         () => {
           if(!connectivity){
             logger.log('Internet Connection Unavailable');
-<<<<<<< HEAD
-
-=======
->>>>>>> feat(activityLog): create activityLog for pumpOverrides
             const activityLogInstance = Container.get(ActivityLogService);
             try {
               const logActivityItems = logActivity.internetConnectionStatus();
@@ -41,11 +37,7 @@ export default class ConnectivityWorker{
               logger.error('🔥 error Creating Activity Log : %o', e);
             }
           }
-<<<<<<< HEAD
           console.log('Connected ' + connectivity);
-
-=======
->>>>>>> feat(activityLog): create activityLog for pumpOverrides
         },
         (err) => {
           console.log('Worker Encountered an Error');

@@ -1,9 +1,11 @@
+
 import { Router, Request, Response, NextFunction } from 'express';
 import { config } from '../../config';
 import { IDeviceInputDTO } from '../../interfaces/IDevice';
 import { IScheduleOverrideInputDTO } from '../../interfaces/IScheduleOverride';
 import { AppLogger } from '../../loaders/logger';
 import ActivityLogService from '../../services/activityLog';
+
 import DeviceService from '../../services/device';
 import MqttService from '../../services/mqttService';
 import ScheduleOverrideService from '../../services/scheduleOverride';
@@ -37,7 +39,7 @@ export default (app: Router) => {
       }),
     }),
     async (req: Request, res: Response, next: NextFunction) => {
-<<<<<<< HEAD
+
       logger.debug('Calling Pump endpoint');
       try {
         // @ts-ignore
@@ -46,21 +48,6 @@ export default (app: Router) => {
         const {enabled} = req.body;
         const topic = config.mqtt.scheduleTopic;
         const status = (enabled) ? '1' : '0';
-   /*     // instantiate module services
-        const scheduleOverrideInstance = Container.get(ScheduleOverrideService);
-        const mqttClient = Container.get(MqttService);
-        const activityLogInstance = Container.get(ActivityLogService);
-*/
-=======
-    logger.debug('Calling Pump endpoint');
-    try {
-      const user = req.currentUser;
-      const { enabled } = req.body;
-      const topic = config.mqtt.scheduleTopic;
-
-      const status = (enabled) ? '1' : '0';
-
->>>>>>> (fix)pump manual override payload
       // instantiate module services
       const scheduleOverrideInstance = Container.get(ScheduleOverrideService);
       const mqttClient = Container.get(MqttService);
@@ -93,10 +80,7 @@ export default (app: Router) => {
         schedule: '',
         enabled: req.body.enabled,
         user: user,
-<<<<<<< HEAD
         deviceId:'',
-=======
->>>>>>> (fix)pump manual override payload
         activityHistory: response
       };
       return res.status(200).send({

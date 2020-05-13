@@ -115,7 +115,6 @@ export default (app: Router) => {
             activityLogInstance.GetActivityLogs(user).then(res => {
               schedule.activityHistory = res
             });
-
           } catch (e) {
             // @ts-ignore
             logger.error('🔥 error Creating Activity Log : %o', e);

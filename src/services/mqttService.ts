@@ -30,7 +30,6 @@ export default class MqttService {
     this.mqttClient.on('connect', (success) => {
       this.logger.debug(`mqtt client connected`);
       this.deviceConnectivityLog(activityLogInstance, req, `Device Connection Successful`);
-
     });
 
     // mqtt subscriptions
@@ -54,7 +53,6 @@ export default class MqttService {
       await activityLogInstance.createActivityLog(logActivityItems, user);
     } catch (e) {
       this.logger.error('🔥 Error Creating Activity Log : %o', e);
-
     }
   }
 
