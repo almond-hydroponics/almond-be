@@ -1,11 +1,5 @@
-<<<<<<< HEAD
 
-
-import { NextFunction, Request, Response, Router } from 'express';
-
-=======
 import { Router, Request, Response, NextFunction } from 'express';
->>>>>>> conflict fix
 import { config } from '../../config';
 import { IDeviceInputDTO } from '../../interfaces/IDevice';
 import { IScheduleOverrideInputDTO } from '../../interfaces/IScheduleOverride';
@@ -90,6 +84,7 @@ export default (app: Router) => {
         schedule: '',
         enabled: req.body.enabled,
         user: user,
+        deviceId:'',
         activityHistory: response
       };
       return res.status(200).send({
