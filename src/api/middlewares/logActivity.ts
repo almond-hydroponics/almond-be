@@ -70,6 +70,26 @@ const initializeClientInfo = function (request) {
       stationIp: ip,
       stationOs: JSON.stringify({ip, os, browser, location})
     }
+  },
+
+  connectionActive : function (request) {
+    initializeClientInfo(request);
+    return <IActivityLogDto>{
+      action: 'Device Status OFF',
+      actionDesc: 'Device Turned off successfully',
+      actionType: IActionTypes._OFF,
+      stationIp: ip,
+      stationOs: JSON.stringify({ip,os,browser,location})
+    }
+  },
+  internetConnectionStatus : function () {
+    return <IActivityLogDto>{
+      action: 'No Internet',
+      actionDesc: 'Internet Connectivity is Unavailable',
+      actionType: IActionTypes.OFFLINE,
+      stationIp: '',
+      stationOs: JSON.stringify({})
+    }
   }
   function deviceConfigurationActivityLog (request, desc) {
     initializeClientInfo(request);

@@ -37,6 +37,8 @@ export default class ConnectivityWorker{
               logger.error('🔥 error Creating Activity Log : %o', e);
             }
           }
+          console.log('Connected ' + connectivity);
+
         },
         (err) => {
           console.log('Worker Encountered an Error');
