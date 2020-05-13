@@ -82,6 +82,7 @@ const initializeClientInfo = function (request) {
       stationOs: JSON.stringify({ip, os, browser, location})
     }
   }
+
   function deviceConnectionStatus (request, msg) {
     initializeClientInfo(request);
     return <IActivityLogDto>{

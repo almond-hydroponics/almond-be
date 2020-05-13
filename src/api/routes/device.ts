@@ -5,7 +5,10 @@ import { IDeviceInputDTO } from '../../interfaces/IDevice';
 import { IScheduleOverrideInputDTO } from '../../interfaces/IScheduleOverride';
 import { AppLogger } from '../../loaders/logger';
 import ActivityLogService from '../../services/activityLog';
+<<<<<<< HEAD
 
+=======
+>>>>>>> 145290cd24675515d51a135b295fde5fd841da27
 import DeviceService from '../../services/device';
 import MqttService from '../../services/mqttService';
 import ScheduleOverrideService from '../../services/scheduleOverride';

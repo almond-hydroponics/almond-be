@@ -12,5 +12,4 @@ export interface IScheduleInputDTO {
   user: any;
   activityHistory:any;
   deviceId: string;
-
 }

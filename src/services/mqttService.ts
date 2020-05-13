@@ -48,14 +48,12 @@ export default class MqttService {
 
   public async deviceConnectivityLog(activityLogInstance: ActivityLogService, req: Request, msg: string) {
     try {
-      // @ts-ignore
       const user = req.currentUser;
       const logActivityItems = logActivity.deviceConnectionStatus(req, msg);
       await activityLogInstance.createActivityLog(logActivityItems, user);
     } catch (e) {
       // @ts-ignore
       this.logger.error('🔥 Error Creating Activity Log : %o', e);
-
     }
   }
 
