@@ -48,7 +48,11 @@
     "geoip-lite": "^1.3.8",
     "googleapis": "^45.0.0",
     "helmet": "^3.21.2",
+<<<<<<< HEAD
     "is-online": "^8.3.0",
+=======
+    "is-online": "^8.2.1",
+>>>>>>> Internet Connectivity
     "jsonwebtoken": "^8.5.1",
     "kill-port": "^1.6.0",
     "lodash": "^4.17.15",
