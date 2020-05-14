@@ -36,7 +36,7 @@ export default class DeviceService {
       };
 
       return await this.deviceModel.findOneAndUpdate(
-        {id: deviceItem.id }, deviceItem, { new: true })
+        { id: deviceItem.id }, deviceItem, { new: true })
         .populate({ path: 'user' });
     } catch (e) {
       this.logger.error(e.message, e.stack);

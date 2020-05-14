@@ -25,11 +25,9 @@ const ActivityLog = new mongoose.Schema({
       ref:'User',
       required: true,
     },
-    dateCreated: {
-      type: Date,
-      required: true,
-      default: Date.now
-    }
+    logType: {
+      type: String
+    },
   },
   {timestamps: true}
 );

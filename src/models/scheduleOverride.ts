@@ -1,6 +1,5 @@
 import * as mongoose from 'mongoose';
 import { IScheduleOverride } from '../interfaces/IScheduleOverride'
-import {array} from "joi";
 
 const ScheduleOverride = new mongoose.Schema({
     enabled: {
@@ -17,7 +16,8 @@ const ScheduleOverride = new mongoose.Schema({
       ref: 'Device',
       required: true,
     }
-  }
+  },
+  {timestamps: true}
 );
 
 export default mongoose.model<IScheduleOverride & mongoose.Document>('ScheduleOverride', ScheduleOverride)

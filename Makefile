@@ -35,16 +35,17 @@ background:
 
 #@-- command to start the application container --@#
 start:
+	${INFO} "Starting docker process"
 	${INFO} "Creating mongo database volume"
-	@ docker pull mongo:4.1.8-xenial
-	@ docker volume create --name=almond_data > /dev/null
+	@ docker pull mongo:latest
+	@ docker volume create --name=dbdata > /dev/null
 	@ echo " "
 	@ ${INFO} "Building required docker images"
 	@ docker-compose -f $(DOCKER_DEV_COMPOSE_FILE) build app
 	@ ${INFO} "Build Completed successfully"
 	@ echo " "
 	@ ${INFO} "Starting local development server"
-	@ docker-compose -f $(DOCKER_DEV_COMPOSE_FILE) up -d
+	@ docker-compose -f $(DOCKER_DEV_COMPOSE_FILE) up
 
 #@-- command to stop the application container --@#
 stop:
@@ -62,7 +63,7 @@ clean:
 	${INFO} "Cleaning your local environment"
 	${INFO} "Note all ephemeral volumes will be destroyed"
 	@ docker-compose -f $(DOCKER_DEV_COMPOSE_FILE) down -v
-	@ docker volume rm almond_data
+	@ docker volume rm db_data
 	@ docker images -q -f label=application=$(PROJECT_NAME) | xargs -I ARGS docker rmi -f ARGS
 	${INFO} "Removing dangling images"
 	@ docker images -q -f dangling=true -f label=application=$(PROJECT_NAME) | xargs -I ARGS docker rmi -f ARGS
@@ -82,7 +83,7 @@ endif
 
 #@-- command to ssh into service container --@#
 ssh:background
-	${INFO} "Opening web container terminal"
+	${INFO} "Opening app container terminal"
 	@ docker-compose -f $(DOCKER_DEV_COMPOSE_FILE) exec app bash
 
 #@-- help should be run by default when no command is specified --@#

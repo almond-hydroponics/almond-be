@@ -8,4 +8,4 @@ build:
   docker:
     web: Dockerfile
 #run:
-#  web: npm config set unsafe-perm true && yarn start:dev
+#  api: npm config set unsafe-perm true && yarn start:dev

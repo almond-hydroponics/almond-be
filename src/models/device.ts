@@ -19,7 +19,8 @@ const Device = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
     },
-  }
+  },
+  {timestamps: true}
 );
 
 export default mongoose.model<IDevice & mongoose.Document>('Device', Device);

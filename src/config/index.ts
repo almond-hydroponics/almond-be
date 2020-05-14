@@ -4,13 +4,18 @@ import * as dotenv from 'dotenv';
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
 const envFound = dotenv.config();
-if (!envFound) {
-  throw new Error("⚠️  Couldn't find .env file  ⚠️");
-}
+if (envFound.error) throw new Error("⚠️  Couldn't find .env file  ⚠️");
 
 interface Config {
   port: number | null | undefined;
   databaseURL: string;
+  mongo: {
+    username: string;
+    password: string;
+    hostname: string;
+    port: number;
+    database: string;
+  };
   redisURL: string;
   siteUrl: string;
   redirectUrl: string;
@@ -55,9 +60,7 @@ interface Config {
   mail: {
     from: string;
   };
-
   saltRounds: string;
-
   mqtt: {
     user: string;
     password: string;
@@ -67,7 +70,6 @@ interface Config {
     server: string;
     scheduleTopic: string;
   },
-
   firebase: {
     type: string;
     project_id: string;
@@ -80,11 +82,19 @@ interface Config {
     auth_provider_x509_cert_url: string;
     client_x509_cert_url: string;
   },
+  almond_admin: string;
 }
 
 export const config: Config = {
-  port: +process.env.PORT,
+  port: parseInt(process.env.PORT, 10),
   databaseURL: process.env.MONGODB_URI,
+  mongo: {
+    username: process.env.MONGO_USERNAME,
+    password: process.env.MONGO_PASSWORD,
+    hostname: process.env.MONGO_HOSTNAME,
+    port: parseInt(process.env.MONGO_PORT, 10),
+    database: process.env.MONGO_DATABASE,
+  },
   redisURL: process.env.REDIS_URL,
   siteUrl: process.env.NODE_ENV === 'development' ? process.env.DEVELOPMENT_SITE_URL : process.env.PRODUCTION_SITE_URL,
   serverUrl:
@@ -159,4 +169,5 @@ export const config: Config = {
     auth_provider_x509_cert_url: process.env.FIREBASE_AUTH_PROVIDER_X509_CERT_URL,
     client_x509_cert_url: process.env.FIREBASE_CLIENT_X509_CERT_URL,
   },
+  almond_admin: process.env.ALMOND_ADMIN
 };

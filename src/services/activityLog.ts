@@ -9,7 +9,7 @@ export default class ActivityLogService{
     @Inject('activityLogModel') private activityLogModel,
   ) {}
 
-  public async createActivityLog(activityLogDto: IActivityLogDto, user): Promise<{
+  public async CreateActivityLog(activityLogDto: IActivityLogDto, user): Promise<{
     activityLog: IActivityLog }> {
     try {
       this.logger.log('Creating Activity Log...');
@@ -28,20 +28,11 @@ export default class ActivityLogService{
 
   public async GetActivityLogs(user) {
     try {
-      let data = [];
-      await this.activityLogModel.find({ user: user._id}, function (err, activityLogModel) {
-        activityLogModel.forEach( function (logs) {
-          let resObject = {
-            _id : logs._id,
-            createdAt : logs.createdAt,
-            updatedAt : logs.updatedAt,
-            type:  `INFO : ${logs.actionType}`,
-            message: logs.actionDesc
-          };
-          data.push(resObject)
-        })
-      });
-      return data;
+      return this.activityLogModel.find({ user: { $eq: user._id } })
+        .select({ 'actionDesc': 1, 'createdAt': 1 })  // select actionDesc and createdAt fields
+        .sort({ createdAt: -1 })  // sort in descending order
+        .limit(20)  // limit to 10 requests only
+        .exec();
     } catch (e) {
       this.logger.error(e.message, e.stack);
       throw e;

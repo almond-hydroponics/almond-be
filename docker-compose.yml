@@ -2,100 +2,57 @@ version: '3'
 
 services:
   app:
-    restart: always
     container_name: almond
     image: almond
+    restart: always
     build:
       context: .
       dockerfile: Dockerfile
-    links:
-      - mongo
-      - redis
+    env_file: .env
     volumes:
+      - .:/home/node/app
       - node_modules:/home/node/app/node_modules
-      - ../../:/home/node/app
     environment:
-      - PORT=8080
-      - MONGODB_URI=mongodb://heroku_8sx14h7x:v9s1e03cf2hqbfaiee0oif9upr@ds045465.mlab.com:45465/heroku_8sx14h7x
-      - REDIS_URL=redis://h:p0a28867448c2fca190f6fd4520b3bbc5f9fd99bd47048497bfeb75ac99622538@ec2-52-202-177-173.compute-1.amazonaws.com:11229
+      - MONGO_HOSTNAME=db
+    ports:
+      - '8080:8080'
     depends_on:
+      - db
       - redis
-      - mongo
     networks:
       - app-network
+    stdin_open: true
+    tty: true
 
-  mongo:
+  db:
+    image: mongo:latest
+    container_name: db
     restart: always
-    image: mongo:4.1.8-xenial
-    container_name: mongo
+    env_file: .env
     environment:
-      - MONGODB_URI=mongodb://heroku_8sx14h7x:v9s1e03cf2hqbfaiee0oif9upr@ds045465.mlab.com:45465/heroku_8sx14h7x
-#    env_file:
-#      - .env
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
     volumes:
-      - almond_data:/data/db
-    expose:
-      - '45465'
+      - dbdata:/data/db
     networks:
       - app-network
     ports:
-      - '45465:45465'
+      - '27018:27017'
+    expose:
+      - 27017
 
   redis:
-    restart: always
     container_name: redis
-#    environment:
-#      - REDIS_URL=redis://h:p0a28867448c2fca190f6fd4520b3bbc5f9fd99bd47048497bfeb75ac99622538@ec2-52-202-177-173.compute-1.amazonaws.com:11229
-    image: redis:alpine
+    restart: always
+    image: redis:6.0.3-alpine
     networks:
       - app-network
-    ports:
-      - '6379:6379'
-
-#  webserver:
-#    image: nginx:1.17.6-alpine
-#    container_name: webserver
-#    restart: always
-#    ports:
-#      - "80:80"
-#      - "443:443"
-#    volumes:
-#      - web-root:/var/www/html
-#      - ./nginx-conf:/etc/nginx/conf.d
-#      - certbot-etc:/etc/letsencrypt
-#      - certbot-var:/var/lib/letsencrypt
-#      - dhparam:/etc/ssl/certs
-#    depends_on:
-#      - app
-#    networks:
-#      - app-network
-#
-#  certbot:
-#    image: certbot/certbot
-#    container_name: certbot
-#    volumes:
-#      - certbot-etc:/etc/letsencrypt
-#      - certbot-var:/var/lib/letsencrypt
-#      - web-root:/var/www/html
-#    depends_on:
-#      - webserver
-#    command: certonly --webroot --webroot-path=/var/www/html --email almond.froyo@gmail.com --agree-tos --no-eff-email --staging -d almondhydroponics.com  -d www.almondhydroponics.com
-
-volumes:
-  almond_data:
-    external: true
-  node_modules:
-#  certbot-etc:
-#  certbot-var:
-#  web-root:
-#    driver: local
-#  dhparam:
-#    driver: local
-#    driver_opts:
-#      type: none
-#      device: /home/masha/almond-be/dhparam/
-#      o: bind
 
 networks:
   app-network:
     driver: bridge
+
+volumes:
+  dbdata:
+    external: true
+  node_modules:

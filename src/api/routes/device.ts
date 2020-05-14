@@ -10,15 +10,24 @@ import DeviceService from '../../services/device';
 import MqttService from '../../services/mqttService';
 import ScheduleOverrideService from '../../services/scheduleOverride';
 import middlewares from '../middlewares';
+import { IScheduleInputDTO } from "../../interfaces/ISchedule";
+import {ScheduleOverride} from "../../config/enums";
 
 const {
   isAuth,
   attachCurrentUser,
   checkRole,
+  getCache,
+  setCache,
+  clearCache,
+  clearAllCache
 } = middlewares;
+
 const logger = new AppLogger('Device');
 const logActivity = require('../middlewares/logActivity');
 const device = Router();
+
+const path = 'DEVICES';
 
 export default (app: Router) => {
   app.use('/', device);
@@ -41,7 +50,7 @@ export default (app: Router) => {
         const user = req.currentUser;
         const {enabled} = req.body;
         const topic = config.mqtt.scheduleTopic;
-        const status = (enabled) ? '1' : '0';
+        const status = (enabled) ? ScheduleOverride.ON : ScheduleOverride.OFF;
         // instantiate module services
         const scheduleOverrideInstance = Container.get(ScheduleOverrideService);
         const mqttClient = Container.get(MqttService);
@@ -52,28 +61,37 @@ export default (app: Router) => {
         mqttClient.sendMessage(topic, status, activityLogInstance, req);
 
         // save instance of the override
-        const scheduleOverride = await scheduleOverrideInstance.EditScheduleOverride(req.body as IScheduleOverrideInputDTO, user).then(
-          async () => {
-            try {
-              const logActivityItems = logActivity.manualOverrideActivityLog(req, enabled);
-              return await activityLogInstance.createActivityLog(logActivityItems, user);
-            } catch (e) {
-              // @ts-ignore
-              logger.error('🔥 Error Creating Activity Log : %o', e);
-            }
+        const scheduleOverride = await scheduleOverrideInstance.EditScheduleOverride(req.body as IScheduleOverrideInputDTO, user);
+        if(scheduleOverride){
+          try {
+            const activityLogInstance = Container.get(ActivityLogService);
+            const logActivityItems = logActivity.manualOverrideActivityLog(req, !!req.body.enabled);
+            await activityLogInstance.CreateActivityLog(logActivityItems, user);
+          } catch (e) {
+            logger.error('🔥 error on Overriding device : %o', e);
           }
-        );
+        }
+        // get instance override history of a particular user and attach to payload
+        let response: any = '';
+        await activityLogInstance.GetActivityLogs(user).then(res => response = res);
 
-        return res.status(200).send({
-          success: true,
-          message: `Manual Override ${enabled ? 'ON' : 'OFF'} successfully`,
-          data: scheduleOverride,
-        })
-      } catch (e) {
-        logger.error('🔥 error: %o', e.stack);
-        return next(e)
-      }
-    });
+      //   let dto: IScheduleInputDTO = {
+      //   schedule: '',
+      //   enabled: req.body.enabled,
+      //   user: user,
+      //   deviceId:'',
+      //   activityHistory: response
+      // };
+      return res.status(200).send({
+        success: true,
+        message: `Manual Override ${enabled ? 'ON' : 'OFF'} successfully`,
+        data: { scheduleOverride, activityHistory: response },
+      })
+    } catch (e) {
+      logger.error('🔥 error: %o', e.stack);
+      return next(e)
+    }
+  });
 
   /**
    * @api {GET} api/pump/:id
@@ -105,14 +123,18 @@ export default (app: Router) => {
         const serverError = 'Server Error. Could not complete the request';
         return res.json({serverError}).status(500);
       }
-    });
+  });
 
   /**
    * @api {POST} api/device
    * @description Add a new device
    * @access Private
    */
-  device.post('/devices', isAuth, attachCurrentUser, checkRole('User'),
+  device.post('/devices',
+    isAuth,
+    attachCurrentUser,
+    checkRole('Admin'),
+    clearCache(path),
     celebrate({
       body: Joi.object({
          id: Joi.string().required(),
@@ -123,14 +145,14 @@ export default (app: Router) => {
       try {
         const user = req.currentUser;
         const deviceServiceInstance = Container.get(DeviceService);
-        const {device} = await deviceServiceInstance.AddDevice(req.body as IDeviceInputDTO, user);
+        const { device } = await deviceServiceInstance.AddDevice(req.body as IDeviceInputDTO, user);
 
         if (device) {
           let desc = 'Device added successfully';
           try {
             const activityLogInstance = Container.get(ActivityLogService);
             const logActivityItems = logActivity.addDeviceActivityLog(req, desc);
-            await activityLogInstance.createActivityLog(logActivityItems, user);
+            await activityLogInstance.CreateActivityLog(logActivityItems, user);
           } catch (e) {
             // @ts-ignore
             logger.error('🔥 error Creating Activity Log : %o', e);
@@ -148,12 +170,15 @@ export default (app: Router) => {
       }
     });
 
-  /**
+   /**
    * @api {POST} api/my-device
    * @description Add device verification
    * @access Private
    */
-  device.post('/my-device', isAuth, attachCurrentUser,
+  device.post('/my-device',
+    isAuth,
+    attachCurrentUser,
+    clearCache('ME'),
     celebrate({
       body: Joi.object({
         id: Joi.string(),
@@ -169,64 +194,30 @@ export default (app: Router) => {
         const device = await deviceServiceInstance.GetDeviceById(id);
 
         if (!device) {
-          let desc = 'Device ID does not exist. Kindly check again or contact maintenance team.';
-          try {
-            const logActivityItems = logActivity.deviceConfigurationActivityLog(req, desc);
-            await activityLogInstance.createActivityLog(logActivityItems, user);
-          } catch (e) {
-            logger.error('🔥 Error Creating Activity Log : %o', e);
-          }
           return res.status(404).send({
             success: false,
-            message: desc,
+            message: 'Device ID does not exist. Kindly check again or contact maintenance team.',
           })
         }
 
         if ((device.verified) && (device.user !== user._id)) {
-          let desc = 'Device has already been taken! Confirm your device ID or contact the maintenance team for support.';
-          try {
-            const logActivityItems = logActivity.deviceConfigurationActivityLog(req, desc);
-            await activityLogInstance.createActivityLog(logActivityItems, user);
-          } catch (e) {
-            logger.error('🔥 Error Creating Activity Log : %o', e);
-          }
           return res.status(400).send({
             success: false,
-            message: desc
+            message: 'Device has already been taken! Confirm your device ID or contact the maintenance team for support.'
           })
         }
 
         if ((device.verified) && (device.user === user._id)) {
-          let desc = 'Device has already been verified! Click on the skip button.';
-          try {
-            const logActivityItems = logActivity.deviceConfigurationActivityLog(req, desc);
-            await activityLogInstance.createActivityLog(logActivityItems, user);
-          } catch (e) {
-            // @ts-ignore
-            logger.error('🔥 Error Creating Activity Log : %o', e);
-          }
           return res.status(400).send({
             success: false,
-            message: desc
+            message: 'Device has already been verified! Click on the skip button.'
           })
         }
         await deviceServiceInstance.UpdateDevice(req.body as IDeviceInputDTO, user);
-        let desc = 'Device has been added and configured successfully';
-        const deviceRecord = await deviceServiceInstance.UserAddDevice(device._id, user).then(
-          async () => {
-            try {
-              const logActivityItems = logActivity.deviceConfigurationActivityLog(req, desc);
-              await activityLogInstance.createActivityLog(logActivityItems, user);
-            } catch (e) {
-              // @ts-ignore
-              logger.error('🔥 Error Creating Activity Log : %o', e);
-            }
-          }
-        );
-
+        const deviceRecord = await deviceServiceInstance.UserAddDevice(device._id, user);
         return res.status(200).send({
           success: true,
-          message: desc,
+          message: 'Device has been added and configured successfully',
           data: deviceRecord,
         });
       } catch (e) {
@@ -240,7 +231,10 @@ export default (app: Router) => {
    * @description Update active device
    * @access Private
    */
-  device.patch('/active-device', isAuth, attachCurrentUser,
+  device.patch('/active-device',
+    isAuth,
+    attachCurrentUser,
+    clearAllCache,
     celebrate({
         body: Joi.object({
         id: Joi.string(),
@@ -271,12 +265,19 @@ export default (app: Router) => {
    * @description Get all devices
    * @access Private
    */
-  device.get('/devices', isAuth, attachCurrentUser, checkRole('User'),
+  device.get('/devices',
+    isAuth,
+    attachCurrentUser,
+    checkRole('Admin'),
+    getCache(path),
      async (req: Request, res: Response, next: NextFunction) => {
        logger.debug('Calling GetAllDevices endpoint');
        try {
          const deviceServiceInstance = Container.get(DeviceService);
          const devices = await deviceServiceInstance.GetAllDevices();
+
+         // set schedules data to redis
+         setCache(`${req.currentUser._id}/${path}`, devices);
 
          if (devices.length !== null) {
            return res.status(200).send({
@@ -285,6 +286,7 @@ export default (app: Router) => {
              data: devices,
            });
          }
+
          return res.status(202).send({
            success: false,
            message: 'There are no devices present. Create one?',
@@ -302,7 +304,11 @@ export default (app: Router) => {
    * @description Delete a device by id
    * @access Private
    */
-  device.delete('/devices/:id', isAuth, attachCurrentUser, checkRole('User'),
+  device.delete('/devices/:id',
+    isAuth,
+    attachCurrentUser,
+    checkRole('Admin'),
+    clearCache(path),
     async (req: Request, res: Response, next: NextFunction) => {
       logger.debug('Calling DeleteDeviceById endpoint');
       try {
@@ -327,7 +333,11 @@ export default (app: Router) => {
    * @description Edit a device
    * @access Private
    */
-  device.patch('/devices/:id', isAuth, attachCurrentUser, checkRole('User'),
+  device.patch('/devices/:id',
+    isAuth,
+    attachCurrentUser,
+    checkRole('Admin'),
+    clearCache(path),
     celebrate({
       body: Joi.object({
         id: Joi.string().required(),

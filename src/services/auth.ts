@@ -8,6 +8,12 @@ import { IUser, IUserInputDTO } from '../interfaces/IUser';
 import { AppLogger } from '../loaders/logger';
 import events from '../subscribers/events';
 import MailerService from './mailer';
+import isArrayNotNull from "../utils/checkArrayEmpty";
+
+const {
+  almond_admin,
+  jwtSecret
+} = config;
 
 @Service()
 export default class AuthService {
@@ -147,7 +153,7 @@ export default class AuthService {
           photo: data.picture,
           email: data.email,
           isVerified: data.email_verified,
-          roles: data.email === 'almond.froyo@gmail.com'
+          roles: data.email === almond_admin
             ? ['5e4703d62faee61d8ede2d65', '5e555801465ca301b1143b90']
             : ['5e4703d62faee61d8ede2d65'],
           currentRole: '5e4703d62faee61d8ede2d65',
@@ -184,7 +190,8 @@ export default class AuthService {
         })
         .populate({ path: 'activeDevice' })
         .populate({ path: 'currentRole', select: 'title' })
-        .populate({ path: 'devices' }).exec();
+        .populate({ path: 'devices' })
+        .exec();
 
       const user = userRecord.toObject();
       Reflect.deleteProperty(user, 'password');
@@ -275,7 +282,7 @@ export default class AuthService {
       photo: user.photo,
       email: user.email,
       isVerified: user.isVerified,
-      deviceVerified: ((user.devices.length >= 1) ? user.devices[0].verified : false),
+      deviceVerified: (isArrayNotNull(user.devices) ? user.devices[0].verified : false),
       activeDevice: user.activeDevice,
     };
 
@@ -287,7 +294,7 @@ export default class AuthService {
         iss: 'almond.com',
         aud: 'almond users'
       },
-      config.jwtSecret,
+      jwtSecret,
     );
   }
 }

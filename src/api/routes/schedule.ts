@@ -20,8 +20,12 @@ const {
   checkRole,
   attachCurrentUser,
   getCache,
+  setCache,
+  clearCache
 } = middlewares;
 const schedule = Router();
+
+const path = 'SCHEDULES'
 
 export default (app: Router) => {
   app.use('/', schedule);
@@ -31,7 +35,10 @@ export default (app: Router) => {
    * @description Get all schedules
    * @access Private
    */
-  schedule.get('/schedules', isAuth, attachCurrentUser,
+  schedule.get('/schedules',
+    isAuth,
+    attachCurrentUser,
+    getCache(path),
     async (req: Request, res: Response, next: NextFunction) => {
       logger.debug('Calling GetAllSchedules endpoint');
       try {
@@ -41,10 +48,8 @@ export default (app: Router) => {
         const schedules = await scheduleServiceInstance.GetSchedules(
           user, deviceId.toString());
 
-        const HASH_EXPIRATION_TIME = 60 * 60 * 24;
-
         // set schedules data to redis
-        redisClient.set(req.route.path, JSON.stringify(schedules), 'EX', HASH_EXPIRATION_TIME);
+        setCache(`${req.currentUser._id}/${path}`, schedules);
 
         if (schedules.length !== null) {
           return res.status(200).send({
@@ -69,7 +74,10 @@ export default (app: Router) => {
    * @description Create a new schedule
    * @access Private
    */
-  schedule.post('/schedules', isAuth, attachCurrentUser,
+  schedule.post('/schedules',
+    isAuth,
+    attachCurrentUser,
+    clearCache(path),
     celebrate({
       body: Joi.object({
         schedule: Joi.string().required(),
@@ -103,7 +111,7 @@ export default (app: Router) => {
           const activityLogInstance = Container.get(ActivityLogService);
           try {
             const logActivityItems = logActivity.createScheduleActivityLogItem(req);
-            await activityLogInstance.createActivityLog(logActivityItems, user);
+            await activityLogInstance.CreateActivityLog(logActivityItems, user);
             activityLogInstance.GetActivityLogs(user).then(res => {
               schedule.activityHistory = res
             });
@@ -131,7 +139,9 @@ export default (app: Router) => {
    * @description Get a schedule by id
    * @access Private
    */
-  schedule.get('/schedules/:id', isAuth, attachCurrentUser,
+  schedule.get('/schedules/:id',
+    isAuth,
+    attachCurrentUser,
     async (req: Request, res: Response, next: NextFunction) => {
       logger.debug('Calling GetAllScheduleById endpoint');
       try {
@@ -163,7 +173,10 @@ export default (app: Router) => {
    * @description Edit a schedule
    * @access Private
    */
-  schedule.patch('/schedules/:id', isAuth, attachCurrentUser,
+  schedule.patch('/schedules/:id',
+    isAuth,
+    attachCurrentUser,
+    clearCache(path),
     celebrate({
       body: Joi.object({
         schedule: Joi.string(),
@@ -204,7 +217,10 @@ export default (app: Router) => {
    * @description Delete a schedule by id
    * @access Private
    */
-  schedule.delete('/schedules/:id', isAuth, attachCurrentUser,
+  schedule.delete('/schedules/:id',
+    isAuth,
+    attachCurrentUser,
+    clearCache(path),
     async (req: Request, res: Response, next: NextFunction) => {
       logger.debug('Calling DeleteScheduleById endpoint');
       try {
@@ -217,7 +233,7 @@ export default (app: Router) => {
           const activityLogInstance = Container.get(ActivityLogService);
           try {
             const logActivityItems = logActivity.deleteScheduleActivityLogItem(req);
-            await activityLogInstance.createActivityLog(logActivityItems, user);
+            await activityLogInstance.CreateActivityLog(logActivityItems, user);
           } catch (e) {
             // @ts-ignore
             logger.error('🔥 error Creating Activity Log : %o', e);

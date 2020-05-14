@@ -40,7 +40,7 @@ export default class ScheduleService {
     try {
       return await this.scheduleModel
         .find({
-          user: user._id,
+          user: { $eq: user._id },
           device: device,
         })
     } catch (e) {
