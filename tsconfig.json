@@ -1,19 +1,22 @@
 {
   "compilerOptions": {
-    "target": "es2017",
-    "lib": [
-      "es2017",
-      "esnext.asynciterable"
-    ],
+    "target": "es2020",
+    "lib": ["esnext"],
     "typeRoots": [
       "./node_modules/@types",
       "./src/types"
     ],
+    "diagnostics": true,
+    "downlevelIteration": true,
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "forceConsistentCasingInFileNames": true,
+//    "strictNullChecks": true,
+//    "suppressImplicitAnyIndexErrors": true,
     "moduleResolution": "node",
+    "removeComments": true,
+    "skipLibCheck": true,
     "module": "commonjs",
     "pretty": true,
     "sourceMap": true,
@@ -27,7 +30,8 @@
   "exclude": [
     "node_modules",
     "tests",
-    "dist",
-    "**/*.test.tsx"
+    "build",
+    "**/*.test.tsx",
+    "nginx-conf"
   ]
 }

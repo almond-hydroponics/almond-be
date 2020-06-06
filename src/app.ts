@@ -7,22 +7,29 @@ const logger = new AppLogger('Start');
 
 async function startServer() {
   const app = express();
-  const PORT = config.port || 8080;
+  const { port = 8080 } = config;
   await require('./loaders').default({ expressApp: app });
 
-  app.listen(PORT, (err: any) => {
+  process.on('uncaughtException', e => {
+    logger.error(`Uncaught Exception: ${e.stack}`, `Error: ${e}`);
+    process.exit(1);
+  });
+
+  process.on('unhandledRejection', (reason, p) => {
+    logger.error(`Unhandled Rejection at: ${JSON.stringify(p)}`, `reason:, ${reason}`);
+    process.exit(1)
+  });
+
+  app.listen(port, (err: any) => {
     if (err) {
       logger.error(err.message, err.stack);
       process.exit(1);
       return;
     }
-    process.on('unhandledRejection', (reason, p) => {
-      logger.error(`Unhandled Rejection at: ${p}`, `reason:, ${reason}`);
-      process.exit(1)
-    });
+
     logger.log(`
       ########################################
-      😎  Server listening on port: ${PORT} 😎
+      😎  Server listening on port: ${port} 😎
       ########################################
     `);
   })

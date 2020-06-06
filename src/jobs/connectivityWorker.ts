@@ -24,7 +24,7 @@ export default class ConnectivityWorker{
             const activityLogInstance = Container.get(ActivityLogService);
             try {
               const logActivityItems = logActivity.internetConnectionStatus();
-              activityLogInstance.createActivityLog(logActivityItems, user)
+              activityLogInstance.CreateActivityLog(logActivityItems, user)
                 .then(
                   (resp) => {
                     logger.debug('Activity Logged');

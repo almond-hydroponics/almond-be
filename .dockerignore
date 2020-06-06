@@ -2,4 +2,8 @@
 .env.development
 node_modules
 .gitignore
-#.env
+.git
+npm-debug.log
+Dockerfile
+.dockerignore
+.env

@@ -6,11 +6,6 @@ const Schedule = new mongoose.Schema({
       type: String,
       required: [true, 'Kindly enter a time schedule'],
     },
-    dateCreated: {
-      type: Date,
-      required: true,
-      default: Date.now
-    },
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
@@ -24,8 +19,9 @@ const Schedule = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Device',
       required: true,
-    }
-  }
+    },
+  },
+  {timestamps: true}
 );
 
 export default mongoose.model<ISchedule & mongoose.Document>('Schedule', Schedule)

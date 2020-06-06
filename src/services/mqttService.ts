@@ -1,12 +1,11 @@
 import * as mqtt from 'mqtt';
-import {Service} from "typedi";
-import {config} from '../config';
-import {AppLogger} from '../loaders/logger';
+import { Service } from "typedi";
+import { config } from '../config';
+import { AppLogger } from '../loaders/logger';
 import ActivityLogService from "./activityLog";
-import {Request} from "express";
+import { Request } from "express";
 
 const logActivity = require('../api/middlewares/logActivity');
-
 
 @Service()
 export default class MqttService {
@@ -50,9 +49,8 @@ export default class MqttService {
     try {
       const user = req.currentUser;
       const logActivityItems = logActivity.deviceConnectionStatus(req, msg);
-      await activityLogInstance.createActivityLog(logActivityItems, user);
+      await activityLogInstance.CreateActivityLog(logActivityItems, user);
     } catch (e) {
-      // @ts-ignore
       this.logger.error('🔥 Error Creating Activity Log : %o', e);
     }
   }
@@ -61,6 +59,7 @@ export default class MqttService {
   public sendMessage(topic, message, activityLogInstance, req) {
     try {
       this.mqttClient.publish(topic, message);
+      this.logger.warn(message);
       this.deviceConnectivityLog(activityLogInstance, req, `Message Published`);
     } catch (e) {
       this.logger.error(e.message, e.stack);

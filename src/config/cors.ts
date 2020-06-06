@@ -11,7 +11,12 @@ import { config } from './index';
 //   config.siteUrl
 // ];
 
-const whitelist = ['http://froyo.almond:3000', 'http://' + config.siteUrl, config.siteUrl];
+const whitelist = [
+  'http://froyo.almond:3000',
+  'https://almond-re.herokuapp.com',
+  'http://' + config.siteUrl,
+  config.siteUrl
+];
 
 const corsOptions = {
   origin: function(origin, callback) {

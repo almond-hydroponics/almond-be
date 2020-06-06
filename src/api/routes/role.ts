@@ -15,9 +15,13 @@ const {
   isAuth,
   checkRole,
   attachCurrentUser,
-  cacheSchedules,
+  getCache,
+  setCache,
+  clearCache
 } = middlewares;
 const role = Router();
+
+const path = 'ROLE'
 
 export default (app: Router) => {
   app.use('/', role);
@@ -27,7 +31,12 @@ export default (app: Router) => {
    * @description Create a new role
    * @access Private
    */
-  role.post('/roles', isAuth, attachCurrentUser, checkRole('User'),
+  role.post('/roles',
+    isAuth,
+    attachCurrentUser,
+    checkRole('User'),
+    clearCache(path),
+
     celebrate({
       body: Joi.object({
         title: Joi.string().required(),
@@ -59,7 +68,12 @@ export default (app: Router) => {
    * @description Get all roles
    * @access Private
    */
-  role.get('/roles', isAuth, attachCurrentUser, checkRole('User'),
+  role.get('/roles',
+    isAuth,
+    attachCurrentUser,
+    checkRole('Admin'),
+    getCache(path),
+
     async (req: Request, res: Response, next: NextFunction) => {
       logger.debug('Calling GetAllRoles endpoint');
       try {
@@ -122,6 +136,10 @@ export default (app: Router) => {
             data: roles,
           });
         }
+
+        // set roles data to redis
+        setCache(`${req.currentUser._id}/${path}`, role);
+
         return res.status(202).send({
           success: false,
           message: 'You have not created any roles.',
@@ -138,7 +156,12 @@ export default (app: Router) => {
    * @description Edit a role
    * @access Private
    */
-  role.patch('/role/:id', isAuth, attachCurrentUser, checkRole('User'),
+  role.patch('/role/:id',
+    isAuth,
+    attachCurrentUser,
+    checkRole('Admin'),
+    clearCache(path),
+
     celebrate({
       body: Joi.object({
         role: Joi.string(),
@@ -177,7 +200,12 @@ export default (app: Router) => {
    * @description Delete a role by id
    * @access Private
    */
-  role.delete('/roles/:id', isAuth, attachCurrentUser, checkRole('User'),
+  role.delete('/roles/:id',
+    isAuth,
+    attachCurrentUser,
+    checkRole('Admin'),
+    clearCache(path),
+
     async (req: Request, res: Response, next: NextFunction) => {
     logger.debug('Calling DeleteRoleById endpoint');
     try {

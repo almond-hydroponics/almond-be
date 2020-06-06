@@ -84,3 +84,4 @@ dist/
 .idea/*
 .idea/dictionaries/masha.xml
 /.env.development
+/.env.production
