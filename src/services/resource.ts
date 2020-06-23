@@ -4,9 +4,11 @@ import { AppLogger } from '../loaders/logger';
 @Service()
 export default class ResourceService {
   private logger = new AppLogger(ResourceService.name);
+
   constructor(
     @Inject('resourceModel') private resourceModel,
-  ) {}
+  ) {
+  }
 
   public async GetResources() {
     try {

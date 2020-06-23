@@ -1,2 +1,2 @@
-//Here we import all events
+// Here we import all events
 import '../subscribers/user';

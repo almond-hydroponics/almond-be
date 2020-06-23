@@ -18,6 +18,6 @@ sleep 10
 echo " "
 echo "<<<<<<<<<<< 😎 Starting Server API 😎 >>>>>>>>>>>>>"
 echo " "
-yarn run start
+yarn run start:dev
 
 exit 0

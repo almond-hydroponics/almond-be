@@ -1,15 +1,15 @@
-import {IActivityLogDto} from "../../interfaces/IActivityLog";
-import {IActionTypes, IClientInfoDto} from "../../interfaces/IClientInfo";
+import {IActivityLogDto} from '../../interfaces/IActivityLog';
+import {IActionTypes, IClientInfoDto} from '../../interfaces/IClientInfo';
 
 const geoIp = require('geoip-lite');
 const Sniffer = require('sniffr');
 
-//global
-let ip = '', os = '', browser = '', location = '';
+// global
+let ip = ''; let os = ''; let browser = ''; let location = '';
 
 const getClientInformation = function (request) {
-  let userAgent, sniffer, clientOs, clientLocation, clientBrowser, ip;
-  userAgent = request.headers["user-agent"];
+  let userAgent, sniffer, clientOs, clientLocation, ip;
+  userAgent = request.headers['user-agent'];
   sniffer = new Sniffer();
   sniffer.sniff(userAgent);
   clientOs = sniffer.os;
@@ -21,10 +21,10 @@ const getClientInformation = function (request) {
     ipAddress: ip,
     ipLocation: clientLocation,
     operatingSystem: clientOs,
-    browser: browser
+    browser
   }
 };
-const initializeClientInfo = function (request) {
+const initializeClientInfo = request => {
   const clientInfo = getClientInformation(request);
   ip = clientInfo.ipAddress;
   os = clientInfo.operatingSystem;
@@ -32,7 +32,7 @@ const initializeClientInfo = function (request) {
   location = clientInfo.ipLocation;
 };
 
-function createScheduleActivityLogItem (request) {
+const createScheduleActivityLogItem = request => {
   initializeClientInfo(request);
   return <IActivityLogDto>{
     action: 'Creating Schedule',
@@ -42,7 +42,8 @@ function createScheduleActivityLogItem (request) {
     stationOs: JSON.stringify({ip, os, browser, location})
   }
 }
-function deleteScheduleActivityLogItem (request) {
+
+const deleteScheduleActivityLogItem = request => {
   initializeClientInfo(request);
   return <IActivityLogDto>{
     action: 'Deleting Schedule',
@@ -52,7 +53,8 @@ function deleteScheduleActivityLogItem (request) {
     stationOs: JSON.stringify({ip, os, browser, location})
   }
 }
-function manualOverrideActivityLog (request, status) {
+
+const manualOverrideActivityLog = (request, status) => {
   initializeClientInfo(request);
   return <IActivityLogDto>{
     action: 'Device Manual Override Status',
@@ -62,7 +64,8 @@ function manualOverrideActivityLog (request, status) {
     stationOs: JSON.stringify({ip, os, browser, location})
   }
 }
-function addDeviceActivityLog (request, desc) {
+
+const addDeviceActivityLog = (request, desc) => {
   initializeClientInfo(request);
   return <IActivityLogDto>{
     action: 'Add Device',
@@ -72,7 +75,8 @@ function addDeviceActivityLog (request, desc) {
     stationOs: JSON.stringify({ip, os, browser, location})
   }
 }
-function deviceConfigurationActivityLog (request, desc) {
+
+const deviceConfigurationActivityLog = (request, desc) => {
   initializeClientInfo(request);
   return <IActivityLogDto>{
     action: 'Device Configuration',
@@ -82,7 +86,8 @@ function deviceConfigurationActivityLog (request, desc) {
     stationOs: JSON.stringify({ip, os, browser, location})
   }
 }
-function deviceConnectionStatus (request, msg) {
+
+const deviceConnectionStatus = (request, msg) => {
   initializeClientInfo(request);
   return <IActivityLogDto>{
     action: 'Device Connection Status',
@@ -92,15 +97,14 @@ function deviceConnectionStatus (request, msg) {
     stationOs: JSON.stringify({ip, os, browser, location})
   }
 }
-function internetConnectionStatus () {
-  return <IActivityLogDto>{
+
+const internetConnectionStatus = () => <IActivityLogDto>{
     action: 'No Internet',
     actionDesc: 'Internet Connectivity is Unavailable',
     actionType: IActionTypes.OFFLINE,
     stationIp: '',
     stationOs: JSON.stringify({})
   }
-}
 
 export {
   createScheduleActivityLogItem,
@@ -111,5 +115,3 @@ export {
   deviceConnectionStatus,
   internetConnectionStatus
 }
-;
-

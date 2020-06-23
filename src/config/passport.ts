@@ -1,5 +1,5 @@
-import * as passport from 'passport';
-import * as pGoogle from 'passport-google-oauth2';
+import passport from 'passport';
+import pGoogle from 'passport-google-oauth2';
 import { Container } from 'typedi';
 import { IUser } from '../interfaces/IUser';
 import { AppLogger } from '../loaders/logger';

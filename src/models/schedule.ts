@@ -21,7 +21,7 @@ const Schedule = new mongoose.Schema({
       required: true,
     },
   },
-  {timestamps: true}
+  { timestamps: true },
 );
 
-export default mongoose.model<ISchedule & mongoose.Document>('Schedule', Schedule)
+export default mongoose.model<ISchedule & mongoose.Document>('Schedule', Schedule);

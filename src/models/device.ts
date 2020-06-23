@@ -20,7 +20,7 @@ const Device = new mongoose.Schema({
       ref: 'User',
     },
   },
-  {timestamps: true}
+  { timestamps: true },
 );
 
 export default mongoose.model<IDevice & mongoose.Document>('Device', Device);

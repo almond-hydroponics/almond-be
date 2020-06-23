@@ -1,4 +1,4 @@
-import * as mongoose from 'mongoose';
+import mongoose from 'mongoose';
 import { Db } from 'mongodb';
 import { config } from '../config';
 import { AppLogger } from './logger';
@@ -10,10 +10,17 @@ const {
   password,
   hostname,
   port,
-  database
+  database,
 } = config.mongo;
 
-const databaseUrl = `mongodb://${username}:${password}@${hostname}:${port}/${database}?authSource=admin`;
+const dataBaseUrl = () =>
+  (process.env.NODE_ENV === 'testing')
+    ? process.env.MONGODB_URI_TEST
+    : 'mongodb://almond:froyogreen@localhost:27017/almond?authSource=admin';
+
+
+const databaseUrl =
+  `mongodb://${username}:${password}@${hostname}:${port}/${database}?authSource=admin`;
 // const databaseUrl = `mongodb://${hostname}:${port}/${database}`;
 
 // TODO: Check on bluebird promise based library with mongoose
@@ -23,10 +30,10 @@ export default async (): Promise<Db> => {
     useNewUrlParser: true,
     useCreateIndex: true,
     useUnifiedTopology: true,
-    useFindAndModify: false
+    useFindAndModify: false,
   });
-  connection.set('debug', function (collectionName, method, query, doc, options) {
-    logger.log(`mongo collection: ${collectionName} - method: ${method}`)
+  connection.set('debug', function(collectionName, method, query, doc, options) {
+    logger.log(`mongo collection: ${collectionName} - method: ${method}`);
   });
 
   return connection.connection.db;

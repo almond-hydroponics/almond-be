@@ -46,8 +46,8 @@ export default (app: Router) => {
     }),
     async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const linkAccountServiceInstance = Container.get(LinkAccountService);
-        const response = await linkAccountServiceInstance.LinkGoogleAccount(req.body.token, req.body.email);
+        // const linkAccountServiceInstance = Container.get(LinkAccountService);
+        // const response = await linkAccountServiceInstance.LinkGoogleAccount(req.body.token, req.body.email);
 
         res.status(200).json('Success');
       } catch (e) {

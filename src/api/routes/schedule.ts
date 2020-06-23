@@ -2,35 +2,32 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { celebrate, Joi } from 'celebrate';
 import { Container } from 'typedi';
 import { AppLogger } from '../../loaders/logger';
-import redisClient from '../../loaders/redis';
 import ScheduleService from '../../services/schedule';
 import { IScheduleInputDTO } from '../../interfaces/ISchedule';
 import middlewares from '../middlewares';
-import * as CronJobManager from 'cron-job-manager';
+import CronJobManager from 'cron-job-manager';
+import ActivityLogService from '../../services/activityLog';
 
 const manager = new CronJobManager();
 const logger = new AppLogger('Schedule');
-import ActivityLogService from "../../services/activityLog";
-import {IActivityLogDto} from "../../interfaces/IActivityLog";
 
 const logActivity = require('../middlewares/logActivity');
 
 const {
   isAuth,
-  checkRole,
   attachCurrentUser,
   getCache,
   setCache,
-  clearCache
+  clearCache,
 } = middlewares;
 const schedule = Router();
 
-const path = 'SCHEDULES'
+const path = 'SCHEDULES';
 
 export default (app: Router) => {
   app.use('/', schedule);
 
-   /**
+  /**
    * @api {GET} api/schedules
    * @description Get all schedules
    * @access Private
@@ -43,10 +40,10 @@ export default (app: Router) => {
       logger.debug('Calling GetAllSchedules endpoint');
       try {
         const user = req.currentUser;
-        const deviceId = req.query.device;
+        const { device } = req.query;
         const scheduleServiceInstance = Container.get(ScheduleService);
         const schedules = await scheduleServiceInstance.GetSchedules(
-          user, deviceId.toString());
+          user, device);
 
         // set schedules data to redis
         setCache(`${req.currentUser._id}/${path}`, schedules);
@@ -65,9 +62,9 @@ export default (app: Router) => {
         });
       } catch (e) {
         logger.error('🔥 error: %o', e.stack);
-        return next(e)
+        return next(e);
       }
-  });
+    });
 
   /**
    * @api {POST} api/schedules
@@ -81,7 +78,7 @@ export default (app: Router) => {
     celebrate({
       body: Joi.object({
         schedule: Joi.string().required(),
-        deviceId: Joi.string().required(),
+        device: Joi.string().required(),
       }),
     }),
     async (req: Request, res: Response) => {
@@ -96,13 +93,12 @@ export default (app: Router) => {
         const hour = date.getHours();
 
         if (await manager.exists(`${schedule._id}`)) {
-          console.log("key exists");
           manager.stop(`${schedule._id}`);
           manager.deleteJob(`${schedule._id}`);
         }
 
         manager.add(`${schedule._id}`, `${minutes} ${hour} * * *`, () => {
-          logger.debug(`Pump time for ${schedule._id} running at ${hour}:${minutes}`)
+          logger.debug(`Pump time for ${schedule._id} running at ${hour}:${minutes}`);
         });
         manager.start(`${schedule._id}`);
 
@@ -113,10 +109,9 @@ export default (app: Router) => {
             const logActivityItems = logActivity.createScheduleActivityLogItem(req);
             await activityLogInstance.CreateActivityLog(logActivityItems, user);
             activityLogInstance.GetActivityLogs(user).then(res => {
-              schedule.activityHistory = res
+              schedule.activityHistory = res;
             });
           } catch (e) {
-            // @ts-ignore
             logger.error('🔥 error Creating Activity Log : %o', e);
           }
         }
@@ -125,13 +120,13 @@ export default (app: Router) => {
           message: 'Time schedule added successfully',
           data: schedule,
 
-        })
+        });
       } catch (e) {
         logger.error('🔥 error: %o', e.stack);
         const serverError = 'Server Error. Could not complete the request';
-        return res.json({serverError}).status(500);
+        return res.json({ serverError }).status(500);
       }
-    }
+    },
   );
 
   /**
@@ -154,19 +149,19 @@ export default (app: Router) => {
             success: true,
             message: 'Time schedule has been fetched successfully',
             data: schedule,
-          })
+          });
 
         }
         return res.status(404).send({
           success: false,
           message: 'Time schedule does not exist',
-        })
+        });
       } catch (e) {
         logger.error('🔥 error: %o', e.stack);
         const serverError = 'Server Error. Could not complete the request';
-        return res.json({serverError}).status(500);
+        return res.json({ serverError }).status(500);
       }
-  });
+    });
 
   /**
    * @api {PATCH} api/schedules/:id
@@ -181,7 +176,7 @@ export default (app: Router) => {
       body: Joi.object({
         schedule: Joi.string(),
         enabled: Joi.boolean(),
-        deviceId: Joi.string().required(),
+        device: Joi.string().required(),
       }),
     }),
     async (req: Request, res: Response) => {
@@ -198,7 +193,7 @@ export default (app: Router) => {
             data: schedule,
           });
         }
-          return res.status(404).send({
+        return res.status(404).send({
           success: false,
           message: 'Time schedule does not exist',
         });
@@ -207,10 +202,10 @@ export default (app: Router) => {
         return res.send({
           success: false,
           message: 'Server Error. Could not complete the request',
-        }).status(500)
+        }).status(500);
       }
-    }
-    );
+    },
+  );
 
   /**
    * @api {DELETE} api/schedules/:id
@@ -235,7 +230,6 @@ export default (app: Router) => {
             const logActivityItems = logActivity.deleteScheduleActivityLogItem(req);
             await activityLogInstance.CreateActivityLog(logActivityItems, user);
           } catch (e) {
-            // @ts-ignore
             logger.error('🔥 error Creating Activity Log : %o', e);
           }
           const message = 'Time schedule deleted successfully';
@@ -246,7 +240,7 @@ export default (app: Router) => {
       } catch (e) {
         logger.error('🔥 error: %o', e.stack);
         const serverError = 'Server Error. Could not complete the request';
-        return res.json({serverError}).status(500);
+        return res.json({ serverError }).status(500);
       }
-  });
+    });
 }

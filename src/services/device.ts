@@ -6,10 +6,12 @@ import { AppLogger } from '../loaders/logger';
 @Service()
 export default class DeviceService {
   private logger = new AppLogger(DeviceService.name);
+
   constructor(
     @Inject('deviceModel') private deviceModel,
     @Inject('userModel') private userModel: Models.UserModel,
-  ) {}
+  ) {
+  }
 
   public async AddDevice(deviceInputDTO: IDeviceInputDTO, user: IUser): Promise<{ device: IDevice }> {
     try {
@@ -19,7 +21,7 @@ export default class DeviceService {
       };
       const deviceRecord = await this.deviceModel.create(deviceItem);
       const device = deviceRecord.toObject();
-      return { device: device }
+      return { device };
     } catch (e) {
       this.logger.error(e.message, e.stack);
       throw e;
@@ -44,18 +46,21 @@ export default class DeviceService {
     }
   }
 
-  public async UserAddDevice(_id: string, user: IUser): Promise<{ device: IDevice }> {
+  public async UserAddDevice(_id: string, user: IUser):
+    Promise<{ device: { _id: string; id: string; verified: string } }> {
     try {
       this.logger.debug('Verifying user device in database');
       const deviceExists = await this.GetDeviceById(_id);
 
-      if (deviceExists) { throw new Error('Device already exists in your list. Kindly skip.'); }
+      if (deviceExists) {
+        throw new Error('Device already exists in your list. Kindly skip.');
+      }
 
       const userRecord: IUser = await this.userModel
         .findByIdAndUpdate(
           user._id,
-          // @ts-ignore
-          { $push: { devices: { $each: [_id] } }},
+          // @ts-expect-error
+          { $push: { devices: { $each: [_id] } } },
           { new: true })
         .populate({ path: 'devices' })
         .populate({ path: 'activeDevice' });
@@ -67,8 +72,7 @@ export default class DeviceService {
       if (!userRecord) {
         throw new Error('Could not add new device');
       }
-      // @ts-ignore
-      return { device: device };
+      return { device };
     } catch (e) {
       this.logger.error(e.message, e.stack);
       throw e;
@@ -78,8 +82,8 @@ export default class DeviceService {
   public async GetDeviceById(deviceId: string) {
     try {
       return await this.deviceModel
-        .findOne({ id: { $eq: deviceId }})
-        .populate({ path: 'user' })
+        .findOne({ id: { $eq: deviceId } })
+        .populate({ path: 'user' });
     } catch (e) {
       this.logger.error(e.message, e.stack);
       throw e;
@@ -89,8 +93,8 @@ export default class DeviceService {
   public async GetDeviceByUser(userId: string) {
     try {
       return await this.deviceModel
-        .findOne({ user: { $eq: userId }})
-        .populate({ path: 'user' })
+        .findOne({ user: { $eq: userId } })
+        .populate({ path: 'user' });
     } catch (e) {
       this.logger.error(e.message, e.stack);
       throw e;
@@ -101,7 +105,7 @@ export default class DeviceService {
     try {
       return this.deviceModel
         .find()
-        .populate({ path: 'user', select: 'name' })
+        .populate({ path: 'user', select: 'name' });
     } catch (e) {
       this.logger.error(e.message, e.stack);
       throw e;
@@ -117,14 +121,14 @@ export default class DeviceService {
           { activeDevice: id },
           { new: true })
         .populate({ path: 'activeDevice' });
-      const selectedDevice = userRecord.toObject().activeDevice;
+      const selectedDevice = userRecord?.toObject().activeDevice;
 
       await this.deviceModel.updateMany({ user: selectedDevice.user }, { enabled: false });
       await this.deviceModel
         .findOneAndUpdate(
           { _id: selectedDevice._id },
           { enabled: true },
-          { new: true }
+          { new: true },
         );
       return selectedDevice;
     } catch (e) {
@@ -135,7 +139,7 @@ export default class DeviceService {
 
   public async DeleteDeviceById(deviceId) {
     try {
-      return this.deviceModel.deleteOne({'_id': Object(deviceId)}).exec();
+      return this.deviceModel.deleteOne({ '_id': Object(deviceId) }).exec();
     } catch (e) {
       this.logger.error(e.message, e.stack);
       throw e;
@@ -154,7 +158,7 @@ export default class DeviceService {
         deviceItem,
         { new: true });
       const device = deviceRecord.toObject();
-      return { device: device }
+      return { device };
     } catch (e) {
       this.logger.error(e.message, e.stack);
       throw e;

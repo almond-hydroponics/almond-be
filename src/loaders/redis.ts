@@ -1,6 +1,6 @@
-import * as redis from 'redis';
+import redis from 'redis';
 import { config } from '../config';
-import * as bluebird from 'bluebird';
+import bluebird from 'bluebird';
 import { AppLogger } from './logger';
 
 const logger = new AppLogger('Redis');

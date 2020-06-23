@@ -1,20 +1,20 @@
-import * as express from 'express';
-import * as bodyParser from 'body-parser';
-import * as cors from 'cors';
-import * as passport from 'passport';
-import * as expressSession from 'express-session';
-import * as helmet from 'helmet';
+import express from 'express';
+import bodyParser from 'body-parser';
+import cors from 'cors';
+import passport from 'passport';
+import expressSession from 'express-session';
+import helmet from 'helmet';
 import routes from '../api';
 import { config } from '../config';
 import corsOptions from '../config/cors';
-import * as Agendash from 'agendash';
-import * as Agenda from 'agenda';
+import Agendash from 'agendash';
+import Agenda from 'agenda';
+import redisClient from './redis';
+import { IError } from "../shared/IError";
+import { rateLimiterUsingThirdParty } from '../api/middlewares/rateLimit';
 
-// todo change to ES import syntax
+// TODO: change to ES import syntax
 const requestIp = require('request-ip');
-import redisClient from '../loaders/redis';
-
-const expiryDate = new Date(Date.now() + 24 * 60 * 60 * 1000); // one day
 
 export default ({ app, agendaInstance }: { app: express.Application; agendaInstance: Agenda }) => {
   app.use(require('express-status-monitor')());
@@ -29,6 +29,8 @@ export default ({ app, agendaInstance }: { app: express.Application; agendaInsta
   });
 
   app.use('/agendash', Agendash(agendaInstance));
+
+  app.use(rateLimiterUsingThirdParty);
 
   // Useful if you're behind a reverse proxy (Heroku, Bluemix, AWS ELB, Nginx, etc)
   // It shows the real origin IP in the heroku or Cloudwatch logs
@@ -80,8 +82,8 @@ export default ({ app, agendaInstance }: { app: express.Application; agendaInsta
 
   // Catch 404 and forward to error handler
   app.use((req, res, next) => {
-    const err = new Error('Not Found');
-    err['status'] = 404;
+    const err: IError = new Error('Not Found');
+    err.status = 404;
     next(err);
   });
 

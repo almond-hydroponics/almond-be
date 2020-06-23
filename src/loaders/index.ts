@@ -3,11 +3,10 @@ import dependencyInjectorLoader from './dependencyInjector';
 import jobsLoader from './jobs';
 import { AppLogger } from './logger';
 import mongooseLoader from './mongoose';
-//We have to import at least all the events once so they can be triggered
+// We have to import at least all the events once so they can be triggered
 import './events';
-import MailerService from '../services/mailer';
 
-export default async ({expressApp}) => {
+export default async ({ expressApp }) => {
   const logger = new AppLogger('Loaders');
   const mongoConnection = await mongooseLoader();
   logger.log('✌️ Database loaded and connected!');

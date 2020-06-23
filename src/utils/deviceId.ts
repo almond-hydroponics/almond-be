@@ -10,17 +10,13 @@ export const getObjectId = name => {
   return new ObjectId(hash.substring(0, 8));
 };
 
-export const getObjectIds = names => {
-  return names.map(name => getObjectId(name));
-};
+export const getObjectIds = names => names.map(name => getObjectId(name));
 
-const mapToEntities = names => {
-  return names.map(name => {
-    const id = getObjectId(name);
+const mapToEntities = names => names.map(name => {
+  const id = getObjectId(name);
 
-    return {
-      id,
-      name,
-    };
-  });
-};
+  return {
+    id,
+    name,
+  };
+});

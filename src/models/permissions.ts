@@ -5,7 +5,7 @@ const Permissions = new mongoose.Schema({
   type: {
     type: String,
     required: true,
-  }
+  },
 });
 
-export default mongoose.model<IPermissions & mongoose.Document>('Permissions', Permissions)
+export default mongoose.model<IPermissions & mongoose.Document>('Permissions', Permissions);

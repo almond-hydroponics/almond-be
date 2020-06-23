@@ -1,4 +1,4 @@
-import {IRole} from "./IRole";
+import {IRole} from './IRole';
 
 export interface IUser {
   _id: string;

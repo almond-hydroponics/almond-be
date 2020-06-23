@@ -15,7 +15,7 @@ const whitelist = [
   'http://froyo.almond:3000',
   'https://almond-re.herokuapp.com',
   'http://' + config.siteUrl,
-  config.siteUrl
+  config.siteUrl,
 ];
 
 const corsOptions = {

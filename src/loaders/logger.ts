@@ -1,11 +1,12 @@
 import { createLogger, format, Logger, transports } from 'winston';
 import { config } from '../config';
+
 const { combine, timestamp, printf } = format;
 
 export class AppLogger {
   private logger: Logger;
 
-  constructor(label?: string) {
+  constructor(label: string) {
     const options = {
       file: {
         level: 'info' || 'error',
@@ -24,17 +25,15 @@ export class AppLogger {
         timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
         format.splat(),
         format.json(),
-        printf(({ level, message, label, timestamp }) => {
-          return `${timestamp} [${label}] ${level.toUpperCase()} - ${message}`;
-        })
+        printf(({ level, message, label, timestamp }) => `${timestamp} [${label}] ${level.toUpperCase()} - ${message}`),
       ),
       level: config.logs.level,
-      transports: [(process.env.NODE_ENV !== 'development')
+      transports: [process.env.NODE_ENV !== 'development'
         ? new transports.File(options.file)
         : new transports.Console({
           format: format.combine(
             format.cli(),
-            format.splat()
+            format.splat(),
           ),
         }),
       ],

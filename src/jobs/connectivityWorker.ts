@@ -1,10 +1,12 @@
 import { Container } from 'typedi';
 import { AppLogger } from '../loaders/logger';
-import ActivityLogService from "../services/activityLog";
+import ActivityLogService from '../services/activityLog';
+
 const logActivity = require('../api/middlewares/logActivity');
 
-var cron = require("node-cron");
-const isOnline = require("is-online");
+const cron = require('node-cron');
+const isOnline = require('is-online');
+
 let connectivity = false;
 const logger = new AppLogger('Schedule');
 const user: any = '';
@@ -16,7 +18,7 @@ async function status() {
 
 export default class ConnectivityWorker{
   public async internetStatusLogger(){
-    cron.schedule("* 2 * * * *", function () {
+    cron.schedule('* 2 * * * *', function () {
       status().then(
         () => {
           if(!connectivity){
@@ -26,9 +28,9 @@ export default class ConnectivityWorker{
               const logActivityItems = logActivity.internetConnectionStatus();
               activityLogInstance.CreateActivityLog(logActivityItems, user)
                 .then(
-                  (resp) => {
+                  resp => {
                     logger.debug('Activity Logged');
-                  }, (err) => {
+                  }, err => {
                     logger.error('An Error Occurred ', err);
                   }
                 );
@@ -38,7 +40,7 @@ export default class ConnectivityWorker{
             }
           }
         },
-        (err) => {
+        err => {
           console.log('Worker Encountered an Error');
           logger.error('🔥 Error with Internet Worker:', err);
         }
