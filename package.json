@@ -70,7 +70,7 @@
     "reflect-metadata": "^0.1.13",
     "request-ip": "^2.1.3",
     "sniffr": "^1.2.0",
-    "snyk": "^1.336.0",
+    "snyk": "^1.348.1",
     "typedi": "^0.8.0",
     "winston": "^3.2.1"
   },
