@@ -1,6 +1,6 @@
-import * as agendash from 'agendash';
+import agendash from 'agendash';
 import { Router } from 'express';
-import * as basicAuth from 'express-basic-auth';
+import basicAuth from 'express-basic-auth';
 import { Container } from 'typedi';
 import { config } from '../../config';
 
@@ -15,6 +15,6 @@ export default (app: Router) => {
       },
       challenge: true,
     }),
-    agendash(agendaInstance)
-  )
+    agendash(agendaInstance),
+  );
 }

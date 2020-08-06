@@ -12,5 +12,5 @@ export interface ISchedule {
 export interface IScheduleInputDTO {
   schedule: string;
   enabled: string;
-  deviceId: string;
+  device: string;
 }

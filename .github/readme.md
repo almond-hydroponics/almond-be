@@ -2,6 +2,10 @@
 
 ## almond-be
 
+[![Maintainability](https://api.codeclimate.com/v1/badges/0bf9c930aba3128bd6ae/maintainability)](https://codeclimate.com/github/almond-hydroponics/almond-be/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/0bf9c930aba3128bd6ae/test_coverage)](https://codeclimate.com/github/almond-hydroponics/almond-be/test_coverage)
+[![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/almond-hydroponics/almond-be.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/almond-hydroponics/almond-be/context:javascript)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/almond-hydroponics/almond-be.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/almond-hydroponics/almond-be/alerts/)
 <img src="https://img.shields.io/badge/version-0.0.1-blue.svg?cacheSeconds=2592000" />
 
 </div>

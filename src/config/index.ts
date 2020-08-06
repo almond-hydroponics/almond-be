@@ -1,10 +1,10 @@
-import * as dotenv from 'dotenv';
+import dotenv from 'dotenv';
 
 // Set the NODE_ENV to 'development' by default
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
 const envFound = dotenv.config();
-if (envFound.error) throw new Error("⚠️  Couldn't find .env file  ⚠️");
+if (envFound.error) throw new Error('⚠️  Couldn\'t find .env file  ⚠️');
 
 interface Config {
   port: number | null | undefined;
@@ -66,7 +66,7 @@ interface Config {
     password: string;
     host: string;
     port: string;
-    protocol:string;
+    protocol: string;
     server: string;
     scheduleTopic: string;
   },
@@ -125,7 +125,7 @@ export const config: Config = {
   },
   emails: {
     apiKey: 'API key from mailgun when we will actually need this',
-    domain: 'Domain Name from mailgun'
+    domain: 'Domain Name from mailgun',
   },
 
   clientUrl: process.env.PUBLIC_URL,
@@ -169,5 +169,5 @@ export const config: Config = {
     auth_provider_x509_cert_url: process.env.FIREBASE_AUTH_PROVIDER_X509_CERT_URL,
     client_x509_cert_url: process.env.FIREBASE_CLIENT_X509_CERT_URL,
   },
-  almond_admin: process.env.ALMOND_ADMIN
+  almond_admin: process.env.ALMOND_ADMIN,
 };

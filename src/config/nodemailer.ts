@@ -3,12 +3,12 @@ import { google } from 'googleapis';
 import { config } from './index';
 
 export async function mail(options: SendMailOptions): Promise<SentMessageInfo> {
-  const OAuth2 = google.auth.OAuth2;
+  const { OAuth2 } = google.auth;
 
   const oauth2Client = new OAuth2(
     config.google.mailClientId,
     config.google.mailClientSecret,
-    'https://developers.google.com/oauthplayground'
+    'https://developers.google.com/oauthplayground',
   );
 
   oauth2Client.setCredentials({ refresh_token: config.google.mailRefreshToken });

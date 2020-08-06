@@ -30,17 +30,18 @@ export interface VerifyOptions {
 export type VerifyCallback = (error: any, user?: any, options?: VerifyOptions) => void;
 
 export type VerifyFunctionWithRequest = (
-    req: Request,
-    accessToken: string,
-    refreshToken: string,
-    profile: any,
-    done: VerifyCallback
+  req: Request,
+  accessToken: string,
+  refreshToken: string,
+  profile: any,
+  done: VerifyCallback,
 ) => void;
 
 export type VerifyFunction = (accessToken: string, refreshToken: string, profile: any, done: VerifyCallback) => void;
 
 export class Strategy implements Strategy {
   name: string;
+
   authenticate: (req: Request, options?: object) => void;
 
   constructor(options: StrategyOptionsWithRequest, verify: VerifyFunctionWithRequest);

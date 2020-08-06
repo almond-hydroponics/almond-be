@@ -1,29 +1,33 @@
 import * as argon2 from 'argon2';
 import { randomBytes } from 'crypto';
-import * as jwt from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import { Inject, Service } from 'typedi';
 import { config } from '../config';
-import { EventDispatcher, EventDispatcherInterface } from '../decorators/eventDispatcher';
+import {
+  EventDispatcher,
+  EventDispatcherInterface,
+} from '../decorators/eventDispatcher';
 import { IUser, IUserInputDTO } from '../interfaces/IUser';
 import { AppLogger } from '../loaders/logger';
 import events from '../subscribers/events';
 import MailerService from './mailer';
-import isArrayNotNull from "../utils/checkArrayEmpty";
+import isArrayNotNull from '../utils/checkArrayEmpty';
 
-const {
-  almond_admin,
-  jwtSecret
-} = config;
+const { almond_admin, jwtSecret } = config;
 
 @Service()
 export default class AuthService {
   private logger = new AppLogger(AuthService.name);
+
   constructor(
     @Inject('userModel') private userModel: Models.UserModel,
     @Inject('roleModel') private roleModel: Models.RoleModel,
-    private mailer: MailerService,
-    @EventDispatcher() private eventDispatcher: EventDispatcherInterface,
-  ) {}
+    // private mailer: MailerService,
+    // @EventDispatcher() private eventDispatcher: EventDispatcherInterface,
+  ) {
+    this.userModel = userModel;
+    this.roleModel = roleModel;
+  }
 
   public async SignUp(userInputDTO: IUserInputDTO): Promise<{ user: IUser; token: Promise<string> }> {
     try {
@@ -52,6 +56,7 @@ export default class AuthService {
         ...userInputDTO,
         salt: salt.toString('hex'),
         password: hashedPassword,
+        // @ts-expect-error
         roles: ['5e4703d62faee61d8ede2d65'],
         currentRole: '5e4703d62faee61d8ede2d65',
       });
@@ -70,9 +75,9 @@ export default class AuthService {
       //   throw new Error('User cannot be created');
       // }
       this.logger.silly('Sending welcome email');
-      await this.mailer.SendWelcomeEmail(userRecord);
-
-      this.eventDispatcher.dispatch(events.user.signUp, {user: userRecord});
+      // await this.mailer.SendWelcomeEmail(userRecord);
+      //
+      // this.eventDispatcher.dispatch(events.user.signUp, {user: userRecord});
 
       /**
        * @TODO This is not the best way to deal with this
@@ -118,9 +123,9 @@ export default class AuthService {
        * Easy as pie, you don't need passport.js anymore :)
        */
       return { user, token };
-    } else {
-      throw new Error('Invalid Password');
     }
+    throw new Error('Invalid Password');
+
   }
 
   public async LoginAs(email): Promise<any> {
@@ -135,7 +140,7 @@ export default class AuthService {
         name: userRecord.name,
       },
       token: this.generateToken(userRecord),
-    }
+    };
   }
 
   public async SocialLogin(profile): Promise<IUser> {
@@ -166,15 +171,15 @@ export default class AuthService {
         await this.roleModel.findOneAndUpdate(
           { _id: userRecord.roles },
           { $inc: { userCount: 1 } },
-          { new: true }
+          { new: true },
         ).exec();
       }
       return userRecord;
     } catch (e) {
       this.logger.error(e.message, e.stack);
       throw new Error(
-          'error while authenticating google user: ' + JSON.stringify(e)
-        );
+        'error while authenticating google user: ' + JSON.stringify(e),
+      );
     }
   }
 
@@ -221,7 +226,7 @@ export default class AuthService {
         await this.roleModel.findOneAndUpdate(
           { _id: userDetails.role },
           { $inc: { userCount: 1 } },
-          { new: true }
+          { new: true },
         ).exec();
       }
 
@@ -229,7 +234,15 @@ export default class AuthService {
         id,
         { currentRole: userDetails.role },
         { new: true })
-        .populate({ path: 'currentRole', select: 'title' });
+        .populate({
+          path: 'roles',
+          select: '_id title description resourceAccessLevels',
+          populate: { path: 'resourceAccessLevels.resource resourceAccessLevels.permissions' },
+        })
+        .populate({ path: 'currentRole', select: 'title' })
+        .populate({ path: 'activeDevice' })
+        .populate({ path: 'devices' })
+        .exec();
 
       return userRecord;
     } catch (e) {
@@ -282,7 +295,7 @@ export default class AuthService {
       photo: user.photo,
       email: user.email,
       isVerified: user.isVerified,
-      deviceVerified: (isArrayNotNull(user.devices) ? user.devices[0].verified : false),
+      deviceVerified: isArrayNotNull(user.devices) ? user.devices[0].verified : false,
       activeDevice: user.activeDevice,
     };
 
@@ -292,7 +305,7 @@ export default class AuthService {
         iat: Date.now(),
         exp: exp.getTime() / 1000,
         iss: 'almond.com',
-        aud: 'almond users'
+        aud: 'almond users',
       },
       jwtSecret,
     );

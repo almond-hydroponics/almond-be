@@ -10,8 +10,7 @@ import DeviceService from '../../services/device';
 import MqttService from '../../services/mqttService';
 import ScheduleOverrideService from '../../services/scheduleOverride';
 import middlewares from '../middlewares';
-import { IScheduleInputDTO } from "../../interfaces/ISchedule";
-import {ScheduleOverride} from "../../config/enums";
+import { ScheduleOverride } from '../../config/enums';
 
 const {
   isAuth,
@@ -20,11 +19,12 @@ const {
   getCache,
   setCache,
   clearCache,
-  clearAllCache
+  clearAllCache,
 } = middlewares;
 
 const logger = new AppLogger('Device');
 const logActivity = require('../middlewares/logActivity');
+
 const device = Router();
 
 const path = 'DEVICES';
@@ -41,16 +41,16 @@ export default (app: Router) => {
     celebrate({
       body: Joi.object({
         enabled: Joi.boolean(),
-        deviceId: Joi.string(),
+        device: Joi.string(),
       }),
     }),
     async (req: Request, res: Response, next: NextFunction) => {
       logger.debug('Calling Pump endpoint');
       try {
         const user = req.currentUser;
-        const {enabled} = req.body;
+        const { enabled } = req.body;
         const topic = config.mqtt.scheduleTopic;
-        const status = (enabled) ? ScheduleOverride.ON : ScheduleOverride.OFF;
+        const status = enabled ? ScheduleOverride.ON : ScheduleOverride.OFF;
         // instantiate module services
         const scheduleOverrideInstance = Container.get(ScheduleOverrideService);
         const mqttClient = Container.get(MqttService);
@@ -62,7 +62,7 @@ export default (app: Router) => {
 
         // save instance of the override
         const scheduleOverride = await scheduleOverrideInstance.EditScheduleOverride(req.body as IScheduleOverrideInputDTO, user);
-        if(scheduleOverride){
+        if (scheduleOverride) {
           try {
             const activityLogInstance = Container.get(ActivityLogService);
             const logActivityItems = logActivity.manualOverrideActivityLog(req, !!req.body.enabled);
@@ -75,23 +75,16 @@ export default (app: Router) => {
         let response: any = '';
         await activityLogInstance.GetActivityLogs(user).then(res => response = res);
 
-      //   let dto: IScheduleInputDTO = {
-      //   schedule: '',
-      //   enabled: req.body.enabled,
-      //   user: user,
-      //   deviceId:'',
-      //   activityHistory: response
-      // };
-      return res.status(200).send({
-        success: true,
-        message: `Manual Override ${enabled ? 'ON' : 'OFF'} successfully`,
-        data: { scheduleOverride, activityHistory: response },
-      })
-    } catch (e) {
-      logger.error('🔥 error: %o', e.stack);
-      return next(e)
-    }
-  });
+        return res.status(200).send({
+          success: true,
+          message: `Manual Override ${enabled ? 'ON' : 'OFF'} successfully`,
+          data: { scheduleOverride, activityHistory: response },
+        });
+      } catch (e) {
+        logger.error('🔥 error: %o', e.stack);
+        return next(e);
+      }
+    });
 
   /**
    * @api {GET} api/pump/:id
@@ -105,25 +98,26 @@ export default (app: Router) => {
         const user = req.currentUser;
         const deviceId = req.query.device;
 
-        const scheduleOverrideServiceInstance = Container.get(ScheduleOverrideService);
-        const scheduleOverride = await scheduleOverrideServiceInstance.GetScheduleOverride(user, deviceId);
-        if (scheduleOverride) {
-          return res.status(200).send({
-            success: true,
-            message: 'Time schedule has been fetched successfully',
-            data: scheduleOverride,
+        const pumpServiceInstance = Container.get(ScheduleOverrideService);
+        const pumpStatus = await pumpServiceInstance.GetScheduleOverride(user, deviceId);
+        logger.warn(pumpStatus);
+        if (!pumpStatus) {
+          return res.status(404).send({
+            success: false,
+            message: 'Pump status does not exist',
           });
         }
-        return res.status(404).send({
-          success: false,
-          message: 'ScheduleOverride does not exist',
-        })
+        return res.status(200).send({
+          success: true,
+          message: 'Pump status has been fetched successfully',
+          data: pumpStatus,
+        });
       } catch (e) {
         logger.error('🔥 error: %o', e);
         const serverError = 'Server Error. Could not complete the request';
-        return res.json({serverError}).status(500);
+        return res.json({ serverError }).status(500);
       }
-  });
+    });
 
   /**
    * @api {POST} api/device
@@ -137,8 +131,8 @@ export default (app: Router) => {
     clearCache(path),
     celebrate({
       body: Joi.object({
-         id: Joi.string().required(),
-       })
+        id: Joi.string().required(),
+      }),
     }),
     async (req: Request, res: Response) => {
       logger.debug('Calling PostDevices endpoint');
@@ -148,29 +142,28 @@ export default (app: Router) => {
         const { device } = await deviceServiceInstance.AddDevice(req.body as IDeviceInputDTO, user);
 
         if (device) {
-          let desc = 'Device added successfully';
+          const desc = 'Device added successfully';
           try {
             const activityLogInstance = Container.get(ActivityLogService);
             const logActivityItems = logActivity.addDeviceActivityLog(req, desc);
             await activityLogInstance.CreateActivityLog(logActivityItems, user);
           } catch (e) {
-            // @ts-ignore
             logger.error('🔥 error Creating Activity Log : %o', e);
           }
           return res.status(201).send({
             success: true,
             message: desc,
             data: device,
-          })
+          });
         }
       } catch (e) {
         logger.error('🔥 error: %o', e.stack);
         const serverError = 'Server Error. Could not complete the request';
-        return res.json({serverError}).status(500);
+        return res.json({ serverError }).status(500);
       }
     });
 
-   /**
+  /**
    * @api {POST} api/my-device
    * @description Add device verification
    * @access Private
@@ -189,7 +182,6 @@ export default (app: Router) => {
       try {
         const user = req.currentUser;
         const { id } = req.body;
-        const activityLogInstance = Container.get(ActivityLogService);
         const deviceServiceInstance = Container.get(DeviceService);
         const device = await deviceServiceInstance.GetDeviceById(id);
 
@@ -197,21 +189,21 @@ export default (app: Router) => {
           return res.status(404).send({
             success: false,
             message: 'Device ID does not exist. Kindly check again or contact maintenance team.',
-          })
+          });
         }
 
-        if ((device.verified) && (device.user !== user._id)) {
+        if (device.verified && (device.user !== user._id)) {
           return res.status(400).send({
             success: false,
-            message: 'Device has already been taken! Confirm your device ID or contact the maintenance team for support.'
-          })
+            message: 'Device has already been taken! Confirm your device ID or contact the maintenance team for support.',
+          });
         }
 
-        if ((device.verified) && (device.user === user._id)) {
+        if (device.verified && (device.user === user._id)) {
           return res.status(400).send({
             success: false,
-            message: 'Device has already been verified! Click on the skip button.'
-          })
+            message: 'Device has already been verified! Click on the skip button.',
+          });
         }
         await deviceServiceInstance.UpdateDevice(req.body as IDeviceInputDTO, user);
         const deviceRecord = await deviceServiceInstance.UserAddDevice(device._id, user);
@@ -236,29 +228,29 @@ export default (app: Router) => {
     attachCurrentUser,
     clearAllCache,
     celebrate({
-        body: Joi.object({
+      body: Joi.object({
         id: Joi.string(),
       }),
     }),
-     async (req: Request, res: Response, next: NextFunction) => {
-       logger.debug('Calling update current device endpoint');
-       try {
-         const user = req.currentUser;
-         const {id} = req.body;
+    async (req: Request, res: Response, next: NextFunction) => {
+      logger.debug('Calling update current device endpoint');
+      try {
+        const user = req.currentUser;
+        const { id } = req.body;
 
-         const activeDeviceInstance = Container.get(DeviceService);
-         const activeDevice = await activeDeviceInstance.UpdateCurrentDevice(id, user);
+        const activeDeviceInstance = Container.get(DeviceService);
+        const activeDevice = await activeDeviceInstance.UpdateCurrentDevice(id, user);
 
-         return res.status(200).send({
-           success: true,
-           message: `Device with ID ${activeDevice.id} has been activated`,
-           data: activeDevice,
-         });
-       } catch (e) {
-         logger.error('🔥 error: %o', e.stack);
-         return next(e);
-       }
-     });
+        return res.status(200).send({
+          success: true,
+          message: `Device with ID ${activeDevice.id} has been activated`,
+          data: activeDevice,
+        });
+      } catch (e) {
+        logger.error('🔥 error: %o', e.stack);
+        return next(e);
+      }
+    });
 
   /**
    * @api {GET} api/device
@@ -270,34 +262,34 @@ export default (app: Router) => {
     attachCurrentUser,
     checkRole('Admin'),
     getCache(path),
-     async (req: Request, res: Response, next: NextFunction) => {
-       logger.debug('Calling GetAllDevices endpoint');
-       try {
-         const deviceServiceInstance = Container.get(DeviceService);
-         const devices = await deviceServiceInstance.GetAllDevices();
+    async (req: Request, res: Response, next: NextFunction) => {
+      logger.debug('Calling GetAllDevices endpoint');
+      try {
+        const deviceServiceInstance = Container.get(DeviceService);
+        const devices = await deviceServiceInstance.GetAllDevices();
 
-         // set schedules data to redis
-         setCache(`${req.currentUser._id}/${path}`, devices);
+        // set schedules data to redis
+        setCache(`${req.currentUser._id}/${path}`, devices);
 
-         if (devices.length !== null) {
-           return res.status(200).send({
-             success: true,
-             message: 'Devices fetched successfully',
-             data: devices,
-           });
-         }
+        if (devices.length !== null) {
+          return res.status(200).send({
+            success: true,
+            message: 'Devices fetched successfully',
+            data: devices,
+          });
+        }
 
-         return res.status(202).send({
-           success: false,
-           message: 'There are no devices present. Create one?',
-           data: [],
-         });
-       } catch (e) {
-         logger.error('🔥 error: %o', e.stack);
-         const serverError = 'Server Error. Could not complete the request';
-         return res.json({serverError}).status(500);
-       }
-     });
+        return res.status(202).send({
+          success: false,
+          message: 'There are no devices present. Create one?',
+          data: [],
+        });
+      } catch (e) {
+        logger.error('🔥 error: %o', e.stack);
+        const serverError = 'Server Error. Could not complete the request';
+        return res.json({ serverError }).status(500);
+      }
+    });
 
   /**
    * @api {DELETE} api/device/:id
@@ -312,19 +304,19 @@ export default (app: Router) => {
     async (req: Request, res: Response, next: NextFunction) => {
       logger.debug('Calling DeleteDeviceById endpoint');
       try {
-        const {params: {id}} = req;
+        const { params: { id } } = req;
         const deviceServiceInstance = Container.get(DeviceService);
         const device = await deviceServiceInstance.DeleteDeviceById(id);
         if (device.n > 0) {
           const message = 'Device has been deleted successfully';
-          return res.status(200).json({message});
-      }
-      const error = 'Device does not exist';
-      return res.status(404).json({error});
+          return res.status(200).json({ message });
+        }
+        const error = 'Device does not exist';
+        return res.status(404).json({ error });
       } catch (e) {
         logger.error('🔥 error: %o', e.stack);
         const serverError = 'Server Error. Could not complete the request';
-        return res.json({serverError}).status(500);
+        return res.json({ serverError }).status(500);
       }
     });
 
@@ -344,29 +336,29 @@ export default (app: Router) => {
       }),
     }),
     async (req: Request, res: Response) => {
-    logger.debug(`Calling PatchDevice endpoint with body: ${JSON.stringify(req.body)}`);
-     try {
-       const {params: {id}} = req;
-       const scheduleServiceInstance = Container.get(DeviceService);
-       const {device} = await scheduleServiceInstance.EditDevice(id, req.body as IDeviceInputDTO);
-       if (device) {
-         return res.status(200).send({
-           success: true,
-           message: 'Device has been updated successfully',
-           data: device,
-         });
-       }
-       return res.status(404).send({
-         success: false,
-         message: 'Device does not exist',
-       });
-     } catch (e) {
-       logger.error('🔥 error: %o', e.stack);
-       return res.send({
-         success: false,
-         message: 'Server Error. Could not complete the request',
-       }).status(500);
-     }
-    }
+      logger.debug(`Calling PatchDevice endpoint with body: ${JSON.stringify(req.body)}`);
+      try {
+        const { params: { id } } = req;
+        const scheduleServiceInstance = Container.get(DeviceService);
+        const { device } = await scheduleServiceInstance.EditDevice(id, req.body as IDeviceInputDTO);
+        if (device) {
+          return res.status(200).send({
+            success: true,
+            message: 'Device has been updated successfully',
+            data: device,
+          });
+        }
+        return res.status(404).send({
+          success: false,
+          message: 'Device does not exist',
+        });
+      } catch (e) {
+        logger.error('🔥 error: %o', e.stack);
+        return res.send({
+          success: false,
+          message: 'Server Error. Could not complete the request',
+        }).status(500);
+      }
+    },
   );
 }

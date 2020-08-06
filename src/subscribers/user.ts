@@ -3,11 +3,12 @@ import { EventSubscriber, On } from 'event-dispatch';
 import { AppLogger } from '../loaders/logger';
 import events from './events';
 import { IUser } from '../interfaces/IUser';
-import * as mongoose from 'mongoose';
+import mongoose from 'mongoose';
 
 @EventSubscriber()
 export default class UserSubscriber {
   private logger = new AppLogger(UserSubscriber.name);
+
   /**
    * A great example of an event that you want to handle
    * save the last time a user signin, your boss will be pleased.
@@ -33,6 +34,7 @@ export default class UserSubscriber {
       throw e;
     }
   }
+
   @On(events.user.signUp)
   public onUserSignUp({ name, email, _id }: Partial<IUser>) {
 

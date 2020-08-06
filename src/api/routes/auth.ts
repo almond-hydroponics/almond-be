@@ -1,12 +1,12 @@
-import {NextFunction, Request, Response, Router} from 'express';
-import {Container} from 'typedi';
+import { NextFunction, Request, Response, Router } from 'express';
+import { Container } from 'typedi';
 import { config } from '../../config';
 import { AppLogger } from '../../loaders/logger';
 import AuthService from '../../services/auth';
-import {IUserInputDTO} from '../../interfaces/IUser';
+import { IUserInputDTO } from '../../interfaces/IUser';
 import middlewares from '../middlewares';
-import {celebrate, Joi} from 'celebrate';
-import * as passport from 'passport';
+import { celebrate, Joi } from 'celebrate';
+import passport from 'passport';
 
 const logger = new AppLogger('Auth');
 const auth = Router();
@@ -39,11 +39,11 @@ export default (app: Router) => {
       logger.debug(`Calling Sign-Up endpoint with body: ${JSON.stringify(req.body)}`);
       try {
         const authServiceInstance = Container.get(AuthService);
-        const {user, token} = await authServiceInstance.SignUp(req.body as IUserInputDTO);
+        const { user, token } = await authServiceInstance.SignUp(req.body as IUserInputDTO);
         return res.status(201).send({
           success: true,
           message: 'Account registration successful',
-          data: {user, token}
+          data: { user, token },
         });
       } catch (e) {
         logger.error('🔥 error: %o', e.stack);
@@ -68,10 +68,10 @@ export default (app: Router) => {
     async (req: Request, res: Response, next: NextFunction) => {
       logger.debug(`Calling Sign-In endpoint with body: ${JSON.stringify(req.body)}`);
       try {
-        const {email, password} = req.body;
+        const { email, password } = req.body;
         const authServiceInstance = Container.get(AuthService);
-        const {user, token} = await authServiceInstance.SignIn(email, password);
-        return res.json({user, token}).status(200);
+        const { user, token } = await authServiceInstance.SignIn(email, password);
+        return res.json({ user, token }).status(200);
       } catch (e) {
         logger.error('🔥 error: %o', e.stack);
         return next(e);
@@ -88,10 +88,10 @@ export default (app: Router) => {
     '/user/login-as', isAuth, attachCurrentUser, checkRole('admin'),
     async (req: Request, res: Response) => {
       try {
-        const email = req.body.user.email;
+        const { email } = req.body.user;
         const authServiceInstance = Container.get(AuthService);
-        const {user, token} = await authServiceInstance.LoginAs(email);
-        return res.status(200).json({user, token}).end();
+        const { user, token } = await authServiceInstance.LoginAs(email);
+        return res.status(200).json({ user, token }).end();
       } catch (e) {
         logger.error('Error in login as user: ', e.stack);
         return res.json(e).status(500).end();
@@ -113,23 +113,25 @@ export default (app: Router) => {
   auth.get(
     '/google/callback',
     passport.authenticate('google', {
-      failureRedirect: '/', session: false }),
+      failureRedirect: '/', session: false,
+    }),
     async (req: Request, res: Response, next: NextFunction) => {
       try {
         const authServiceInstance = Container.get(AuthService);
-        // @ts-ignore
+        // @ts-expect-error
         const token = await authServiceInstance.generateToken(req.user);
         await res.cookie('jwt-token', token,
           {
-          httpOnly: false,
-          domain: config.cookiesDomain,});
-        // res.redirect(`https://almond-re.herokuapp.com?socialToken=${token}`);
+            httpOnly: false,
+            domain: config.cookiesDomain,
+          });
         res.redirect(`${config.siteUrl}?socialToken=${token}`);
+        // res.redirect(config.siteUrl);
       } catch (e) {
         logger.error('🔥 error: %o', e.stack);
         return next(e);
       }
-    }
+    },
   );
 
   /**
@@ -144,7 +146,7 @@ export default (app: Router) => {
   auth.post('/logout', middlewares.isAuth, (req: Request, res: Response, next: NextFunction) => {
     logger.debug(`Calling Sign-Out endpoint with body: ${JSON.stringify(req.body)}`);
     try {
-      //@TODO AuthService.Logout(req.user) do some clever stuff
+      // @TODO AuthService.Logout(req.user) do some clever stuff
       return res.status(200).end();
     } catch (e) {
       logger.error('🔥 error %o', e);

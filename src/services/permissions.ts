@@ -4,9 +4,11 @@ import { AppLogger } from '../loaders/logger';
 @Service()
 export default class PermissionService {
   private logger = new AppLogger(PermissionService.name);
+
   constructor(
     @Inject('permissionsModel') private permissionsModel,
-  ) {}
+  ) {
+  }
 
   public async GetPermission() {
     try {

@@ -1,5 +1,5 @@
 import * as mongoose from 'mongoose';
-import { IScheduleOverride } from '../interfaces/IScheduleOverride'
+import { IScheduleOverride } from '../interfaces/IScheduleOverride';
 
 const ScheduleOverride = new mongoose.Schema({
     enabled: {
@@ -7,7 +7,7 @@ const ScheduleOverride = new mongoose.Schema({
       default: false,
     },
     user: {
-      type:mongoose.Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: true,
     },
@@ -15,9 +15,9 @@ const ScheduleOverride = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Device',
       required: true,
-    }
+    },
   },
-  {timestamps: true}
+  { timestamps: true },
 );
 
-export default mongoose.model<IScheduleOverride & mongoose.Document>('ScheduleOverride', ScheduleOverride)
+export default mongoose.model<IScheduleOverride & mongoose.Document>('ScheduleOverride', ScheduleOverride);

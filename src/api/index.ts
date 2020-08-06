@@ -18,5 +18,5 @@ export default () => {
   linkAccount(app);
   role(app);
 
-  return app
+  return app;
 }

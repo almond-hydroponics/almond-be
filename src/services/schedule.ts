@@ -1,16 +1,18 @@
-import {Container, Inject, Service} from 'typedi';
+import { Container, Inject, Service } from 'typedi';
 import { ISchedule, IScheduleInputDTO } from '../interfaces/ISchedule';
 import { IUser } from '../interfaces/IUser';
 import { AppLogger } from '../loaders/logger';
-import ActivityLogService from "./activityLog";
+import ActivityLogService from './activityLog';
 
 @Service()
 export default class ScheduleService {
   private logger = new AppLogger(ScheduleService.name);
   private activityLogInstance = Container.get(ActivityLogService);
+
   constructor(
     @Inject('scheduleModel') private scheduleModel,
-  ) {}
+  ) {
+  }
 
   public async CreateSchedule(scheduleInputDTO: IScheduleInputDTO, user: IUser): Promise<{ schedule: ISchedule }> {
     try {
@@ -18,31 +20,31 @@ export default class ScheduleService {
       const scheduleItem = {
         ...scheduleInputDTO,
         user: user._id,
-        device: scheduleInputDTO.deviceId
+        device: scheduleInputDTO.device,
       };
       let response: any = '';
       const scheduleRecord = await this.scheduleModel.create(scheduleItem);
       const schedule = scheduleRecord.toObject();
       await this.activityLogInstance.GetActivityLogs(user).then(
         res => {
-          response = res
-        }
+          response = res;
+        },
       );
       schedule.activityHistory = response;
-      return { schedule: schedule };
+      return { schedule };
     } catch (e) {
       this.logger.error(e.message, e.stack);
       throw e;
     }
   }
 
-  public async GetSchedules(user: IUser, device: string) {
+  public async GetSchedules(user: IUser, device: string | string[] | any) {
     try {
       return await this.scheduleModel
         .find({
           user: { $eq: user._id },
-          device: device,
-        })
+          device: { $eq: device },
+        });
     } catch (e) {
       this.logger.error(e.message, e.stack);
       throw e;
@@ -54,9 +56,9 @@ export default class ScheduleService {
       return await this.scheduleModel
         .findById({
           _id: scheduleId,
-          user: user._id
+          user: user._id,
         })
-        .populate({ path: 'device' })
+        .populate({ path: 'device' });
     } catch (e) {
       this.logger.error(e.message, e.stack);
       throw e;
@@ -66,7 +68,8 @@ export default class ScheduleService {
   public async DeleteScheduleById(scheduleId, user) {
     try {
       return await this.scheduleModel.deleteOne({
-        '_id': Object(scheduleId), user: user._id }).exec();
+        '_id': Object(scheduleId), user: user._id,
+      }).exec();
     } catch (e) {
       this.logger.error(e.message, e.stack);
       throw e;
@@ -80,14 +83,14 @@ export default class ScheduleService {
         ...scheduleInputDTO,
         _id: scheduleId,
         user: user._id,
-        device: scheduleInputDTO.deviceId
+        device: scheduleInputDTO.device,
       };
       const scheduleRecord = await this.scheduleModel.findOneAndUpdate(
-        {_id: scheduleId,  user: user._id },
+        { _id: scheduleId, user: user._id },
         scheduleItem,
         { new: true });
       const schedule = scheduleRecord.toObject();
-      return { schedule: schedule };
+      return { schedule };
     } catch (e) {
       this.logger.error(e.message, e.stack);
       throw e;

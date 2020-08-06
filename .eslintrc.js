@@ -1,39 +1,16 @@
-module.exports = {
-  env: {
-    browser: true,
-    es6: true,
-    jest: true
-  },
-  extends: [
-    'airbnb',
-    'eslint:recommended',
-    'plugin:import/recommended',
-    'plugin:@typescript-eslint/eslint-recommended',
-    'plugin:@typescript-eslint/recommended',
-    'plugin:prettier/recommended',
-    'prettier',
-    'prettier/@typescript-eslint',
+module.exports =  {
+  parser:  '@typescript-eslint/parser',  // Specifies the ESLint parser
+  extends:  [
+    'plugin:@typescript-eslint/recommended',  // Uses the recommended rules from the @typescript-eslint/eslint-plugin
+    'prettier/@typescript-eslint',  // Uses eslint-config-prettier to disable ESLint rules from @typescript-eslint/eslint-plugin that would conflict with prettier
+    'plugin:prettier/recommended',  // Enables eslint-plugin-prettier and displays prettier errors as ESLint errors. Make sure this is always the last configuration in the extends array.
   ],
-  globals: {
-    Atomics: 'readonly',
-    SharedArrayBuffer: 'readonly',
-  },
-  parser: '@typescript-eslint/parser',
-  parserOptions: {
-    ecmaFeatures: {
-      jsx: true
-    },
+  parserOptions:  {
+    ecmaVersion:  2018,  // Allows for the parsing of modern ECMAScript features
+    sourceType:  'module',  // Allows for the use of imports
     project: './tsconfig.json',
-    ecmaVersion: 2018,
-    sourceType: 'module',
   },
-  plugins: [
-    'react',
-    'prettier',
-    '@typescript-eslint',
-    'react-hooks'
-  ],
-  rules: {
+  rules:  {
     "prettier/prettier": [0,
       {
         "semi": true,
@@ -52,7 +29,7 @@ module.exports = {
     "quotes": [1, "single"],
     "jsx-quotes": [2, "prefer-double"],
     "no-undef": 0,
-    "no-console": 1,
+    "no-console": 2,
     "no-unused-vars": 0,
     "no-mixed-operators": [1,
       {
@@ -74,12 +51,6 @@ module.exports = {
         "enforceForArrowConditionals": false
       }
     ],
-    "no-param-reassign": 0,
-    "prefer-template": 0,
-    "prefer-promise-reject-errors": 0,
-    "no-script-url": 0,
-    "no-unused-expressions": 0,
-    // "dot-notation": 0,
 
     "import/prefer-default-export": 0,
     "import/no-useless-path-segments": 1,
@@ -103,9 +74,7 @@ module.exports = {
     "@typescript-eslint/no-explicit-any": 0,
     "@typescript-eslint/explicit-member-accessibility": 0,
     "@typescript-eslint/no-angle-bracket-type-assertion": 0,
-    // TODO: enable the lines below when refactoring
-    // "react-hooks/rules-of-hooks": 1,
-    // "react-hooks/exhaustive-deps": 1
+    '@typescript-eslint/no-parameter-properties': 0,
+    '@typescript-eslint/interface-name-prefix': 0,
   },
 };
-

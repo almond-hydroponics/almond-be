@@ -22,7 +22,7 @@ export const uid: IUID = {
    * Generate
    * Generates uid push identifier.
    */
-  generate: (function () {
+  generate: (function() {
     // Timestamp of last push, used to prevent local
     // collisions if you push twice in one ms.
     let lastPushTime = 0;
@@ -33,12 +33,12 @@ export const uid: IUID = {
     // in the event of a collision, we'll use those same
     // characters except "incremented" by one.
     const lastRandChars = [];
-    return function () {
+    return function() {
       let now = new Date().getTime();
-      let duplicateTime = (now === lastPushTime);
+      const duplicateTime = now === lastPushTime;
       lastPushTime = now;
 
-      let timeStampChars: string[] = new Array(8);
+      const timeStampChars: string[] = new Array(8);
       let i: number;
       for (i = 7; i >= 0; i--) {
         timeStampChars[i] = ASCII_CHARS.charAt(now % 64);
@@ -55,8 +55,8 @@ export const uid: IUID = {
           lastRandChars[i] = Math.floor(Math.random() * 64);
         }
       }
-      // If the timestamp hasn't changed since
-      // last push, use the same random number,
+        // If the timestamp hasn't changed since
+        // last push, use the same random number,
       // except incremented by 1.
       else {
         for (i = 11; i >= 0 && lastRandChars[i] === 63; i--) {
@@ -79,8 +79,8 @@ export const uid: IUID = {
    * Timestamp
    * Gets timestamp from provided uid.
    */
-  timestamp: (function () {
-    return function (id: string, asDate?: boolean): number | Date {
+  timestamp: (function() {
+    return function(id: string, asDate?: boolean): number | Date {
       let time = 0;
       const data = id.substr(0, 8);
       for (let i = 0; i < 8; i++) {
@@ -90,5 +90,5 @@ export const uid: IUID = {
         return new Date(time);
       return time;
     };
-  })()
+  })(),
 };
