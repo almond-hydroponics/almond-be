@@ -57,7 +57,7 @@
     "geoip-lite": "^1.4.2",
     "git-bug-trace": "^0.0.7",
     "googleapis": "^58.0.0",
-    "helmet": "^4.0.0",
+    "helmet": "^4.1.0",
     "is-online": "^8.4.0",
     "jsonwebtoken": "^8.5.1",
     "kill-port": "^1.6.1",
