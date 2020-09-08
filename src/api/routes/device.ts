@@ -100,7 +100,6 @@ export default (app: Router) => {
 
         const pumpServiceInstance = Container.get(ScheduleOverrideService);
         const pumpStatus = await pumpServiceInstance.GetScheduleOverride(user, deviceId);
-        logger.warn(pumpStatus);
         if (!pumpStatus) {
           return res.status(404).send({
             success: false,

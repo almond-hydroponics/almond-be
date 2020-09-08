@@ -30,7 +30,7 @@ export default ({ app, agendaInstance }: { app: express.Application; agendaInsta
 
   app.use('/agendash', Agendash(agendaInstance));
 
-  app.use(rateLimiterUsingThirdParty);
+  // app.use(rateLimiterUsingThirdParty);
 
   // Useful if you're behind a reverse proxy (Heroku, Bluemix, AWS ELB, Nginx, etc)
   // It shows the real origin IP in the heroku or Cloudwatch logs

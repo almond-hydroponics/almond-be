@@ -45,9 +45,9 @@ export default class MqttService {
   public connect(activityLogInstance: ActivityLogService, req: Request) {
     // connect mqtt with credentials (in case of needed, otherwise we can omit 2nd param)
     // Mqtt error callback
-    this.mqttClient.on('error', (err: IError) => {
+    this.mqttClient.on('error', async (err: IError) => {
       this.logger.error(err.message, err.stack);
-      this.deviceConnectivityLog(activityLogInstance, req, 'Device Connection Error ');
+      await this.deviceConnectivityLog(activityLogInstance, req, 'Device Connection Error ');
       this.mqttClient.end();
     });
 
