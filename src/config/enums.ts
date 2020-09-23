@@ -1,4 +1,4 @@
 export enum ScheduleOverride {
-  OFF = '0',
-  ON = '1'
+	OFF = '0',
+	ON = '1',
 }

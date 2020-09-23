@@ -1,7 +1,11 @@
 import { config } from '../config';
 
-export default function recoverPasswordEmail(name: string, token: string, email: string) {
-  return `<!DOCTYPE html>
+export default function recoverPasswordEmail(
+	name: string,
+	token: string,
+	email: string,
+) {
+	return `<!DOCTYPE html>
   <html lang="en">
     <head>
       <meta name="viewport" content="width=device-width">

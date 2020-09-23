@@ -1,4 +1,4 @@
 export interface IPermissions {
-  _id: string;
-  type: string;
+	_id: string;
+	type: string;
 }

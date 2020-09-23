@@ -1,4 +1,4 @@
-import Factory from "factory.ts";
+import Factory from 'factory.ts';
 import { IUserInputDTO } from '../interfaces/IUser';
 
 // export const userFactory = Factory.Sync.makeFactory<IUserInputDTO>({

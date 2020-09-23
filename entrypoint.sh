@@ -6,8 +6,8 @@
 #echo " "
 #
 #sleep 20
-#export NODE_ENV=development
-#yarn seed:data
+export NODE_ENV=development
+yarn seed:data
 #
 #sleep 10
 #echo " "
@@ -18,6 +18,6 @@ sleep 10
 echo " "
 echo "<<<<<<<<<<< 😎 Starting Server API 😎 >>>>>>>>>>>>>"
 echo " "
-yarn run start:dev
+yarn start:dev
 
 exit 0

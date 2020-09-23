@@ -2,5 +2,5 @@
 import Bluebird from 'bluebird';
 
 declare module 'mongoose' {
-  type Promise<T> = Bluebird<T>;
+	type Promise<T> = Bluebird<T>;
 }

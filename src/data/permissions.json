@@ -1,38 +1,38 @@
 [
   {
-    "_id": {
-      "$oid": "5e439ea3fd05da507ca0161a"
+    '_id': {
+      '$oid': '5e439ea3fd05da507ca0161a'
     },
-    "type": "No Access"
+    'type': 'No Access'
   },
   {
-    "_id": {
-      "$oid": "5e439ed9fd05da507ca0161c"
+    '_id': {
+      '$oid': '5e439ed9fd05da507ca0161c'
     },
-    "type": "Full Access"
+    'type': 'Full Access'
   },
   {
-    "_id": {
-      "$oid": "5e439f32fd05da507ca0161e"
+    '_id': {
+      '$oid': '5e439f32fd05da507ca0161e'
     },
-    "type": "Add"
+    'type': 'Add'
   },
   {
-    "_id": {
-      "$oid": "5e44f86b2eeeee195403efcb"
+    '_id': {
+      '$oid': '5e44f86b2eeeee195403efcb'
     },
-    "type": "View"
+    'type': 'View'
   },
   {
-    "_id": {
-      "$oid": "5e456d694df0c437590ebc3e"
+    '_id': {
+      '$oid': '5e456d694df0c437590ebc3e'
     },
-    "type": "Edit"
+    'type': 'Edit'
   },
   {
-    "_id": {
-      "$oid": "5e45bc5228c0d70f4a9363a3"
+    '_id': {
+      '$oid': '5e45bc5228c0d70f4a9363a3'
     },
-    "type": "Delete"
+    'type': 'Delete'
   }
 ]

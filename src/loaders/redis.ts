@@ -11,11 +11,11 @@ bluebird.promisifyAll(redis.Multi.prototype);
 const redisClient = redis.createClient(config.redisURL);
 
 redisClient.on('connect', () => {
-  logger.log('✌️ Redis connected');
+	logger.log('✌️ Redis connected');
 });
 
-redisClient.on('error', err => {
-  logger.error('🔥 Redis error: ', err);
+redisClient.on('error', (err) => {
+	logger.error('🔥 Redis error: ', err);
 });
 
 export default redisClient;
