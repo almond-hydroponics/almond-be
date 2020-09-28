@@ -21,11 +21,6 @@ const path = 'USERS';
 
 export default (app: Router) => {
   app.use('/', user);
-  /**
-   * @api {GET} api/me
-   * @description Get my personal details
-   * @access Private
-   */
   user.get('/me',
     isAuth,
     attachCurrentUser,

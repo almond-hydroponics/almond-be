@@ -1,15 +1,17 @@
+import swaggerUi from "swagger-ui-express";
 require('newrelic');
 import 'reflect-metadata';
 import express from 'express';
 import { config } from './config';
 import { AppLogger } from './loaders/logger';
+import {swaggerSpecs} from "./api/docs/swaggerDocs";
 
 const logger = new AppLogger('Start');
-
+const app = express();
 async function startServer() {
-  const app = express();
   const { port = 8080 } = config;
   await require('./loaders').default({ expressApp: app });
+
 
   process.on('uncaughtException', e => {
     logger.error(`Uncaught Exception: ${e.stack}`, `Error: ${e}`);
@@ -37,3 +39,10 @@ async function startServer() {
 }
 
 startServer().catch(err => logger.error(err.message, err.stack));
+
+
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpecs)
+);

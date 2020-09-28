@@ -25,6 +25,28 @@ export default (app: Router) => {
   app.use('/', role);
 
   /**
+   * @swagger
+   * /api/role:
+   *   post:
+   *     tags:
+   *       - role
+   *     summary: This should create a new ice cream.
+   *     description: This is where you can give some background as to why this route is being created or perhaps reference a ticket number.
+   *     consumes:
+   *       - application/json
+   *     parameters:
+   *       — name: body
+   *       in: body
+   *       schema:
+   *         type: object
+   *         properties:
+   *           flavor:
+   *           type: string
+   *     responses:
+   *       200:
+   *         description: Receive back flavor and flavor Id.
+   */
+  /**
    * @api {POST} api/role
    * @description Create a new role
    * @access Private
