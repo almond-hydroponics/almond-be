@@ -2,7 +2,7 @@
   "swagger": "2.0",
   "info": {
     "description": "This is Almond Backend API server documentation.For this sample, you can use the api key `special-key` to test the authorization     filters.",
-    "version": "3.0.0",
+    "version": "1.0.0",
     "title": "Almond Backend API",
     "termsOfService": "http://swagger.io/terms/",
     "contact": {
@@ -13,8 +13,8 @@
       "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
     }
   },
-  "host": "localhost:5000",
-  "basePath": "/v1",
+  "host": "localhost:8080",
+  "basePath": "/api",
   "tags": [
     {
       "name": "auth",
@@ -247,7 +247,6 @@
         }
       }
     },
-
     "ApiResponse": {
       "type": "object",
       "properties": {
