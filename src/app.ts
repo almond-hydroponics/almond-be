@@ -4,7 +4,7 @@ import 'reflect-metadata';
 import express from 'express';
 import { config } from './config';
 import { AppLogger } from './loaders/logger';
-import {swaggerSpecs} from "./api/docs/swaggerDocs";
+import * as swaggerDocument from './api/docs/swagger.json'
 
 const logger = new AppLogger('Start');
 const app = express();
@@ -44,5 +44,5 @@ startServer().catch(err => logger.error(err.message, err.stack));
 app.use(
   "/api-docs",
   swaggerUi.serve,
-  swaggerUi.setup(swaggerSpecs)
+  swaggerUi.setup(swaggerDocument)
 );

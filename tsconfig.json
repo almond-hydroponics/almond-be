@@ -24,6 +24,7 @@
     "module": "commonjs",
     "pretty": true,
     "sourceMap": true,
+    "resolveJsonModule": true,
     "outDir": "./build",
     "allowJs": true,
     "noEmit": false,
