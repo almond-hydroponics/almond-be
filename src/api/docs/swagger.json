@@ -67,12 +67,7 @@
           "405": {
             "description": "Method Not Allowed"
           }
-        },
-        "security": [
-          {
-            "api_key": []
-          }
-        ]
+        }
       }
     },
     "/auth/signin": {
@@ -112,12 +107,7 @@
           "405": {
             "description": "Method Not Allowed"
           }
-        },
-        "security": [
-          {
-            "api_key": []
-          }
-        ]
+        }
       }
     },
     "/auth/user/login-as": {
@@ -157,12 +147,7 @@
           "405": {
             "description": "Method Not Allowed"
           }
-        },
-        "security": [
-          {
-            "api_key": []
-          }
-        ]
+        }
       }
     },
     "/auth/logout": {
@@ -191,20 +176,15 @@
           "405": {
             "description": "Method Not Allowed"
           }
-        },
-        "security": [
-          {
-            "api_key": []
-          }
-        ]
+        }
       }
     }
   },
   "securityDefinitions": {
     "api_key": {
-      "type": "oauth2",
-      "flow": "password",
-      "tokenUrl": "https://accounts.google.com/o/oauth2/auth"
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
     }
   },
   "definitions": {
