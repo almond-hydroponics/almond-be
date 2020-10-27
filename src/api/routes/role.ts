@@ -23,7 +23,6 @@ const path = 'ROLE';
 
 export default (app: Router) => {
   app.use('/', role);
-
   /**
    * @api {POST} api/role
    * @description Create a new role

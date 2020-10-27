@@ -16,6 +16,7 @@ const whitelist = [
   'https://almond-re.herokuapp.com',
   'http://' + config.siteUrl,
   config.siteUrl,
+  'http://localhost:8080',
 ];
 
 const corsOptions = {

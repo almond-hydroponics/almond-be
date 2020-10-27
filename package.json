@@ -79,6 +79,8 @@
     "reflect-metadata": "^0.1.13",
     "request-ip": "^2.1.3",
     "sniffr": "^1.2.0",
+    "swagger-jsdoc": "4.2.0",
+    "swagger-ui-express": "4.1.4",
     "typedi": "^0.8.0",
     "winston": "^3.3.3"
   },
@@ -101,6 +103,8 @@
     "@types/passport-local": "^1.0.33",
     "@types/redis": "^2.8.26",
     "@types/supertest": "^2.0.10",
+    "@types/swagger-jsdoc": "latest",
+    "@types/swagger-ui-express": "latest",
     "@typescript-eslint/eslint-plugin": "^3.10.1",
     "@typescript-eslint/parser": "^3.10.1",
     "cross-env": "7.0.2",
