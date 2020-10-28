@@ -3480,15 +3480,16 @@ getpass@^0.1.1:
   dependencies:
     assert-plus "^1.0.0"
 
-git-bug-trace@^0.0.7:
-  version "0.0.7"
-  resolved "https://registry.yarnpkg.com/git-bug-trace/-/git-bug-trace-0.0.7.tgz#02af3d3118fd35779cdb2c54894d1027cbe1d2e3"
-  integrity sha512-nW5TKZaVea8nfxRS3csxjBlAVq2yh/aKkXDe6y8x8g0oDkT2dTl72x+96Fn0eokkuVR8+lUi5ti/YP2JGCgAqA==
+git-bug-trace@^0.0.8:
+  version "0.0.8"
+  resolved "https://registry.yarnpkg.com/git-bug-trace/-/git-bug-trace-0.0.8.tgz#7f8bb142650c51d1a8bd7b7cda96115576bcd58b"
+  integrity sha512-2nCm6qn2PclL8lurA+tupr3YrPLTfUevcZNFFVh9THPIgK8oFcWO0UHTelFzBhcZv485u+2dPPZUSuZQM/ulyA==
   dependencies:
     "@types/node" "^14.0.13"
     chalk "^4.1.0"
     dotenv "^8.2.0"
     express "^4.17.1"
+    lodash "^4.17.20"
     request "^2.88.2"
 
 glob-parent@^3.1.0:
