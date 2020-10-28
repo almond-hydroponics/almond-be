@@ -5552,10 +5552,10 @@ netmask@^1.0.6:
   resolved "https://registry.yarnpkg.com/netmask/-/netmask-1.0.6.tgz#20297e89d86f6f6400f250d9f4f6b4c1945fcd35"
   integrity sha1-ICl+idhvb2QA8lDZ9Pa0wZRfzTU=
 
-newrelic@^6.12.1:
-  version "6.12.1"
-  resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-6.12.1.tgz#2daeba4dd7433219207f9a926f7675dcf9735fa5"
-  integrity sha512-wjlmpxyDti9OhjPtPE6CHfHa63XioXhhC9yPRWfkgTg/x6sPxuxwMXNYeI8gFflYWMZxQfpy+1vvjhDQxzJ5uw==
+newrelic@^6.13.1:
+  version "6.13.2"
+  resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-6.13.2.tgz#4d9caf28b7c3822f1c1ad0c288e05accdfde1027"
+  integrity sha512-zXZKeV4kOAZ/P06Tbw6Kmqkj3keBbxFEB4tbMgXP1u0CstfTX5V1yGrtJIibxjTfcU3OtVj7SRSWon56y/e1gA==
   dependencies:
     "@grpc/grpc-js" "1.0.5"
     "@grpc/proto-loader" "^0.5.4"
