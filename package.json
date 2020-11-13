@@ -68,7 +68,7 @@
     "mongoose": "^5.10.0",
     "morgan": "^1.10.0",
     "mqtt": "^4.2.1",
-    "newrelic": "^6.12.1",
+    "newrelic": "^6.13.2",
     "node-cron": "^2.0.3",
     "nodemailer": "^6.4.11",
     "passport": "^0.4.1",
