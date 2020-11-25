@@ -1,48 +1,48 @@
-import swaggerUi from "swagger-ui-express";
 require('newrelic');
 import 'reflect-metadata';
 import express from 'express';
+import swaggerUi from 'swagger-ui-express';
 import { config } from './config';
 import { AppLogger } from './loaders/logger';
-import * as swaggerDocument from './api/docs/swagger.json'
+import * as swaggerDocument from './api/docs/swagger.json';
+import * as loaders from './loaders';
+import { IError } from './types/error';
 
 const logger = new AppLogger('Start');
 const app = express();
+
 async function startServer() {
-  const { port = 8080 } = config;
-  await require('./loaders').default({ expressApp: app });
+	const { port = 8080 } = config;
+	await loaders.default({ expressApp: app });
 
+	process.on('uncaughtException', (e) => {
+		logger.error(`Uncaught Exception: ${e.stack}`, `Error: ${e}`);
+		process.exit(1);
+	});
 
-  process.on('uncaughtException', e => {
-    logger.error(`Uncaught Exception: ${e.stack}`, `Error: ${e}`);
-    process.exit(1);
-  });
+	process.on('unhandledRejection', (reason, p) => {
+		logger.error(
+			`Unhandled Rejection at: ${JSON.stringify(p)}`,
+			`reason:, ${reason}`,
+		);
+		process.exit(1);
+	});
 
-  process.on('unhandledRejection', (reason, p) => {
-    logger.error(`Unhandled Rejection at: ${JSON.stringify(p)}`, `reason:, ${reason}`);
-    process.exit(1);
-  });
+	app.listen(port, (err: IError) => {
+		if (err) {
+			logger.error(err.message, err.stack);
+			process.exit(1);
+			return;
+		}
 
-  app.listen(port, (err: any) => {
-    if (err) {
-      logger.error(err.message, err.stack);
-      process.exit(1);
-      return;
-    }
-
-    logger.log(`
+		logger.log(`
       ########################################
       😎  Server listening on port: ${port} 😎
       ########################################
     `);
-  });
+	});
 }
 
-startServer().catch(err => logger.error(err.message, err.stack));
+startServer().catch((err) => logger.error(err.message, err.stack));
 
-
-app.use(
-  "/api-docs",
-  swaggerUi.serve,
-  swaggerUi.setup(swaggerDocument)
-);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));

@@ -9,14 +9,14 @@ import linkAccount from './routes/linkAccount';
 
 // guaranteed to get dependencies
 export default () => {
-  const app = Router();
-  schedules(app);
-  auth(app);
-  user(app);
-  agendash(app);
-  device(app);
-  linkAccount(app);
-  role(app);
+	const app = Router();
+	schedules(app);
+	auth(app);
+	user(app);
+	agendash(app);
+	device(app);
+	linkAccount(app);
+	role(app);
 
-  return app;
-}
+	return app;
+};

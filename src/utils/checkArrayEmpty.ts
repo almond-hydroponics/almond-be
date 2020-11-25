@@ -5,6 +5,7 @@
  *
  * @returns {boolean}
  */
-const isArrayNotNull = array => Array.isArray(array) && Object.keys(array).length > 0;
+const isArrayNotNull = (array) =>
+	Array.isArray(array) && Object.keys(array).length > 0;
 
 export default isArrayNotNull;

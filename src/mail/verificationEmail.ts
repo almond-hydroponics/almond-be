@@ -2,7 +2,7 @@ import { config } from '../config';
 import { IUser } from '../interfaces/IUser';
 
 export default function verificationEmail(user: Partial<IUser>) {
-  return `<!DOCTYPE html>
+	return `<!DOCTYPE html>
             <html lang="en">
             <head>
                 <meta name="viewport" content="width=device-width">
@@ -134,10 +134,7 @@ export default function verificationEmail(user: Partial<IUser>) {
                                             <tbody>
                                                 <tr>
                                                 <td style="font-family: 'Raleway', sans-serif; font-size: 14px; vertical-align: top; border-radius: 8px; text-align: center; background-color: #ffb03f;" valign="top" align="center" bgcolor="#ffb03f">
-                                                    <a href="${config.serverUrl}/api/auth/verification?token=${user.verificationToken
-  }&email=${
-    user.email
-  }" target="_blank" style="border: solid 1px #ffb03f; border-radius: 12px; box-sizing: border-box; cursor: pointer; display: inline-block; font-size: 14px; font-weight: bold; margin: 0; padding: 12px 25px; text-decoration: none; text-transform: capitalize; background-color: #ffb03f; border-color: #ffb03f; color: #ffffff;">VERIFY EMAIL ADDRESS</a>
+                                                    <a href="${config.serverUrl}/api/auth/verification?token=${user.verificationToken}&email=${user.email}" target="_blank" style="border: solid 1px #ffb03f; border-radius: 12px; box-sizing: border-box; cursor: pointer; display: inline-block; font-size: 14px; font-weight: bold; margin: 0; padding: 12px 25px; text-decoration: none; text-transform: capitalize; background-color: #ffb03f; border-color: #ffb03f; color: #ffffff;">VERIFY EMAIL ADDRESS</a>
                                                 </td>
                                                 </tr>
                                             </tbody>

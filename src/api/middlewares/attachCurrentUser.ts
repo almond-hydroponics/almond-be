@@ -11,14 +11,14 @@ const logger = new AppLogger('CurrentUser');
  * @param {*} next  Express next Function
  */
 const attachCurrentUser = async (req, res, next) => {
-  try {
-    const userService = Container.get(AuthService);
-    req.currentUser = await userService.UserProfile(req.token.userData._id);
-    return next();
-  } catch (e) {
-    logger.error('🔥 Error attaching user to req: %o', e.stack);
-    return next(e);
-  }
+	try {
+		const userService = Container.get(AuthService);
+		req.currentUser = await userService.UserProfile(req.token.userData._id);
+		return next();
+	} catch (e) {
+		logger.error('🔥 Error attaching user to req: %o', e.stack);
+		return next(e);
+	}
 };
 
 export default attachCurrentUser;
