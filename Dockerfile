@@ -32,9 +32,6 @@ RUN rm -rf package-lock.json
 
 COPY yarn.lock /home/node/app
 COPY package.json /home/node/app
-
-RUN yarn set version berry
-RUN echo 'nodeLinker: node-modules' >> .yarnrc.yml
 RUN yarn install
 
 ENV PATH="./node_modules/.bin:$PATH"

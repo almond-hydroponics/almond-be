@@ -1,32 +1,32 @@
 [
   {
-    '_id': {
-      '$oid': '5db373445e38b20ae991710b'
+    "_id": {
+      "$oid": "5db373445e38b20ae991710b"
     },
-    'name': 'Devices'
+    "name": "Devices"
   },
   {
-    '_id': {
-      '$oid': '5db373875e38b20ae991710d'
+    "_id": {
+      "$oid": "5db373875e38b20ae991710d"
     },
-    'name': 'People'
+    "name": "People"
   },
   {
-    '_id': {
-      '$oid': '5db42955b21bb9ce0cd93f25'
+    "_id": {
+      "$oid": "5db42955b21bb9ce0cd93f25"
     },
-    'name': 'Roles'
+    "name": "Roles"
   },
   {
-    '_id': {
-      '$oid': '5e16d15fffb6541b5b909d3e'
+    "_id": {
+      "$oid": "5e16d15fffb6541b5b909d3e"
     },
-    'name': 'Requests'
+    "name": "Requests"
   },
   {
-    '_id': {
-      '$oid': '5e17d95fffb6541b6b909d3e'
+    "_id": {
+      "$oid": "5e17d95fffb6541b6b909d3e"
     },
-    'name': 'Analytics'
+    "name": "Analytics"
   }
 ]
