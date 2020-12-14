@@ -3,7 +3,7 @@
 <head>
   <meta name="viewport" content="width=device-width">
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <title>Email verification - Butternut</title>
+  <title>Email verification - Almond Hydroponics</title>
   <link
       href="https://fonts.googleapis.com/css?family=Google+Sans:400,400i,500,500i,700,700i|Google+Sans+Display:400,400i,500,500i,700,700i&amp;subset=all"
       rel="stylesheet">
@@ -152,11 +152,11 @@
             <td class="wrapper"
                 style="font-family: 'Raleway', sans-serif; font-size: 14px; vertical-align: top; box-sizing: border-box; padding: 0;"
                 valign="top">
-              <img
-                  src="https://res.cloudinary.com/almondgreen/image/upload/v1575356980/Butternut/Food_set_go_wxvgme.png"
-                  alt="Food Set Go" width="auto"
-                  height="auto" border="0"
-                  style="-ms-interpolation-mode: bicubic; max-width: 100%; border: 0; outline: none; text-decoration: none; display: block;">
+{#              <img#}
+{#                  src="https://res.cloudinary.com/almondgreen/image/upload/v1575356980/Butternut/Food_set_go_wxvgme.png"#}
+{#                  alt="Food Set Go" width="auto"#}
+{#                  height="auto" border="0"#}
+{#                  style="-ms-interpolation-mode: bicubic; max-width: 100%; border: 0; outline: none; text-decoration: none; display: block;">#}
               <table class="wrapper-table" role="presentation"
                      border="0" cellpadding="0" cellspacing="0"
                      style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; border-spacing: 0; padding: 20px;"
@@ -165,10 +165,8 @@
                   <td style="font-family: 'Raleway', sans-serif; font-size: 14px; vertical-align: top;"
                       valign="top">
                     <p style="font-family: 'Google Sans', Roboto, 'Helvetica Neue', sans-serif;font-size: 16px; margin: 0 0 50px;text-align: center; font-weight: 300; line-height: 30px;">
-                      Hey {{ user.first_name }}! Welcome to <b>Food Set Go!</b>
-                      We deliver food at your own convenience.
-                      Kindly verify your email and get ready to make your food
-                      set go.
+                      Hey {{ user.name }}! Welcome to <b>Almond Hydroponics!</b>
+                      We grow food healthily in a creative way.
                     </p>
                     <table role="presentation" border="0"
                            cellpadding="0" cellspacing="0"
@@ -189,7 +187,7 @@
                               <td style="font-size: 16px; vertical-align: top; border-radius: 8px; text-align: center; background-color: #ffb03f;"
                                   valign="top" align="center"
                                   bgcolor="#ffb03f">
-                                <a href="{{ config.clientUrl }}/activate?token={{ token }}"
+                                <a href="{{ config.serverUrl }}/auth/verification?token={{ token }}&email={{ user.email }}"
                                    target="_blank"
                                    style="display: inline-block; color: #ffffff; background-color: #c4962b; border: solid 2px #c4962b; border-radius: 4px; box-sizing: border-box; cursor: pointer; text-decoration: none; font-size: 16px; font-weight: normal; margin: 0; padding: 12px 24px; text-transform: capitalize; border-color: #c4962b;">
                                   Verify your account

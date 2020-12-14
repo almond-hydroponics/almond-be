@@ -1,71 +1,71 @@
 [
   {
-    'userCount': 0,
-    'deleted': false,
-    '_id': {
-      '$oid': '5e555801465ca301b1143b90'
+    "userCount": 0,
+    "deleted": false,
+    "_id": {
+      "$oid": "5e555801465ca301b1143b90"
     },
-    'title': 'Admin',
-    'description': 'Almond administrator with full permissions',
-    'resourceAccessLevels': [
+    "title": "Admin",
+    "description": "Almond administrator with full permissions",
+    "resourceAccessLevels": [
       {
-        'permissions': ['5e439ed9fd05da507ca0161c'],
-        'resource': '5e17d95fffb6541b6b909d3e',
-        '_id': {
-          '$oid': '5e4703d62faee61d8ede2d66'
+        "permissions": ["5e439ed9fd05da507ca0161c"],
+        "resource": "5e17d95fffb6541b6b909d3e",
+        "_id": {
+          "$oid": "5e4703d62faee61d8ede2d66"
         }
       },
       {
-        'permissions': ['5e439ed9fd05da507ca0161c'],
-        'resource': '5db42955b21bb9ce0cd93f25',
-        '_id': {
-          '$oid': '5e555801465ca301b1143b91'
+        "permissions": ["5e439ed9fd05da507ca0161c"],
+        "resource": "5db42955b21bb9ce0cd93f25",
+        "_id": {
+          "$oid": "5e555801465ca301b1143b91"
         }
       },
       {
-        'permissions': ['5e439ed9fd05da507ca0161c'],
-        'resource': '5e17d95fffb6541b6b909d3e',
-        '_id': {
-          '$oid': '5e4703d62faee61d8ede2d66'
+        "permissions": ["5e439ed9fd05da507ca0161c"],
+        "resource": "5e17d95fffb6541b6b909d3e",
+        "_id": {
+          "$oid": "5e4703d62faee61d8ede2d66"
         }
       },
       {
-        'permissions': ['5e439ed9fd05da507ca0161c'],
-        'resource': '5db373445e38b20ae991710b',
-        '_id': {
-          '$oid': '5e555801465ca301b1143b92'
+        "permissions": ["5e439ed9fd05da507ca0161c"],
+        "resource": "5db373445e38b20ae991710b",
+        "_id": {
+          "$oid": "5e555801465ca301b1143b92"
         }
       },
       {
-        'permissions': ['5e439ed9fd05da507ca0161c'],
-        'resource': '5db373875e38b20ae991710d',
-        '_id': {
-          '$oid': '5e555801465ca301b1143b93'
+        "permissions": ["5e439ed9fd05da507ca0161c"],
+        "resource": "5db373875e38b20ae991710d",
+        "_id": {
+          "$oid": "5e555801465ca301b1143b93"
         }
       },
       {
-        'permissions': ['5e439ed9fd05da507ca0161c'],
-        'resource': '5e16d15fffb6541b5b909d3e',
-        '_id': {
-          '$oid': '5e555801465ca301b1143b94'
+        "permissions": ["5e439ed9fd05da507ca0161c"],
+        "resource": "5e16d15fffb6541b5b909d3e",
+        "_id": {
+          "$oid": "5e555801465ca301b1143b94"
         }
       }
     ]
   },
   {
-    'userCount': 0,
-    'deleted': false,
-    '_id': {
-      '$oid': '5e4703d62faee61d8ede2d65'
+    "userCount": 0,
+    "deleted": false,
+    "_id": {
+      "$oid": "5e4703d62faee61d8ede2d65"
     },
-    'title': 'User',
-    'description': 'Almond regular user with limited privileges',
-    'resourceAccessLevels': [
+    "title": "User",
+    "description": "Almond regular user with limited privileges",
+    "resourceAccessLevels": [
       {
-        'permissions': ['5e439ed9fd05da507ca0161c'],
-        'resource': '5e17d95fffb6541b6b909d3e',
-        '_id': {
-          '$oid': '5e4703d62faee61d8ede2d66'
+        "permissions": ["5e439ed9fd05da507ca0161c"],
+        "resource": "5e17d95fffb6541b6b909d3e",
+        "_id": {
+          "$oid": "5e4703d62faee61d8ede2d66"
         }
       }
     ]

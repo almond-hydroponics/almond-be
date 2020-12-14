@@ -1,13 +1,16 @@
 import passport from 'passport';
+import pLocal from 'passport-local';
 import pGoogle from 'passport-google-oauth2';
 import { Container } from 'typedi';
-import { IUser } from '../interfaces/IUser';
-import { AppLogger } from '../loaders/logger';
-import AuthService from '../services/auth';
+import { IUser } from '../app/interfaces/IUser';
+import { AppLogger } from '../app';
+import AuthService from '../app/services/auth';
 import { config } from './index';
+import { Request } from 'express';
 
 const logger = new AppLogger('Auth');
 const GoogleStrategy = pGoogle.Strategy;
+const LocalStrategy = pLocal.Strategy;
 
 passport.use(
 	new GoogleStrategy(
@@ -17,7 +20,13 @@ passport.use(
 			callbackURL: config.google.callbackUrl,
 			passReqToCallback: true,
 		},
-		async (request, accessToken, refreshToken, profile, done) => {
+		async (
+			request: Request,
+			accessToken: string,
+			refreshToken: string,
+			profile,
+			done,
+		) => {
 			try {
 				const authServerInstance = Container.get(AuthService);
 				const user = await authServerInstance.SocialLogin(profile);
@@ -31,6 +40,22 @@ passport.use(
 				done(null, user);
 			} catch (e) {
 				logger.error('🔥 Passport Google error: ', e.stack);
+				done(e);
+			}
+		},
+	),
+);
+
+passport.use(
+	new LocalStrategy(
+		{ usernameField: 'email', passwordField: 'password' },
+		async (email: string, password: string, done) => {
+			try {
+				const authServerInstance = Container.get(AuthService);
+				const user = await authServerInstance.SignIn(email, password);
+				done(null, user);
+			} catch (e) {
+				logger.error('🔥 Passport Local error: ', e.stack);
 				done(e);
 			}
 		},

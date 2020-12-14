@@ -37,7 +37,7 @@ background:
 start:
 	${INFO} "Starting docker process"
 	${INFO} "Creating mongo database volume"
-	@ docker pull mongo:latest
+	@ docker pull mongo:4.4.2-bionic
 	@ docker volume create --name=dbdata > /dev/null
 	@ echo " "
 	@ ${INFO} "Building required docker images"

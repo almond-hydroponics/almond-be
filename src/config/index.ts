@@ -7,7 +7,9 @@ const envFound = dotenv.config();
 if (envFound.error) throw new Error("⚠️  Couldn't find .env file  ⚠️");
 
 interface Config {
+	isProduction: boolean;
 	port: number | null | undefined;
+	host: string;
 	databaseURL: string;
 	mongo: {
 		username: string;
@@ -27,6 +29,8 @@ interface Config {
 	nodeMailer: {
 		username: string;
 		password: string;
+		host: string;
+		port: number;
 	};
 	logs: {
 		level: string;
@@ -84,10 +88,34 @@ interface Config {
 	};
 	almond_admin: string;
 	assetsPath: string;
+	uuid: string;
+	session: {
+		domain: string;
+		secret: string;
+		timeout: number;
+		refresh: {
+			secret: string;
+			timeout: number;
+		};
+		verify_account: {
+			secret: string;
+			timeout: number;
+		};
+		password_reset: {
+			secret: string;
+			timeout: number;
+		};
+		verify: {
+			secret: string;
+			timeout: number;
+		};
+	};
 }
 
 export const config: Config = {
+	isProduction: process.env.NODE_ENV === 'production',
 	port: parseInt(process.env.PORT, 10),
+	host: process.env.APP_HOST,
 	databaseURL: process.env.MONGODB_URI,
 	mongo: {
 		username: process.env.MONGO_USERNAME,
@@ -113,11 +141,13 @@ export const config: Config = {
 	sessionSecret: process.env.SESSION_SECRET,
 	cookiesDomain:
 		process.env.NODE_ENV === 'development'
-			? '.almond.com'
+			? 'froyo.almond.com'
 			: process.env.COOKIES_DOMAIN,
 	nodeMailer: {
 		username: process.env.NODEMAILER_USERNAME,
 		password: process.env.NODEMAILER_PASSWORD,
+		port: parseInt(process.env.NODEMAILER_PORT, 10),
+		host: process.env.NODEMAILER_HOST,
 	},
 	logs: {
 		level: process.env.LOG_LEVEL || 'silly',
@@ -147,8 +177,8 @@ export const config: Config = {
 		callbackUrl: process.env.GOOGLE_CALLBACK_URL,
 		refreshToken: process.env.GOOGLE_REFRESH_TOKEN,
 		accessToken: process.env.GOOGLE_ACCESS_TOKEN,
-		mailClientId: process.env.GOOGLE_MAIL_CLIENT_ID,
-		mailClientSecret: process.env.GOOGLE_MAIL_CLIENT_SECRET,
+		mailClientId: process.env.GOOGLE_CLIENT_ID,
+		mailClientSecret: process.env.GOOGLE_CLIENT_SECRET,
 		mailRefreshToken: process.env.GOOGLE_MAIL_REFRESH_TOKEN,
 	},
 
@@ -183,4 +213,26 @@ export const config: Config = {
 	},
 	almond_admin: process.env.ALMOND_ADMIN,
 	assetsPath: `${__dirname}/../assets`,
+	uuid: process.env.UUID,
+	session: {
+		domain: process.env.SESSION_DOMAIN,
+		secret: process.env.SESSION_SECRET,
+		timeout: parseInt(process.env.SESSION_TIMEOUT, 10),
+		refresh: {
+			secret: process.env.SESSION_REFRESH_SECRET,
+			timeout: parseInt(process.env.SESSION_REFRESH_TIMEOUT, 10),
+		},
+		verify_account: {
+			secret: process.env.SESSION_VERIFY_ACCOUNT,
+			timeout: parseInt(process.env.SESSION_VERIFY_ACCOUNT_TIMEOUT, 10),
+		},
+		password_reset: {
+			secret: process.env.SESSION_PASSWORD_RESET_SECRET,
+			timeout: parseInt(process.env.SESSION_PASSWORD_RESET_TIMEOUT, 10),
+		},
+		verify: {
+			secret: process.env.SESSION_VERIFY_SECRET,
+			timeout: parseInt(process.env.SESSION_VERIFY_TIMEOUT, 10),
+		},
+	},
 };

@@ -1,0 +1,1464 @@
+{
+	"info": {
+		"_postman_id": "891048eb-7836-4da2-9bf1-e75324795006",
+		"name": "Almond",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Profile",
+			"item": [
+				{
+					"name": "Single user",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base-url}}/api/people/5e53fb9cbbb697ce4541331b",
+							"host": [
+								"{{base-url}}"
+							],
+							"path": [
+								"api",
+								"people",
+								"5e53fb9cbbb697ce4541331b"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change user role",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"role\": \"5e555801465ca301b1143b90\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base-url}}/people/5fc210df769db654dae9905e",
+							"host": [
+								"{{base-url}}"
+							],
+							"path": [
+								"people",
+								"5fc210df769db654dae9905e"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "My profile",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base-url}}/api/me",
+							"host": [
+								"{{base-url}}"
+							],
+							"path": [
+								"api",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Fetch all users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base-url}}/people",
+							"host": [
+								"{{base-url}}"
+							],
+							"path": [
+								"people"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Device",
+			"item": [
+				{
+					"name": "Pump",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"enabled\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base-url}}/pump",
+							"host": [
+								"{{base-url}}"
+							],
+							"path": [
+								"pump"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create new device",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Token eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyZGF0YSI6eyJpZCI6Ii1MaEdZbzllXzJwTlVKQ3JpcEVIIiwiZW1haWwiOiJtYXNoYUBtYXNoYS5jb20iLCJ1c2VybmFtZSI6Im1hc2hhIiwiaW1hZ2UiOiJodHRwczovL3Jlcy5jbG91ZGluYXJ5LmNvbS9tYXNoYWZyYW5jaXMvaW1hZ2UvdXBsb2FkL3YxNTUyNjQxNjIwL2thcmk0bWUvbmFuLmpwZyAiLCJmaXJzdF9uYW1lIjoiIiwibGFzdF9uYW1lIjoiIiwicm9sZV9pZCI6Ii1MZ3BZYlktcHVDemxVblk2c1IwIn0sImlhdCI6MTU2MDQ0MTU0NSwibmJmIjoxNTYwNDQxMjQ1LCJleHAiOjE1NjEwNDYzNDV9.e6iCOylngVk8Uxf4qLJZPBQ-4ZilkMR1nDJoaSebMzY",
+								"disabled": true
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": \"DEVICE\"\n}",
+							"options": {
+								"raw": {}
+							}
+						},
+						"url": {
+							"raw": "{{base-url}}/devices",
+							"host": [
+								"{{base-url}}"
+							],
+							"path": [
+								"devices"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verify device",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Token eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyZGF0YSI6eyJpZCI6Ii1MaEdZbzllXzJwTlVKQ3JpcEVIIiwiZW1haWwiOiJtYXNoYUBtYXNoYS5jb20iLCJ1c2VybmFtZSI6Im1hc2hhIiwiaW1hZ2UiOiJodHRwczovL3Jlcy5jbG91ZGluYXJ5LmNvbS9tYXNoYWZyYW5jaXMvaW1hZ2UvdXBsb2FkL3YxNTUyNjQxNjIwL2thcmk0bWUvbmFuLmpwZyAiLCJmaXJzdF9uYW1lIjoiIiwibGFzdF9uYW1lIjoiIiwicm9sZV9pZCI6Ii1MZ3BZYlktcHVDemxVblk2c1IwIn0sImlhdCI6MTU2MDQ0MTU0NSwibmJmIjoxNTYwNDQxMjQ1LCJleHAiOjE1NjEwNDYzNDV9.e6iCOylngVk8Uxf4qLJZPBQ-4ZilkMR1nDJoaSebMzY",
+								"disabled": true
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": \"ABC123\"\n}",
+							"options": {
+								"raw": {}
+							}
+						},
+						"url": {
+							"raw": "{{base-url}}/api/my-device",
+							"host": [
+								"{{base-url}}"
+							],
+							"path": [
+								"api",
+								"my-device"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all devices",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base-url}}/devices",
+							"host": [
+								"{{base-url}}"
+							],
+							"path": [
+								"devices"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "7014298a-fef6-4841-bb9a-ef5791e3de1c",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "bdfa67f3-bb39-4baa-bfc3-ec53bee2a686",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Schedules",
+			"item": [
+				{
+					"name": "Create new schedule",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyZGF0YSI6eyJpZCI6Ii1MaEdZbzllXzJwTlVKQ3JpcEVIIiwiZW1haWwiOiJtYXNoYUBtYXNoYS5jb20iLCJ1c2VybmFtZSI6Im1hc2hhIiwiaW1hZ2UiOiJodHRwczovL3Jlcy5jbG91ZGluYXJ5LmNvbS9tYXNoYWZyYW5jaXMvaW1hZ2UvdXBsb2FkL3YxNTUyNjQxNjIwL2thcmk0bWUvbmFuLmpwZyAiLCJmaXJzdF9uYW1lIjoiIiwibGFzdF9uYW1lIjoiIiwicm9sZV9pZCI6Ii1MZ3BZYlktcHVDemxVblk2c1IwIn0sImlhdCI6MTU2MDQ0MTU0NSwibmJmIjoxNTYwNDQxMjQ1LCJleHAiOjE1NjEwNDYzNDV9.e6iCOylngVk8Uxf4qLJZPBQ-4ZilkMR1nDJoaSebMzY",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"schedule\": \"2019-07-02T07:54:31.199486+00:00\",\n\t\"deviceId\": \"5e4a57ffa04a6d8445b5885b\"\n}\n",
+							"options": {
+								"raw": {}
+							}
+						},
+						"url": {
+							"raw": "{{base-url}}/schedules",
+							"host": [
+								"{{base-url}}"
+							],
+							"path": [
+								"schedules"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit a schedule",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Token eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyZGF0YSI6eyJpZCI6Ii1MaEdZbzllXzJwTlVKQ3JpcEVIIiwiZW1haWwiOiJtYXNoYUBtYXNoYS5jb20iLCJ1c2VybmFtZSI6Im1hc2hhIiwiaW1hZ2UiOiJodHRwczovL3Jlcy5jbG91ZGluYXJ5LmNvbS9tYXNoYWZyYW5jaXMvaW1hZ2UvdXBsb2FkL3YxNTUyNjQxNjIwL2thcmk0bWUvbmFuLmpwZyAiLCJmaXJzdF9uYW1lIjoiIiwibGFzdF9uYW1lIjoiIiwicm9sZV9pZCI6Ii1MZ3BZYlktcHVDemxVblk2c1IwIn0sImlhdCI6MTU2MDQ0MTU0NSwibmJmIjoxNTYwNDQxMjQ1LCJleHAiOjE1NjEwNDYzNDV9.e6iCOylngVk8Uxf4qLJZPBQ-4ZilkMR1nDJoaSebMzY"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"schedule\": \"2060-06-05T03:54:31.199486+00:00\",\n\t\"enabled\": true\n}"
+						},
+						"url": {
+							"raw": "{{base-url}}/api/schedules/5dbf296db2c53f8594a887c4",
+							"host": [
+								"{{base-url}}"
+							],
+							"path": [
+								"api",
+								"schedules",
+								"5dbf296db2c53f8594a887c4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Toggle override pump",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Token eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyZGF0YSI6eyJpZCI6Ii1MaEdZbzllXzJwTlVKQ3JpcEVIIiwiZW1haWwiOiJtYXNoYUBtYXNoYS5jb20iLCJ1c2VybmFtZSI6Im1hc2hhIiwiaW1hZ2UiOiJodHRwczovL3Jlcy5jbG91ZGluYXJ5LmNvbS9tYXNoYWZyYW5jaXMvaW1hZ2UvdXBsb2FkL3YxNTUyNjQxNjIwL2thcmk0bWUvbmFuLmpwZyAiLCJmaXJzdF9uYW1lIjoiIiwibGFzdF9uYW1lIjoiIiwicm9sZV9pZCI6Ii1MZ3BZYlktcHVDemxVblk2c1IwIn0sImlhdCI6MTU2MDQ0MTU0NSwibmJmIjoxNTYwNDQxMjQ1LCJleHAiOjE1NjEwNDYzNDV9.e6iCOylngVk8Uxf4qLJZPBQ-4ZilkMR1nDJoaSebMzY"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"enabled\": false\n}"
+						},
+						"url": {
+							"raw": "{{base-url}}/api/pump",
+							"host": [
+								"{{base-url}}"
+							],
+							"path": [
+								"api",
+								"pump"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all schedules",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyZGF0YSI6eyJpZCI6Ii1MaGE5RmREYTJBOWd2Znl1cF9oIiwiZW1haWwiOiJtYXNoYUBtYXNoYS5jb20iLCJ1c2VybmFtZSI6Im1hc2hhIiwiaW1hZ2UiOiJodHRwczovL3Jlcy5jbG91ZGluYXJ5LmNvbS9tYXNoYWZyYW5jaXMvaW1hZ2UvdXBsb2FkL3YxNTUyNjQxNjIwL2thcmk0bWUvbmFuLmpwZyIsImZpcnN0X25hbWUiOiIiLCJsYXN0X25hbWUiOiIiLCJyb2xlX2lkIjoiLUxncFliWS1wdUN6bFVuWTZzUjAifSwiaWF0IjoxNTYwNzg3MTQ0LCJuYmYiOjE1NjA3ODY4NDQsImV4cCI6MTU2MTM5MTk0NH0.yZcVq8iEFJJjui9v9KKkQpT0MfUO6K0pGDwbFwxgq6g",
+								"disabled": true
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base-url}}/schedules?device=5e4a57ffa04a6d8445b5885b",
+							"host": [
+								"{{base-url}}"
+							],
+							"path": [
+								"schedules"
+							],
+							"query": [
+								{
+									"key": "user_id",
+									"value": "-Lha0iDsOhkNfUT8NblO",
+									"disabled": true
+								},
+								{
+									"key": "device",
+									"value": "5e4a57ffa04a6d8445b5885b"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get a specific schedule",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyZGF0YSI6eyJpZCI6Ii1MaGE5RmREYTJBOWd2Znl1cF9oIiwiZW1haWwiOiJtYXNoYUBtYXNoYS5jb20iLCJ1c2VybmFtZSI6Im1hc2hhIiwiaW1hZ2UiOiJodHRwczovL3Jlcy5jbG91ZGluYXJ5LmNvbS9tYXNoYWZyYW5jaXMvaW1hZ2UvdXBsb2FkL3YxNTUyNjQxNjIwL2thcmk0bWUvbmFuLmpwZyIsImZpcnN0X25hbWUiOiIiLCJsYXN0X25hbWUiOiIiLCJyb2xlX2lkIjoiLUxncFliWS1wdUN6bFVuWTZzUjAifSwiaWF0IjoxNTYwNzg3MTQ0LCJuYmYiOjE1NjA3ODY4NDQsImV4cCI6MTU2MTM5MTk0NH0.yZcVq8iEFJJjui9v9KKkQpT0MfUO6K0pGDwbFwxgq6g",
+								"disabled": true
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{base-url}}/api/schedules/5e53ed48042427b6ff09aff2",
+							"host": [
+								"{{base-url}}"
+							],
+							"path": [
+								"api",
+								"schedules",
+								"5e53ed48042427b6ff09aff2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete a specific schedule",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Token eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyZGF0YSI6eyJpZCI6Ii1MaVNkdjRycGtTck9wYWo3Xy1FIiwiZW1haWwiOiJtYXNoYUBtYXNoYS5jb20iLCJ1c2VybmFtZSI6Im1hc2hhIiwiaW1hZ2UiOiJodHRwczovL3Jlcy5jbG91ZGluYXJ5LmNvbS9tYXNoYWZyYW5jaXMvaW1hZ2UvdXBsb2FkL3YxNTUyNjQxNjIwL2thcmk0bWUvbmFuLmpwZyIsImZpcnN0X25hbWUiOiIiLCJsYXN0X25hbWUiOiIiLCJyb2xlX2lkIjoiLUxncFliWS1wdUN6bFVuWTZzUjAifSwiaWF0IjoxNTYyMDc1MzgzLCJuYmYiOjE1NjIwNzUwODMsImV4cCI6MTU2MjY4MDE4M30.UW7UD-fY3GmufGKSrCYZImazUlXsw6rlOkWM-aw2CCo",
+								"disabled": true
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base-url}}/api/schedules/5de9ff850279533bf5c9ad28",
+							"host": [
+								"{{base-url}}"
+							],
+							"path": [
+								"api",
+								"schedules",
+								"5de9ff850279533bf5c9ad28"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Role",
+			"item": [
+				{
+					"name": "Create new role",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Tester\",\n    \"description\": \"This is a test role\",\n    \"resourceAccessLevels\": [\n        {\n            \"resourceId\": \"5e16d15fffb6541b5b909d3e\",\n            \"name\": \"Requests\",\n            \"permissionIds\": [\n                \"5e439ed9fd05da507ca0161c\",\n                \"5e44f86b2eeeee195403efcb\"\n            ]\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base-url}}/api/roles",
+							"host": [
+								"{{base-url}}"
+							],
+							"path": [
+								"api",
+								"roles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit existing role",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"role\": {\n        \"title\": \"Tester\",\n        \"description\": \"This is a test role\",\n        \"resourceAccessLevels\": [\n            {\n                \"resourceId\": \"5e16d15fffb6541b5b909d3e\",\n                \"name\": \"Requests\",\n                \"permissionIds\": [\n                    \"5e439ed9fd05da507ca0161c\",\n                    \"5e44f86b2eeeee195403efcb\"\n                ]\n            }\n        ]\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base-url}}/api/roles",
+							"host": [
+								"{{base-url}}"
+							],
+							"path": [
+								"api",
+								"roles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all roles",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyZGF0YSI6eyJpZCI6Ii1MaGE5RmREYTJBOWd2Znl1cF9oIiwiZW1haWwiOiJtYXNoYUBtYXNoYS5jb20iLCJ1c2VybmFtZSI6Im1hc2hhIiwiaW1hZ2UiOiJodHRwczovL3Jlcy5jbG91ZGluYXJ5LmNvbS9tYXNoYWZyYW5jaXMvaW1hZ2UvdXBsb2FkL3YxNTUyNjQxNjIwL2thcmk0bWUvbmFuLmpwZyIsImZpcnN0X25hbWUiOiIiLCJsYXN0X25hbWUiOiIiLCJyb2xlX2lkIjoiLUxncFliWS1wdUN6bFVuWTZzUjAifSwiaWF0IjoxNTYwNzg3MTQ0LCJuYmYiOjE1NjA3ODY4NDQsImV4cCI6MTU2MTM5MTk0NH0.yZcVq8iEFJJjui9v9KKkQpT0MfUO6K0pGDwbFwxgq6g",
+								"disabled": true
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base-url}}/api/roles?include=permissions&include=resources",
+							"host": [
+								"{{base-url}}"
+							],
+							"path": [
+								"api",
+								"roles"
+							],
+							"query": [
+								{
+									"key": "include",
+									"value": "permissions"
+								},
+								{
+									"key": "include",
+									"value": "resources"
+								},
+								{
+									"key": "user_id",
+									"value": "-Lha0iDsOhkNfUT8NblO",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete a specific role",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Token eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyZGF0YSI6eyJpZCI6Ii1MaVNkdjRycGtTck9wYWo3Xy1FIiwiZW1haWwiOiJtYXNoYUBtYXNoYS5jb20iLCJ1c2VybmFtZSI6Im1hc2hhIiwiaW1hZ2UiOiJodHRwczovL3Jlcy5jbG91ZGluYXJ5LmNvbS9tYXNoYWZyYW5jaXMvaW1hZ2UvdXBsb2FkL3YxNTUyNjQxNjIwL2thcmk0bWUvbmFuLmpwZyIsImZpcnN0X25hbWUiOiIiLCJsYXN0X25hbWUiOiIiLCJyb2xlX2lkIjoiLUxncFliWS1wdUN6bFVuWTZzUjAifSwiaWF0IjoxNTYyMDc1MzgzLCJuYmYiOjE1NjIwNzUwODMsImV4cCI6MTU2MjY4MDE4M30.UW7UD-fY3GmufGKSrCYZImazUlXsw6rlOkWM-aw2CCo",
+								"disabled": true
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base-url}}/api/roles/5e4aa0efd9ad8c659abb6086",
+							"host": [
+								"{{base-url}}"
+							],
+							"path": [
+								"api",
+								"roles",
+								"5e4aa0efd9ad8c659abb6086"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Account",
+			"item": [
+				{
+					"name": "Register a new user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "0ffa9cf1-e3f9-4fc5-b574-81b90d01ac4d",
+								"exec": [
+									"var res = JSON.parse(responseBody)",
+									"if(res) {",
+									"    pm.environment.set(\"verificationToken\",res.data.user.verificationToken)",
+									"    pm.environment.set(\"email\",res.data.user.email)",
+									"}",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Test\",\n    \"email\": \"test@test.com\",\n    \"password\": \"Test12#\"\n}",
+							"options": {
+								"raw": {}
+							}
+						},
+						"url": {
+							"raw": "{{base-url}}/auth/register",
+							"host": [
+								"{{base-url}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verify email",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "5150b4b5-699c-4a6e-97bf-88fe870ffc2d",
+								"exec": [
+									"pm.test(\"Status test\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base-url}}/auth/verification?token={{verificationToken}}&email={{email}}",
+							"host": [
+								"{{base-url}}"
+							],
+							"path": [
+								"auth",
+								"verification"
+							],
+							"query": [
+								{
+									"key": "token",
+									"value": "{{verificationToken}}"
+								},
+								{
+									"key": "email",
+									"value": "{{email}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login a user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "5b39f64e-0275-4aa6-ae63-5a681139493e",
+								"exec": [
+									"var res = JSON.parse(responseBody)",
+									"if(res) {",
+									"    pm.environment.set(\"token\",res.data.token.accessToken)",
+									"    pm.environment.set(\"user_id\",res.data.user._id)",
+									"}",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\": \"test@test.com\",\n\t\"password\": \"Test12#\"\n}\n",
+							"options": {
+								"raw": {}
+							}
+						},
+						"url": {
+							"raw": "{{base-url}}/auth/login",
+							"host": [
+								"{{base-url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reset password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "5b39f64e-0275-4aa6-ae63-5a681139493e",
+								"exec": [
+									"var res = JSON.parse(responseBody)",
+									"pm.environment.set(\"token\",res.data.token)"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "",
+								"variables": ""
+							},
+							"options": {
+								"graphql": {}
+							}
+						},
+						"url": {
+							"raw": "{{base-url}}/api/users/login",
+							"host": [
+								"{{base-url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Google authentication",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"idToken\":\"eyJhbGciOiJSUzI1NiIsImtpZCI6ImEwYjQwY2NjYmQ0OWQxNmVkMjg2MGRiNzIyNmQ3NDZiNmZhZmRmYzAiLCJ0eXAiOiJKV1QifQ.eyJuYW1lIjoiRnJhbmNpcyBNYXNoYSIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS0vQUF1RTdtRHduNmRzX0V4TUo0VDUyT25HVTU0S1gxYzF6alFrM3hob0JPUjJWRzAiLCJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vYWxtb25kLXJlIiwiYXVkIjoiYWxtb25kLXJlIiwiYXV0aF90aW1lIjoxNTcxNzM1NTEzLCJ1c2VyX2lkIjoiMXh0N08xV2JGdWN4R2h3WGNHREM4RE1DYndCMyIsInN1YiI6IjF4dDdPMVdiRnVjeEdod1hjR0RDOERNQ2J3QjMiLCJpYXQiOjE1NzE5MzYxNjgsImV4cCI6MTU3MTkzOTc2OCwiZW1haWwiOiJmcmFuY2lzbWFzaGE5NkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiZmlyZWJhc2UiOnsiaWRlbnRpdGllcyI6eyJnb29nbGUuY29tIjpbIjEwODUzOTY1MjQ0NzU0MTYyNDc4OCJdLCJlbWFpbCI6WyJmcmFuY2lzbWFzaGE5NkBnbWFpbC5jb20iXX0sInNpZ25faW5fcHJvdmlkZXIiOiJnb29nbGUuY29tIn19.B6mD4_m1brj0NtRbT6TxLUloJkJkRI67T3nAn47QQv8MCvUwPbpSbHgNbHor0qwmqyy9x_Hm81ZGc_2IrBee-pcCryBq9Bz4idT17J5FW7A76XKFZ002mfnRnAV916vBHYWn7lpFA6z0QconJdTU0ZagSZLQEmV_9lChI6RZkozvrKg5upSwL99N0zgVd5Z75PmG0VvWSmMFLcsQsE7aVi8qhClaE_vtfYPQr89bgoKN04nR2P4kp4vN7SvYfSlG2mtkqR54suiVNUcVxQ55tKFEPCIzGjgnG1vwNrAai7RH45EZQVKrF6SkTvThC1kURFiltoduKRz0Rrr7UNv9uw\"\n}\n",
+							"options": {
+								"raw": {}
+							}
+						},
+						"url": {
+							"raw": "{{base-url}}/api/auth/social/google",
+							"host": [
+								"{{base-url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"social",
+								"google"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Facebook authentication",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \n\t\"provider\":\"facebook\",\n\t\"access_token\":\"\" \n}",
+							"options": {
+								"raw": {}
+							}
+						},
+						"url": {
+							"raw": "{{base-url}}/api/auth/social",
+							"host": [
+								"{{base-url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"social"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Grafana",
+			"item": [
+				{
+					"name": "API Tokens",
+					"item": [
+						{
+							"name": "Get All API Keys",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "1b1e3366-3078-49a9-9232-e5917a458899",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{grafana-url}}/auth/keys",
+									"host": [
+										"{{grafana-url}}"
+									],
+									"path": [
+										"auth",
+										"keys"
+									],
+									"query": [
+										{
+											"key": "includeExpired",
+											"value": "true",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create API Key",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "81c4825d-0524-4dee-8404-df2d819429d1",
+										"exec": [
+											"pm.test(\"Status test\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Francis Masha\",\n    \"role\": \"Editor\",\n    \"secondsToLive\": 864000\n}",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{grafana-url}}/auth/keys",
+									"host": [
+										"{{grafana-url}}"
+									],
+									"path": [
+										"auth",
+										"keys"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete API Key",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "16d2e0ac-a6cd-4f4c-b1a8-33047febda87",
+										"exec": [
+											"pm.test(\"Status test\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{grafana-url}}/auth/keys/2",
+									"host": [
+										"{{grafana-url}}"
+									],
+									"path": [
+										"auth",
+										"keys",
+										"2"
+									],
+									"query": [
+										{
+											"key": "",
+											"value": null,
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Organization",
+					"item": [
+						{
+							"name": "Get current organization",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{grafana-url}}/org",
+									"host": [
+										"{{grafana-url}}"
+									],
+									"path": [
+										"org"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get all users within current organization",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{grafana-url}}/org/users",
+									"host": [
+										"{{grafana-url}}"
+									],
+									"path": [
+										"org",
+										"users"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Updates the given user",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"role\": \"Viewer\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{grafana-url}}/org/users/1",
+									"host": [
+										"{{grafana-url}}"
+									],
+									"path": [
+										"org",
+										"users",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get all users within the current organization (lookup)",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{grafana-url}}/org/users/lookup",
+									"host": [
+										"{{grafana-url}}"
+									],
+									"path": [
+										"org",
+										"users",
+										"lookup"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete user in current organization",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{grafana-url}}/org/users/1",
+									"host": [
+										"{{grafana-url}}"
+									],
+									"path": [
+										"org",
+										"users",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Data Source",
+					"item": [
+						{
+							"name": "Get all data sources",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{grafana-url}}/datasources",
+									"host": [
+										"{{grafana-url}}"
+									],
+									"path": [
+										"datasources"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get a single data source by Id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{grafana-url}}/datasources/2",
+									"host": [
+										"{{grafana-url}}"
+									],
+									"path": [
+										"datasources",
+										"2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get a single data source by Name",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{grafana-url}}/datasources/Almond-InfluxDB",
+									"host": [
+										"{{grafana-url}}"
+									],
+									"path": [
+										"datasources",
+										"Almond-InfluxDB"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create a data source",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\":\"test_datasource\",\n  \"type\":\"graphite\",\n  \"url\":\"http://mydatasource.com\",\n  \"access\":\"proxy\",\n  \"basicAuth\":false\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{grafana-url}}/datasources",
+									"host": [
+										"{{grafana-url}}"
+									],
+									"path": [
+										"datasources"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update an existing data source",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\": 3,\n    \"orgId\": 1,\n    \"name\": \"test_datasource\",\n    \"type\": \"graphite\",\n    \"access\": \"proxy\",\n    \"url\": \"http://mydatasource.com\",\n    \"password\": \"\",\n    \"user\": \"\",\n    \"database\": \"\",\n    \"basicAuth\": true,\n    \"basicAuthUser\": \"basicuser\",\n    \"secureJsonData\": {\n        \"basicAuthPassword\": \"basicpassword\"\n    },\n    \"isDefault\": false,\n    \"jsonData\": null\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{grafana-url}}/datasources/3",
+									"host": [
+										"{{grafana-url}}"
+									],
+									"path": [
+										"datasources",
+										"3"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete an existing data source by id",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{grafana-url}}/datasources/3",
+									"host": [
+										"{{grafana-url}}"
+									],
+									"path": [
+										"datasources",
+										"3"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Dashboard",
+					"item": [
+						{
+							"name": "Create / Update dashboard",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"dashboard\": {\n        \"id\": null,\n        \"uid\": null,\n        \"title\": \"Production Overview\",\n        \"tags\": [\n            \"templated\"\n        ],\n        \"timezone\": \"browser\",\n        \"schemaVersion\": 16,\n        \"version\": 0,\n        \"refresh\": \"25s\"\n    },\n    \"folderId\": 0,\n    \"overwrite\": false\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{grafana-url}}/dashboards/db",
+									"host": [
+										"{{grafana-url}}"
+									],
+									"path": [
+										"dashboards",
+										"db"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get dashboard by uid",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{grafana-url}}/dashboards/uid/rWcK_A2Mk",
+									"host": [
+										"{{grafana-url}}"
+									],
+									"path": [
+										"dashboards",
+										"uid",
+										"rWcK_A2Mk"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get dashboard by uid Copy",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{grafana-url}}/datasources/proxy/2/query?db=almond_db&q=SELECT mean(\"temperature\") FROM \"data\" WHERE time >= now() - 1d GROUP BY time(5m) fill(null)&epoch=ms",
+									"host": [
+										"{{grafana-url}}"
+									],
+									"path": [
+										"datasources",
+										"proxy",
+										"2",
+										"query"
+									],
+									"query": [
+										{
+											"key": "db",
+											"value": "almond_db"
+										},
+										{
+											"key": "q",
+											"value": "SELECT mean(\"temperature\") FROM \"data\" WHERE time >= now() - 1d GROUP BY time(5m) fill(null)"
+										},
+										{
+											"key": "epoch",
+											"value": "ms"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{grafana-token}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "288a67e6-ff1e-4f05-8dd6-ab87b5d9da63",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "bbd0c591-4fd4-481a-b519-07c59cff13c8",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "InfluxDB Server",
+			"item": [
+				{
+					"name": "Get data",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{influx-server-url}}/air-temperature?q=time >= '2020-10-31T21:00:00.000Z' and time <= '2020-11-30T20:59:59.999Z'",
+							"host": [
+								"{{influx-server-url}}"
+							],
+							"path": [
+								"air-temperature"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "time >= '2020-10-31T21:00:00.000Z' and time <= '2020-11-30T20:59:59.999Z'"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "a6d10aed-8e43-4255-a89c-eaf44baf8173",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "9ee8b65d-e09b-49b0-b36a-6fefb3ece482",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"protocolProfileBehavior": {}
+}

@@ -16,6 +16,8 @@ services:
       - MONGO_HOSTNAME=db
     ports:
       - '8080:8080'
+    expose:
+      - 8080
     depends_on:
       - db
       - redis
@@ -25,7 +27,7 @@ services:
     tty: true
 
   db:
-    image: mongo:latest
+    image: mongo:4.4.2-bionic
     container_name: db
     restart: always
     env_file: .env

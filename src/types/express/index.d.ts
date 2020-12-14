@@ -1,7 +1,7 @@
 import { Document, Model } from 'mongoose';
-import { IPermissions } from '../../interfaces/IPermissions';
-import { IRole } from '../../interfaces/IRole';
-import { IUser } from '../../interfaces/IUser';
+import { IPermissions } from '../../app/interfaces/IPermissions';
+import { IRole } from '../../app/interfaces/IRole';
+import { IUser } from '../../app/interfaces/IUser';
 
 declare global {
 	namespace Express {

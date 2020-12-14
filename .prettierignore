@@ -9,4 +9,7 @@
 \.ignore
 \.prettierignore
 \.reports
+src/data
+src/assets/mail
+src/certificates
 node_modules
