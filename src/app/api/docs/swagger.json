@@ -67,7 +67,7 @@
 	],
 	"schemes": ["http"],
 	"paths": {
-		"/auth/signup": {
+		"/auth/register": {
 			"post": {
 				"tags": ["auth"],
 				"summary": "Sign Up to Almond Hydroponics",
@@ -107,7 +107,7 @@
 				}
 			}
 		},
-		"/auth/signin": {
+		"/auth/login": {
 			"post": {
 				"tags": ["auth"],
 				"summary": "Sign in to Almond Hydroponics",

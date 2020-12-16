@@ -1,4 +1,4 @@
-import * as argon2 from 'argon2';
+import argon2 from 'argon2';
 import { randomBytes } from 'crypto';
 import * as Str from '@supercharge/strings';
 import jwt from 'jsonwebtoken';
