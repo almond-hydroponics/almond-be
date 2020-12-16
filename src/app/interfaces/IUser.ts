@@ -8,15 +8,9 @@ export interface IUser {
 	isVerified?: boolean;
 	googleId?: string;
 	verificationToken?: string;
-	roles?: Role[] | string[];
-	currentRole: string;
-	devices?: [
-		{
-			_id: string;
-			id: string;
-			verified: string;
-		},
-	];
+	roles?: Role[] | string[] | string;
+	currentRole?: string;
+	devices?: Device[];
 	activeDevice?: string;
 }
 
@@ -26,11 +20,17 @@ export interface IUserInputDTO {
 	password?: string;
 	photo?: string;
 	isVerified?: boolean;
-	roles?: Role[] | string[];
+	roles?: Role[] | string[] | string;
 	role?: string;
 }
 
 interface Role {
 	title?: string;
 	_id?: string;
+}
+
+interface Device {
+	_id: string;
+	id: string;
+	verified: string;
 }
