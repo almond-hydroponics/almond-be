@@ -1,6 +1,9 @@
 import passport from 'passport';
-import pLocal from 'passport-local';
-import pGoogle from 'passport-google-oauth2';
+import { Strategy as LocalStrategy } from 'passport-local';
+import {
+	Strategy as GoogleStrategy,
+	VerifyCallback,
+} from 'passport-google-oauth2';
 import { Container } from 'typedi';
 import { IUser } from '../app/interfaces/IUser';
 import { AppLogger } from '../app';
@@ -9,8 +12,6 @@ import { config } from './index';
 import { Request } from 'express';
 
 const logger = new AppLogger('Auth');
-const GoogleStrategy = pGoogle.Strategy;
-const LocalStrategy = pLocal.Strategy;
 
 passport.use(
 	new GoogleStrategy(
@@ -25,7 +26,7 @@ passport.use(
 			accessToken: string,
 			refreshToken: string,
 			profile,
-			done,
+			done: VerifyCallback,
 		) => {
 			try {
 				const authServerInstance = Container.get(AuthService);
@@ -49,7 +50,7 @@ passport.use(
 passport.use(
 	new LocalStrategy(
 		{ usernameField: 'email', passwordField: 'password' },
-		async (email: string, password: string, done) => {
+		async (email: string, password: string, done: VerifyCallback) => {
 			try {
 				const authServerInstance = Container.get(AuthService);
 				const user = await authServerInstance.SignIn(email, password);

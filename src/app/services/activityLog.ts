@@ -1,6 +1,7 @@
 import { Inject, Service } from 'typedi';
 import { IActivityLog, IActivityLogDto } from '../interfaces/IActivityLog';
 import { AppLogger } from '../app.logger';
+import { IUser } from '../interfaces/IUser';
 
 @Service()
 export default class ActivityLogService {
@@ -10,12 +11,12 @@ export default class ActivityLogService {
 
 	public async CreateActivityLog(
 		activityLogDto: IActivityLogDto,
-		user,
+		user: any,
 	): Promise<{
 		activityLog: IActivityLog;
 	}> {
 		try {
-			this.logger.log('Creating Activity Log...');
+			this.logger.log('[activityLog] Creating Activity Log');
 			const activityLogItem = {
 				...activityLogDto,
 				user: user._id,
@@ -29,7 +30,7 @@ export default class ActivityLogService {
 		}
 	}
 
-	public async GetActivityLogs(user) {
+	public async GetActivityLogs(user: IUser): Promise<IActivityLog[]> {
 		try {
 			return this.activityLogModel
 				.find({ user: { $eq: user._id } })

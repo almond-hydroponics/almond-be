@@ -1,8 +1,7 @@
+import Sniffer from 'sniffr';
+import geoIp from 'geoip-lite';
 import { IActivityLogDto } from '../../interfaces/IActivityLog';
 import { IActionTypes, IClientInfoDto } from '../../interfaces/IClientInfo';
-
-const geoIp = require('geoip-lite');
-const Sniffer = require('sniffr');
 
 // global
 let ip = '';
@@ -11,15 +10,13 @@ let browser = '';
 let location = '';
 
 const getClientInformation = function (request) {
-	let userAgent, sniffer, clientOs, clientLocation, ip;
-	userAgent = request.headers['user-agent'];
-	sniffer = new Sniffer();
+	const userAgent = request.headers['user-agent'];
+	const sniffer = new Sniffer();
 	sniffer.sniff(userAgent);
-	clientOs = sniffer.os;
+	const clientOs = sniffer.os;
 	browser = sniffer.browser;
-	// @ts-ignore
 	ip = request.clientIp;
-	clientLocation = geoIp.lookup(ip);
+	const clientLocation = geoIp.lookup(ip);
 	return <IClientInfoDto>{
 		ipAddress: ip,
 		ipLocation: clientLocation,

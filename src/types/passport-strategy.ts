@@ -4,14 +4,14 @@
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 // TypeScript Version: 2.3
 
-/// <reference types="passport"/>
+// <reference types="passport"/>
 
 /**
  * Using this module, one can easily implement a strategy using typescript by
  * inheriting the 'Strategy' class and reimplementing the 'authenticate' method.
  */
 
-/// <reference types="express" />
+// <reference types="express" />
 
 import passport from 'passport';
 import express from 'express';

@@ -7,11 +7,13 @@ import { IScheduleInputDTO } from '../../interfaces/ISchedule';
 import middlewares from '../middlewares';
 import CronJobManager from 'cron-job-manager';
 import ActivityLogService from '../../services/activityLog';
+import {
+	createScheduleActivityLogItem,
+	deleteScheduleActivityLogItem,
+} from '../middlewares/logActivity';
 
 const manager = new CronJobManager();
 const logger = new AppLogger('Schedule');
-
-const logActivity = require('../middlewares/logActivity');
 
 const {
 	isAuth,
@@ -24,7 +26,7 @@ const schedule = Router();
 
 const path = 'SCHEDULES';
 
-export default (app: Router) => {
+export default (app: Router): void => {
 	app.use('/', schedule);
 
 	/**
@@ -45,7 +47,7 @@ export default (app: Router) => {
 				const scheduleServiceInstance = Container.get(ScheduleService);
 				const schedules = await scheduleServiceInstance.GetSchedules(
 					user,
-					device,
+					device as string,
 				);
 
 				// set schedules data to redis
@@ -120,9 +122,7 @@ export default (app: Router) => {
 					// update activity log
 					const activityLogInstance = Container.get(ActivityLogService);
 					try {
-						const logActivityItems = logActivity.createScheduleActivityLogItem(
-							req,
-						);
+						const logActivityItems = createScheduleActivityLogItem(req);
 						await activityLogInstance.CreateActivityLog(logActivityItems, user);
 						activityLogInstance.GetActivityLogs(user).then((res) => {
 							schedule.activityHistory = res;
@@ -261,13 +261,13 @@ export default (app: Router) => {
 					id,
 					user,
 				);
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+				// @ts-expect-error
 				if (schedule.n > 0) {
 					// update activity log
 					const activityLogInstance = Container.get(ActivityLogService);
 					try {
-						const logActivityItems = logActivity.deleteScheduleActivityLogItem(
-							req,
-						);
+						const logActivityItems = deleteScheduleActivityLogItem(req);
 						await activityLogInstance.CreateActivityLog(logActivityItems, user);
 					} catch (e) {
 						logger.error('🔥 error Creating Activity Log : %o', e);

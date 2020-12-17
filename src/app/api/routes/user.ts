@@ -20,7 +20,7 @@ const user = Router();
 
 const path = 'USERS';
 
-export default (app: Router) => {
+export default (app: Router): void => {
 	app.use('/', user);
 
 	user.get(
@@ -29,7 +29,7 @@ export default (app: Router) => {
 		attachCurrentUser,
 		// getCache('ME'),
 		async (req: Request, res: Response, next: NextFunction) => {
-			logger.debug('Calling My Profile Details endpoint');
+			logger.debug('[me] Calling My Profile Details endpoint');
 			try {
 				const user = req.currentUser;
 				// set me data to redis
@@ -52,7 +52,7 @@ export default (app: Router) => {
 		attachCurrentUser,
 		checkRole('User'),
 		async (req: Request, res: Response, next: NextFunction) => {
-			logger.debug('Calling GetUserDetails endpoint');
+			logger.debug('[peopleId] Calling GetUserDetails endpoint');
 			try {
 				const {
 					params: { id },
@@ -79,7 +79,7 @@ export default (app: Router) => {
 		checkRole('Admin'),
 		getCache(path),
 		async (req: Request, res: Response, next: NextFunction) => {
-			logger.debug('Calling FetchingAllUsers endpoint');
+			logger.debug('[people] Calling FetchingAllUsers endpoint');
 			try {
 				const userService = Container.get(AuthService);
 				const users = await userService.GetUsers();
@@ -117,11 +117,7 @@ export default (app: Router) => {
 			}),
 		}),
 		async (req: Request, res: Response) => {
-			logger.debug(
-				`Calling PatchUserDetails endpoint with body: ${JSON.stringify(
-					req.body,
-				)}`,
-			);
+			logger.debug('[peopleId] Calling PatchUserDetails endpoint');
 			try {
 				const {
 					params: { id },
@@ -131,7 +127,6 @@ export default (app: Router) => {
 					id,
 					req.body as IUserInputDTO,
 				);
-				logger.debug(JSON.stringify(user.currentRole));
 				return res.status(200).send({
 					success: true,
 					message: 'User role has been updated successfully',

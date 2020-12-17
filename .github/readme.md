@@ -2,11 +2,13 @@
 
 ## almond-be
 
+[![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/almond-hydroponics/almond-be)
+![CI](https://github.com/almond-hydroponics/almond-be/workflows/CI/badge.svg)
+[![CircleCI](https://circleci.com/gh/almond-hydroponics/almond-be.svg?style=svg)](https://circleci.com/gh/almond-hydroponics/almond-be)
 [![Maintainability](https://api.codeclimate.com/v1/badges/0bf9c930aba3128bd6ae/maintainability)](https://codeclimate.com/github/almond-hydroponics/almond-be/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/0bf9c930aba3128bd6ae/test_coverage)](https://codeclimate.com/github/almond-hydroponics/almond-be/test_coverage)
 [![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/almond-hydroponics/almond-be.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/almond-hydroponics/almond-be/context:javascript)
 [![Total alerts](https://img.shields.io/lgtm/alerts/g/almond-hydroponics/almond-be.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/almond-hydroponics/almond-be/alerts/)
-<img src="https://img.shields.io/badge/version-0.0.1-blue.svg?cacheSeconds=2592000" />
 
 </div>
 
@@ -57,6 +59,48 @@ Run `yarn start:dev` for a dev server. Navigate to `http://localhost:8080/`. The
 ### Build
 
 Run `yarn build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+
+### Online one-click setup
+
+You can use Gitpod for the one click online setup. With a single click it will launch a workspace and automatically:
+
+- Clone the `almond-be` repo.
+- Install the dependencies.
+- Run `cp .env.example .env`.
+- Run `yarn install & yarn build`.
+- Run `yarn start`.
+
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/from-referrer/)
+
+### API Validation
+
+By using celebrate the req.body schema becomes clary defined at route level, so even frontend devs can read what an API endpoint expects without need to writting a documentation that can get outdated quickly.
+
+```js
+route.post(
+	'/signup',
+	celebrate({
+		body: Joi.object({
+			name: Joi.string().required(),
+			email: Joi.string().required(),
+			password: Joi.string().required(),
+		}),
+	}),
+	controller.signup,
+);
+```
+
+**Example error**
+
+```json
+{
+	"errors": {
+		"message": "child \"email\" fails because [\"email\" is required]"
+	}
+}
+```
+
+[Read more about celebrate here](https://github.com/arb/celebrate) and [the Joi validation API](https://github.com/hapijs/joi/blob/v15.0.1/API.md)
 
 ## FAQ
 

@@ -1,0 +1,94 @@
+version: '2'
+checks:
+  argument-count:
+    enabled: true
+    config:
+      threshold: 5
+
+  complex-logic:
+    enabled: true
+    config:
+      threshold: 5
+
+  file-lines:
+    enabled: true
+    config:
+      threshold: 400
+
+  method-complexity:
+    enabled: true
+    config:
+      threshold: 8
+
+  method-count:
+    enabled: true
+    config:
+      threshold: 20
+
+  method-lines:
+    enabled: true
+    config:
+      threshold: 60
+
+  nested-control-flow:
+    enabled: true
+    config:
+      threshold: 4
+
+  return-statements:
+    enabled: true
+    config:
+      threshold: 4
+
+  similar-code:
+    enabled: true
+    threshold: 75
+
+  identical-code:
+    enabled: true
+    threshold: 75
+
+plugins:
+  duplication:
+    enabled: true
+    config:
+      languages:
+        javascript:
+          mass_threshold: 75
+        typescript:
+          mass_threshold: 75
+
+exclude_patterns:
+  - 'config/'
+  - 'db/'
+  - 'dist/'
+  - 'features/'
+  - '**/node_modules/'
+  - 'script/'
+  - '**/spec/'
+  - '**/test/'
+  - '**/tests/'
+  - '**/vendor/'
+  - '**/*.d.ts'
+  - '**/vendor/'
+  - '**/*_test.go'
+  - '**/*.d.ts'
+  - '**/*.test.tsx'
+  - '**/*.test.ts'
+  - '**/*.*test*.*'
+  - '**/__test*__/'
+  - '.build/'
+  - '.cache/'
+  - '.env'
+  - '.eslintrc.js'
+  - '.github/'
+  - '.ignore/'
+  - '.reports/'
+  - '.vscode/'
+  - 'cypress/'
+  - 'data/'
+  - 'src/.generated/'
+  - 'src/assets/'
+  - 'static/'
+  - 'stylelint.config.js'
+  - 'tools'

@@ -2,22 +2,22 @@ import { Inject, Service } from 'typedi';
 import { IDevice, IDeviceInputDTO } from '../interfaces/IDevice';
 import { IUser } from '../interfaces/IUser';
 import { AppLogger } from '../app.logger';
+import { DeepPartial } from '../_helpers/database';
 
 @Service()
 export default class DeviceService {
 	private logger = new AppLogger(DeviceService.name);
 
 	constructor(
-		@Inject('deviceModel') private deviceModel,
+		@Inject('deviceModel') private deviceModel: Models.DeviceModel,
 		@Inject('userModel') private userModel: Models.UserModel,
 	) {}
 
 	public async AddDevice(
 		deviceInputDTO: IDeviceInputDTO,
-		user: IUser,
-	): Promise<{ device: IDevice }> {
+	): Promise<{ device: DeepPartial<IDevice> }> {
 		try {
-			this.logger.debug('Adding a new device into database');
+			this.logger.debug('[addDevice] Adding a new device into database');
 			const deviceItem = {
 				...deviceInputDTO,
 			};
@@ -33,18 +33,20 @@ export default class DeviceService {
 	public async UpdateDevice(
 		deviceInputDTO: IDeviceInputDTO,
 		user: IUser,
-	): Promise<{ device: IDevice }> {
+	): Promise<{ device: DeepPartial<IDevice> }> {
 		try {
-			this.logger.debug('Verifying device for the user');
+			this.logger.debug('[updateDevice] Verifying device for the user');
 			const deviceItem = {
 				...deviceInputDTO,
 				user: user._id,
 				verified: true,
 			};
 
-			return await this.deviceModel
+			const device = await this.deviceModel
 				.findOneAndUpdate({ id: deviceItem.id }, deviceItem, { new: true })
 				.populate({ path: 'user' });
+
+			return { device };
 		} catch (e) {
 			this.logger.error(e.message, e.stack);
 			throw e;
@@ -54,9 +56,9 @@ export default class DeviceService {
 	public async UserAddDevice(
 		_id: string,
 		user: IUser,
-	): Promise<{ device: { _id: string; id: string; verified: string } }> {
+	): Promise<{ device: DeepPartial<IDevice> }> {
 		try {
-			this.logger.debug('Verifying user device in database');
+			this.logger.debug('[userAddDevice] Verifying user device in database');
 			const deviceExists = await this.GetDeviceById(_id);
 
 			if (deviceExists) {
@@ -66,6 +68,7 @@ export default class DeviceService {
 			const userRecord: IUser = await this.userModel
 				.findByIdAndUpdate(
 					user._id,
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 					// @ts-expect-error
 					{ $push: { devices: { $each: [_id] } } },
 					{ new: true },
@@ -87,9 +90,9 @@ export default class DeviceService {
 		}
 	}
 
-	public async GetDeviceById(deviceId: string) {
+	public async GetDeviceById(deviceId: string): Promise<DeepPartial<IDevice>> {
 		try {
-			return await this.deviceModel
+			return this.deviceModel
 				.findOne({ id: { $eq: deviceId } })
 				.populate({ path: 'user' });
 		} catch (e) {
@@ -98,7 +101,7 @@ export default class DeviceService {
 		}
 	}
 
-	public async GetDeviceByUser(userId: string) {
+	public async GetDeviceByUser(userId: string): Promise<DeepPartial<IDevice>> {
 		try {
 			return await this.deviceModel
 				.findOne({ user: { $eq: userId } })
@@ -109,7 +112,7 @@ export default class DeviceService {
 		}
 	}
 
-	public async GetAllDevices() {
+	public async GetAllDevices(): Promise<IDevice[]> {
 		try {
 			return this.deviceModel.find().populate({ path: 'user', select: 'name' });
 		} catch (e) {
@@ -118,31 +121,36 @@ export default class DeviceService {
 		}
 	}
 
-	public async UpdateCurrentDevice(id: string, user: IUser) {
+	public async UpdateCurrentDevice(
+		id: string,
+		user: IUser,
+	): Promise<{ selectedDevice: DeepPartial<IDevice | string> }> {
 		try {
-			this.logger.debug('Updating current controlled device');
+			this.logger.debug(
+				'[updateCurrentDevice] Updating current controlled device',
+			);
 			const userRecord = await this.userModel
 				.findByIdAndUpdate(user._id, { activeDevice: id }, { new: true })
 				.populate({ path: 'activeDevice' });
-			const selectedDevice = userRecord?.toObject().activeDevice;
+			const selectedDevice = userRecord.toObject().activeDevice;
 
 			await this.deviceModel.updateMany(
-				{ user: selectedDevice.user },
+				{ user: selectedDevice['user'] },
 				{ enabled: false },
 			);
 			await this.deviceModel.findOneAndUpdate(
-				{ _id: selectedDevice._id },
+				{ _id: selectedDevice['_id'] },
 				{ enabled: true },
 				{ new: true },
 			);
-			return selectedDevice;
+			return { selectedDevice };
 		} catch (e) {
 			this.logger.error(e.message, e.stack);
 			throw e;
 		}
 	}
 
-	public async DeleteDeviceById(deviceId) {
+	public async DeleteDeviceById(deviceId: string): Promise<void> {
 		try {
 			return this.deviceModel.deleteOne({ _id: Object(deviceId) }).exec();
 		} catch (e) {
@@ -152,7 +160,7 @@ export default class DeviceService {
 	}
 
 	public async EditDevice(
-		deviceId,
+		deviceId: string,
 		deviceInputDTO: IDeviceInputDTO,
 	): Promise<{ device: IDevice }> {
 		try {

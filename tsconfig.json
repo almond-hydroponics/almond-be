@@ -1,44 +1,36 @@
 {
-  "compilerOptions": {
-    "target": "es2017",
-    "lib": [
-      "es6",
-      "es2017",
-      "esnext.asynciterable"
-    ],
-    "typeRoots": [
-      "./node_modules/@types",
-      "./src/types"
-    ],
-    "diagnostics": true,
-    "downlevelIteration": true,
-    "allowSyntheticDefaultImports": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "forceConsistentCasingInFileNames": true,
-//    "strictNullChecks": true,
-//    "suppressImplicitAnyIndexErrors": true,
-    "moduleResolution": "node",
-    "removeComments": true,
-//    "skipLibCheck": true,
-    "module": "commonjs",
-    "pretty": true,
-    "sourceMap": true,
-    "resolveJsonModule": true,
-    "outDir": "./build",
-    "allowJs": true,
-    "noEmit": false,
-    "esModuleInterop": true
-  },
-  "include": [
-    "./src/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "tests",
-    "build",
-    "**/*.test.ts",
-    "nginx-conf",
-    "__tests__"
-  ]
+	"compilerOptions": {
+		"target": "es2018",
+		"lib": ["es6", "es2017", "esnext.asynciterable"],
+		"typeRoots": ["./node_modules/@types", "./src/types"],
+		"diagnostics": true,
+		"downlevelIteration": true,
+		"allowSyntheticDefaultImports": true,
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true,
+		"forceConsistentCasingInFileNames": true,
+		//    "strictNullChecks": true,
+		"suppressImplicitAnyIndexErrors": true,
+		"moduleResolution": "node",
+		"removeComments": true,
+		"skipLibCheck": true,
+		"module": "commonjs",
+		"pretty": true,
+		"sourceMap": true,
+		"resolveJsonModule": true,
+		"outDir": "./build",
+		"baseUrl": "src",
+		"allowJs": true,
+		"noEmit": false,
+		"esModuleInterop": true
+	},
+	"include": ["./src/**/*"],
+	"exclude": [
+		"node_modules",
+		"src/app/api/routes/tests",
+		"build",
+		"**/*.test.ts",
+		"nginx-conf",
+		"__tests__"
+	]
 }

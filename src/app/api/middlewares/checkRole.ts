@@ -1,7 +1,7 @@
 import { AppLogger } from '../../app.logger';
 import { NextFunction, Request, Response } from 'express';
 
-const logger = new AppLogger('Schedule');
+const logger = new AppLogger('Check Role');
 
 const checkRole = (requiredRole: string) => (
 	req: Request,

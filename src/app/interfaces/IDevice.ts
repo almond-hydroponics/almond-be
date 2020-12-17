@@ -1,8 +1,9 @@
 import { IUser } from './IUser';
 
 export interface IDevice {
+	_id?: string;
 	id: string;
-	user?: IUser;
+	user?: IUser | string;
 	verified?: boolean;
 	enabled?: boolean;
 }

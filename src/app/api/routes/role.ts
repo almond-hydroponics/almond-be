@@ -21,7 +21,7 @@ const role = Router();
 
 const path = 'ROLE';
 
-export default (app: Router) => {
+export default (app: Router): void => {
 	app.use('/', role);
 
 	/**
