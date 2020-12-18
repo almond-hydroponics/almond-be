@@ -72,11 +72,11 @@ export default class MqttService {
 
 		this.mqttClient.on('close', (close) => {
 			this.logger.debug('mqtt client disconnected');
-			this.deviceConnectivityLog(
-				activityLogInstance,
-				req,
-				'Device Disconnected',
-			);
+			// this.deviceConnectivityLog(
+			// 	activityLogInstance,
+			// 	req,
+			// 	'Device Disconnected',
+			// );
 		});
 	}
 
@@ -99,7 +99,7 @@ export default class MqttService {
 		try {
 			this.mqttClient.publish(topic, message);
 			this.logger.warn(message);
-			this.deviceConnectivityLog(activityLogInstance, req, 'Message Published');
+			// this.deviceConnectivityLog(activityLogInstance, req, 'Message Published');
 		} catch (e) {
 			this.logger.error(e.message, e.stack);
 			this.deviceConnectivityLog(
