@@ -5,16 +5,23 @@ import {
 } from '../interfaces/IScheduleOverride';
 import { IUser } from '../interfaces/IUser';
 import { AppLogger } from '../app.logger';
+import { DeepPartial } from '../_helpers/database';
 
 @Service()
 export default class ScheduleOverrideService {
 	private logger = new AppLogger(ScheduleOverrideService.name);
 
-	constructor(@Inject('scheduleOverrideModel') private scheduleOverrideModel) {}
+	constructor(
+		@Inject('scheduleOverrideModel')
+		private scheduleOverrideModel: Models.ScheduleOverride,
+	) {}
 
-	public async GetScheduleOverride(user: IUser, device: string | any) {
+	public async GetScheduleOverride(
+		user: IUser,
+		device: string,
+	): Promise<IScheduleOverride> {
 		try {
-			return await this.scheduleOverrideModel.findOne({
+			return this.scheduleOverrideModel.findOne({
 				device: { $eq: device },
 				user: { $eq: user._id },
 			});
@@ -26,22 +33,24 @@ export default class ScheduleOverrideService {
 
 	public async EditScheduleOverride(
 		scheduleInputOverrideDTO: IScheduleOverrideInputDTO,
-		user,
+		user: DeepPartial<IUser>,
 	): Promise<{ scheduleOverride: IScheduleOverride }> {
 		try {
-			this.logger.debug('Editing schedule override db record');
+			this.logger.debug(
+				'[editScheduleOverride] Editing schedule override db record',
+			);
 			const scheduleOverrideItem = {
 				...scheduleInputOverrideDTO,
 				user: user._id,
 			};
 			const options = { upsert: true, new: true, setDefaultsOnInsert: true };
-			return this.scheduleOverrideModel
-				.findOneAndUpdate(
-					{ user: { $eq: user._id } },
-					scheduleOverrideItem,
-					options,
-				)
-				.populate({ path: 'user' });
+			const scheduleOverride = await this.scheduleOverrideModel.findOneAndUpdate(
+				{ user: { $eq: user._id } },
+				scheduleOverrideItem,
+				options,
+			);
+			// .populate({ path: 'user' });
+			return { scheduleOverride };
 		} catch (e) {
 			this.logger.error(e.message, e.stack);
 			throw e;

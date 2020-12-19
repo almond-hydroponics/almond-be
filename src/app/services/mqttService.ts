@@ -39,7 +39,7 @@ export default class MqttService {
 
 	constructor(private mqttClient = mqtt.connect(config.mqtt.server)) {}
 
-	public connect(activityLogInstance: ActivityLogService, req: Request) {
+	public connect(activityLogInstance: ActivityLogService, req: Request): void {
 		// connect mqtt with credentials (in case of needed, otherwise we can omit 2nd param)
 		// Mqtt error callback
 		this.mqttClient.on('error', async (err: IError) => {
@@ -53,9 +53,9 @@ export default class MqttService {
 		});
 
 		// Connection callback
-		this.mqttClient.on('connect', (success) => {
-			this.logger.debug('mqtt client connected');
-			this.deviceConnectivityLog(
+		this.mqttClient.on('connect', async (success) => {
+			this.logger.debug('[mqttConnect] Mqtt client connected');
+			await this.deviceConnectivityLog(
 				activityLogInstance,
 				req,
 				'Device Connection Successful',
@@ -70,9 +70,9 @@ export default class MqttService {
 			this.logger.debug(message.toString());
 		});
 
-		this.mqttClient.on('close', (close) => {
-			this.logger.debug('mqtt client disconnected');
-			this.deviceConnectivityLog(
+		this.mqttClient.on('close', async (close) => {
+			this.logger.debug('[mqttClose] Mqtt client disconnected');
+			await this.deviceConnectivityLog(
 				activityLogInstance,
 				req,
 				'Device Disconnected',
@@ -84,7 +84,7 @@ export default class MqttService {
 		activityLogInstance: ActivityLogService,
 		req: Request,
 		msg: string,
-	) {
+	): Promise<void> {
 		try {
 			const user = req.currentUser;
 			const logActivityItems = deviceConnectionStatus(req, msg);
@@ -95,14 +95,23 @@ export default class MqttService {
 	}
 
 	// Sends a mqtt message to topic: almond
-	public sendMessage(topic, message, activityLogInstance, req) {
+	public async sendMessage(
+		topic: string,
+		message: string,
+		activityLogInstance,
+		req: Request,
+	): Promise<void> {
 		try {
 			this.mqttClient.publish(topic, message);
 			this.logger.warn(message);
-			this.deviceConnectivityLog(activityLogInstance, req, 'Message Published');
+			await this.deviceConnectivityLog(
+				activityLogInstance,
+				req,
+				'Message Published',
+			);
 		} catch (e) {
 			this.logger.error(e.message, e.stack);
-			this.deviceConnectivityLog(
+			await this.deviceConnectivityLog(
 				activityLogInstance,
 				req,
 				'Error while publish Message ',

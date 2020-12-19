@@ -24,6 +24,7 @@ interface Config {
 	serverUrl: string;
 	clientUrl: string;
 	jwtSecret: string;
+	jwtAlgorithm: string;
 	sessionSecret: string;
 	cookiesDomain: string;
 	nodeMailer: {
@@ -138,6 +139,7 @@ export const config: Config = {
 			? process.env.DEVELOPMENT_REDIRECT_URL
 			: process.env.PRODUCTION_REDIRECT_URL,
 	jwtSecret: process.env.JWT_SECRET,
+	jwtAlgorithm: process.env.JWT_ALGORITHM,
 	sessionSecret: process.env.SESSION_SECRET,
 	cookiesDomain:
 		process.env.NODE_ENV === 'development'

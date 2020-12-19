@@ -1,15 +1,14 @@
 import { Container } from 'typedi';
+import cron from 'node-cron';
+import isOnline from 'is-online';
+
 import { AppLogger } from '../app.logger';
 import ActivityLogService from '../services/activityLog';
-
-const logActivity = require('../api/middlewares/logActivity');
-
-const cron = require('node-cron');
-const isOnline = require('is-online');
+import { internetConnectionStatus } from '../api/middlewares/logActivity';
 
 let connectivity = false;
 const logger = new AppLogger('Schedule');
-const user: any = '';
+const user = '';
 
 async function status() {
 	connectivity = await isOnline();
@@ -17,33 +16,34 @@ async function status() {
 }
 
 export default class ConnectivityWorker {
-	public async internetStatusLogger() {
+	public async internetStatusLogger(): Promise<void> {
 		cron.schedule('* 2 * * * *', function () {
 			status().then(
-				() => {
+				async () => {
 					if (!connectivity) {
-						logger.log('Internet Connection Unavailable');
+						logger.log('[connectivityWorker] Internet Connection Unavailable');
 						const activityLogInstance = Container.get(ActivityLogService);
 						try {
-							const logActivityItems = logActivity.internetConnectionStatus();
-							activityLogInstance
-								.CreateActivityLog(logActivityItems, user)
-								.then(
-									(resp) => {
-										logger.debug('Activity Logged');
-									},
-									(err) => {
-										logger.error('An Error Occurred ', err);
-									},
-								);
+							const logActivityItems = internetConnectionStatus();
+							await activityLogInstance.CreateActivityLog(
+								logActivityItems,
+								user,
+							);
+							logger.debug('[connectivityWorker] Activity Logged');
+							// .then(
+							// 	(resp) => {
+							// 		logger.debug('Activity Logged');
+							// 	},
+							// 	(err) => {
+							// 		logger.error('An Error Occurred ', err);
+							// 	},
+							// );
 						} catch (e) {
-							// @ts-ignore
-							logger.error('🔥 error Creating Activity Log : %o', e);
+							logger.error('🔥 error Creating Activity Log : %o', e.message);
 						}
 					}
 				},
 				(err) => {
-					console.log('Worker Encountered an Error');
 					logger.error('🔥 Error with Internet Worker:', err);
 				},
 			);

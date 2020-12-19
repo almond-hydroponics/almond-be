@@ -1,6 +1,6 @@
 defaults: &defaults
   docker:
-    - image: circleci/node:14.3.0
+    - image: circleci/node:14.14.0
   working_directory: ~/almond-be
 
 cmd_install_dependencies: &cmd_install_dependencies
@@ -22,7 +22,7 @@ cmd_save_cache: &cmd_save_cache
 
 cmd_download_cc_test_reporter: &cmd_download_cc_test_reporter
   run:
-    name:  Download cc-test-reporter
+    name: Download cc-test-reporter
     command: |
       mkdir -p tmp/
       curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > /tmp/cc-test-reporter
@@ -60,7 +60,7 @@ jobs:
       - run:
           name: Run unit tests
           command: |
-            yarn test
+            yarn test:unit
             /tmp/cc-test-reporter format-coverage -t lcov -o tmp/codeclimate.unittest.json coverage/unittest/lcov.info
       - persist_to_workspace:
           root: tmp

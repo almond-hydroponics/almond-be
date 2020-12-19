@@ -27,7 +27,7 @@ export default async (): Promise<Db> => {
 	connection.set(
 		'debug',
 		function (collectionName, method, query, doc, options) {
-			logger.log(`mongo collection: ${collectionName} - method: ${method}`);
+			logger.log(`[mongoCollection] ${collectionName} - method: ${method}`);
 		},
 	);
 

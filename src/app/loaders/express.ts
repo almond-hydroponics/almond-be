@@ -1,4 +1,4 @@
-import { Application } from 'express';
+import { Application, NextFunction, Request, Response } from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import passport from 'passport';
@@ -13,6 +13,8 @@ import methodOverride from 'method-override';
 import connectRedis from 'connect-redis';
 import Agendash from 'agendash';
 import Agenda from 'agenda';
+import morgan from 'morgan';
+import { AppLogger } from '../app.logger';
 
 import routes from '../api';
 import { config } from '../../config';
@@ -24,6 +26,7 @@ import * as swaggerDocument from '../api/docs/swagger.json';
 import statusMonitor from '../../config/statusMonitor';
 
 const { isProduction, clientUrl, api } = config;
+const winston = new AppLogger('Express');
 
 const rateLimiter = expressRateLimit({
 	windowMs: 15 * 60 * 1000, // 15 minutes
@@ -46,9 +49,11 @@ export default ({
 	app.enable('trust proxy');
 	app.use(requestIp.mw());
 	app.use(cors(corsOptions));
+	// app.use(morgan('dev'));
+	// app.use(morgan('combined', { stream: winston.stream }));
 	app.use(methodOverride());
 	app.use(bodyParser.json({ limit: '2mb' }));
-	app.use(bodyParser.urlencoded({ extended: true }));
+	app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 	isProduction && app.use(helmet());
 	const redisStore = connectRedis(expressSession);
 	app.use(
@@ -98,8 +103,9 @@ export default ({
 		return next(err);
 	});
 
-	app.use((err, req, res, next) => {
-		res.status(err.status || 500);
+	app.use((err, req: Request, res: Response, next: NextFunction) => {
+		// winston.error('', winston.combinedFormat(err, req, res));
+		res.status(err.status || 500).send('Internal Server Error.');
 		res.json({
 			errors: {
 				message: err.message,

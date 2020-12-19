@@ -55,7 +55,10 @@ export async function mail(options: SendMailOptions): Promise<SentMessageInfo> {
 	return transporter.sendMail({ ...options, from });
 }
 
-export const renderTemplate = (path: string, data: unknown): string => {
+export const renderTemplate = async (
+	path: string,
+	data: unknown,
+): Promise<string> => {
 	const loader = new TwingLoaderFilesystem(assetsPath);
 	const twing = new TwingEnvironment(loader);
 	return twing.render(path, data);

@@ -13,8 +13,8 @@ export default class UserSubscriber {
 	 * A great example of an event that you want to handle
 	 * save the last time a user signin, your boss will be pleased.
 	 *
-	 * Altough it works in this tiny toy API, please don't do this for a production product
-	 * just spamming insert/update to mongo will kill it eventualy
+	 * Although it works in this tiny toy API, please don't do this for a production product
+	 * just spamming insert/update to mongo will kill it eventually
 	 *
 	 * Use another approach like emit events to a queue (rabbitmq/aws sqs),
 	 * then save the latest in Redis/Memcache or something similar
@@ -28,7 +28,6 @@ export default class UserSubscriber {
 
 			UserModel.update({ _id }, { $set: { lastLogin: new Date() } });
 		} catch (e) {
-			// @ts-ignore
 			this.logger.error(`🔥 Error on event ${events.user.signIn}:`, e.stack);
 
 			// Throw the error so the process die (check src/app.ts)
@@ -48,8 +47,10 @@ export default class UserSubscriber {
 			// Start your email sequence or whatever
 			// MailService.startSequence('user.welcome', { email, name })
 		} catch (e) {
-			// @ts-ignore
-			this.logger.error(`🔥 Error on event ${events.user.signUp}: %o`, e.stack);
+			this.logger.error(
+				`🔥 Error on event ${events.user.signUp}: %o`,
+				e.message,
+			);
 
 			// Throw the error so the process dies (check src/app.ts)
 			throw e;

@@ -1,6 +1,6 @@
 declare global {
 	namespace Express {
-		// tslint:disable-next-line:no-empty-interface
+		// eslint-disable-next-line @typescript-eslint/no-empty-interface
 		interface AuthInfo {}
 
 		interface Request {
@@ -111,6 +111,7 @@ declare namespace passport {
 		 * useful for third-party authentication strategies to pass profile
 		 * details.
 		 */
+		// eslint-disable-next-line @typescript-eslint/ban-types
 		success(user: object, info?: object): void;
 
 		/**

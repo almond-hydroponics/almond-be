@@ -35,7 +35,9 @@ export default (app: Router): void => {
 		}),
 		async (req: Request, res: Response, next: NextFunction) => {
 			logger.debug(
-				`Calling Sign-Up endpoint with body: ${JSON.stringify(req.body.email)}`,
+				`[register] Calling Sign-Up endpoint with body: ${JSON.stringify(
+					req.body.email,
+				)}`,
 			);
 			try {
 				const authServiceInstance = Container.get(AuthService);
@@ -59,14 +61,16 @@ export default (app: Router): void => {
 				});
 			} catch (e) {
 				logger.error('🔥 error: %o', e.message);
-				if (e.code === 11000) {
-					e['status'] = 409;
-				}
 				return next(e);
 			}
 		},
 	);
 
+	/**
+	 * @route {POST} api/auth/verification
+	 * @description Verify user account
+	 * @access Public
+	 */
 	auth.get(
 		'/verification',
 		celebrate({
@@ -85,14 +89,14 @@ export default (app: Router): void => {
 
 				res.redirect(config.siteUrl);
 			} catch (e) {
-				logger.error('🔥 error: %o', e.stack);
+				logger.error('🔥 error: %o', e.message);
 				return next(e);
 			}
 		},
 	);
 
 	/**
-	 * @route {POST} api/auth/signin
+	 * @route {POST} api/auth/login
 	 * @description Login a new user
 	 * @access Public
 	 */
@@ -106,7 +110,9 @@ export default (app: Router): void => {
 		}),
 		async (req: Request, res: Response, next: NextFunction) => {
 			logger.debug(
-				`Calling Sign-In endpoint with body: ${JSON.stringify(req.body)}`,
+				`[login] Calling Sign-In endpoint for account: ${JSON.stringify(
+					req.body.email,
+				)}`,
 			);
 			try {
 				const { email, password } = req.body;
@@ -121,7 +127,7 @@ export default (app: Router): void => {
 					data: { user, token },
 				});
 			} catch (e) {
-				logger.error('🔥 error: %o', e.stack);
+				logger.error('🔥 error: %o', e.message);
 				return next(e);
 			}
 		},
@@ -144,7 +150,7 @@ export default (app: Router): void => {
 				const { user, token } = await authServiceInstance.LoginAs(email);
 				return res.status(200).json({ user, token }).end();
 			} catch (e) {
-				logger.error('Error in login as user: ', e.stack);
+				logger.error('Error in login as user: ', e.message);
 				return res.json(e).status(500).end();
 			}
 		},
@@ -197,9 +203,7 @@ export default (app: Router): void => {
 		'/logout',
 		middlewares.isAuth,
 		(req: Request, res: Response, next: NextFunction) => {
-			logger.debug(
-				`Calling Sign-Out endpoint with body: ${JSON.stringify(req.body)}`,
-			);
+			logger.debug('[logout] Calling Sign-Out endpoint');
 			try {
 				// @TODO AuthService.Logout(req.user) do some clever stuff
 				return res.status(200).end();

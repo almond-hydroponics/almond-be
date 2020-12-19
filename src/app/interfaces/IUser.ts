@@ -1,5 +1,7 @@
+import { IDevice } from './IDevice';
+
 export interface IUser {
-	_id: string;
+	_id?: string;
 	name: string;
 	email: string;
 	password?: string;
@@ -8,10 +10,10 @@ export interface IUser {
 	isVerified?: boolean;
 	googleId?: string;
 	verificationToken?: string;
-	roles?: Role[] | string[] | string;
+	roles?: Role[] | string[];
 	currentRole?: string;
 	devices?: Device[];
-	activeDevice?: string;
+	activeDevice?: IDevice | string;
 }
 
 export interface IUserInputDTO {
@@ -20,8 +22,20 @@ export interface IUserInputDTO {
 	password?: string;
 	photo?: string;
 	isVerified?: boolean;
-	roles?: Role[] | string[] | string;
+	roles?: Role[] | string[];
 	role?: string;
+}
+
+export interface IProfile extends IUser {
+	id: string;
+	_json: {
+		id: string;
+		name: string;
+		photo: string;
+		email: string;
+		picture: string;
+		email_verified: boolean;
+	};
 }
 
 interface Role {
@@ -32,5 +46,5 @@ interface Role {
 interface Device {
 	_id: string;
 	id: string;
-	verified: string;
+	verified: boolean;
 }

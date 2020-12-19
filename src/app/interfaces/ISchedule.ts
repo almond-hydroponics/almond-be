@@ -5,12 +5,12 @@ export interface ISchedule {
 	schedule: string;
 	user: string;
 	enabled: boolean;
-	activityHistory: any;
-	device: IDevice;
+	activityHistory?: any;
+	device: IDevice | string;
 }
 
 export interface IScheduleInputDTO {
 	schedule: string;
-	enabled: string;
+	enabled: boolean;
 	device: string;
 }
