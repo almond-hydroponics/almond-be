@@ -88,7 +88,7 @@ export default (app: Router): void => {
 
 				return res.status(200).send({
 					success: true,
-					message: `Manual Override ${enabled ? 'ON' : 'OFF'} successfully`,
+					message: ``,
 					data: { scheduleOverride, activityHistory: response },
 				});
 			} catch (e) {
