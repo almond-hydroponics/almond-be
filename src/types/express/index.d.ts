@@ -5,6 +5,7 @@ import { IUser } from '../../app/interfaces/IUser';
 import { ISchedule } from '../../app/interfaces/ISchedule';
 import { IDevice } from '../../app/interfaces/IDevice';
 import { IScheduleOverride } from '../../app/interfaces/IScheduleOverride';
+import { IActivityLog } from '../../app/interfaces/IActivityLog';
 
 declare global {
 	namespace Express {
@@ -20,6 +21,7 @@ declare global {
 		export type ScheduleModel = Model<ISchedule & Document>;
 		export type DeviceModel = Model<IDevice & Document>;
 		export type ScheduleOverride = Model<IScheduleOverride & Document>;
+		export type ActivityLogModel = Model<IActivityLog & Document>;
 	}
 }
 

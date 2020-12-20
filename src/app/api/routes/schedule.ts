@@ -11,6 +11,9 @@ import {
 	createScheduleActivityLogItem,
 	deleteScheduleActivityLogItem,
 } from '../middlewares/logActivity';
+import HttpResponse from '../../utils/responseHelper';
+import HttpError from '../../utils/errorHandler';
+import isArrayNotNull from '../../utils/isArrayNotNull';
 
 const manager = new CronJobManager();
 const logger = new AppLogger('Schedule');
@@ -38,9 +41,10 @@ export default (app: Router): void => {
 		'/schedules',
 		isAuth,
 		attachCurrentUser,
-		getCache(path),
+		// getCache(path),
 		async (req: Request, res: Response, next: NextFunction) => {
-			logger.debug('Calling GetAllSchedules endpoint');
+			let message;
+			logger.debug('[schedulesGet] Calling GetAllSchedules endpoint');
 			try {
 				const user = req.currentUser;
 				const { device } = req.query;
@@ -53,21 +57,16 @@ export default (app: Router): void => {
 				// set schedules data to redis
 				setCache(`${req.currentUser._id}/${path}`, schedules);
 
-				if (schedules.length !== null) {
-					return res.status(200).send({
-						success: true,
-						message: 'Time schedules fetched successfully',
-						data: schedules,
-					});
+				if (isArrayNotNull(schedules)) {
+					message = 'You have not created any time schedules';
+					HttpError.throwErrorIfNull(schedules, message);
+				} else {
+					message = 'Time schedules fetched successfully';
+					return HttpResponse.sendResponse(res, 200, true, message, schedules);
 				}
-				return res.status(202).send({
-					success: false,
-					message: 'You have not created any time schedules.',
-					data: [],
-				});
-			} catch (e) {
-				logger.error('🔥 error: %o', e.stack);
-				return next(e);
+			} catch (error) {
+				logger.error('🔥 error: %o', error.stack);
+				HttpError.sendErrorResponse(error, res);
 			}
 		},
 	);
@@ -89,8 +88,9 @@ export default (app: Router): void => {
 			}),
 		}),
 		async (req: Request, res: Response) => {
+			let message;
 			logger.debug(
-				`Calling CreateSchedule endpoint with body: ${JSON.stringify(
+				`[schedulesCreate] Calling CreateSchedule endpoint with body: ${JSON.stringify(
 					req.body,
 				)}`,
 			);
@@ -131,15 +131,11 @@ export default (app: Router): void => {
 						logger.error('🔥 error Creating Activity Log : %o', e);
 					}
 				}
-				return res.status(201).send({
-					success: true,
-					message: 'Time schedule added successfully',
-					data: schedule,
-				});
+				message = 'Time schedule added successfully';
+				return HttpResponse.sendResponse(res, 201, true, message, schedule);
 			} catch (e) {
-				logger.error('🔥 error: %o', e.stack);
-				const serverError = 'Server Error. Could not complete the request';
-				return res.json({ serverError }).status(500);
+				logger.error('🔥 error: %o', e.message);
+				HttpError.sendErrorResponse(e, res);
 			}
 		},
 	);
@@ -154,6 +150,7 @@ export default (app: Router): void => {
 		isAuth,
 		attachCurrentUser,
 		async (req: Request, res: Response, next: NextFunction) => {
+			let message;
 			logger.debug('Calling GetAllScheduleById endpoint');
 			try {
 				const user = req.currentUser;
@@ -165,17 +162,12 @@ export default (app: Router): void => {
 					id,
 					user,
 				);
-				if (schedule) {
-					return res.status(200).send({
-						success: true,
-						message: 'Time schedule has been fetched successfully',
-						data: schedule,
-					});
+				if (!schedule) {
+					message = 'Time schedule does not exist';
+					return HttpError.throwErrorIfNull(schedule, message);
 				}
-				return res.status(404).send({
-					success: false,
-					message: 'Time schedule does not exist',
-				});
+				message = 'Time schedule has been fetched successfully';
+				return HttpResponse.sendResponse(res, 200, true, message, schedule);
 			} catch (e) {
 				logger.error('🔥 error: %o', e.stack);
 				const serverError = 'Server Error. Could not complete the request';

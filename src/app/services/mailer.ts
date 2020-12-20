@@ -3,7 +3,6 @@ import * as Str from '@supercharge/strings';
 import { mail, renderTemplate } from '../../config/nodemailer';
 import { IUser } from '../interfaces/IUser';
 import { AppLogger } from '../app.logger';
-import { recoverPasswordEmail } from '../mail';
 import redisClient from '../loaders/redis';
 import { config } from '../../config';
 // import { createToken } from './jwt';
@@ -75,7 +74,11 @@ export default class MailerService {
 				from: '"Almond Hydroponics" <almond.noreply@gmail.com>',
 				to: userRecord.email,
 				subject: 'My Study Planner recover password link',
-				html: recoverPasswordEmail(userRecord.name, token, userRecord.email),
+				html: await renderTemplate(`/mail/verify_registration.twig`, {
+					userRecord,
+					config,
+					token,
+				}),
 			});
 
 			if (!messageStatus)

@@ -1,7 +1,7 @@
 import { IDevice } from './IDevice';
 
 export interface ISchedule {
-	_id: string;
+	_id?: string;
 	schedule: string;
 	user: string;
 	enabled: boolean;

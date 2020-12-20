@@ -3,7 +3,7 @@ import { ISchedule, IScheduleInputDTO } from '../interfaces/ISchedule';
 import { IUser } from '../interfaces/IUser';
 import { AppLogger } from '../app.logger';
 import ActivityLogService from './activityLog';
-import { DeepPartial } from '../_helpers/database';
+import { DeepPartial } from '../helpers/database';
 import { IActivityLog } from '../interfaces/IActivityLog';
 
 @Service()
@@ -78,7 +78,7 @@ export default class ScheduleService {
 	): Promise<ISchedule | void> {
 		try {
 			this.logger.debug('[deleteScheduleById] Deleting schedule record');
-			return await this.scheduleModel
+			return this.scheduleModel
 				.deleteOne({
 					_id: Object(scheduleId),
 					user: user._id,

@@ -115,7 +115,7 @@ interface Config {
 
 export const config: Config = {
 	isProduction: process.env.NODE_ENV === 'production',
-	port: parseInt(process.env.PORT, 10),
+	port: +process.env.PORT,
 	host: process.env.APP_HOST,
 	databaseURL: process.env.MONGODB_URI,
 	mongo: {

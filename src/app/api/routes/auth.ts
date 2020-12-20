@@ -1,12 +1,12 @@
 import { NextFunction, Request, Response, Router } from 'express';
 import { Container } from 'typedi';
+import { celebrate, Joi } from 'celebrate';
+import passport from 'passport';
 import { config } from '../../../config';
 import { AppLogger } from '../../app.logger';
 import AuthService from '../../services/auth';
 import { IUserInputDTO } from '../../interfaces/IUser';
 import middlewares from '../middlewares';
-import { celebrate, Joi } from 'celebrate';
-import passport from 'passport';
 // import csrf from 'csurf';
 import { createAuthToken } from '../../services/jwt';
 
