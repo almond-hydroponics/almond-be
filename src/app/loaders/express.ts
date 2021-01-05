@@ -87,8 +87,8 @@ export default ({
 
 	// Catch 404 and forward to error handler
 	app.use((req, res, next) => {
-		const err: IError = new Error('Not Found');
-		err.status = 404;
+		const err = new Error('Not Found');
+		err['status'] = 404;
 		next(err);
 	});
 
@@ -105,7 +105,7 @@ export default ({
 
 	app.use((err, req: Request, res: Response, next: NextFunction) => {
 		// winston.error('', winston.combinedFormat(err, req, res));
-		res.status(err.status || 500).send('Internal Server Error.');
+		res.status(500);
 		res.json({
 			errors: {
 				message: err.message,

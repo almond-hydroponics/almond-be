@@ -24,7 +24,7 @@ export class AppLogger implements LoggerService {
 			file: {
 				level: 'info' || 'error',
 				filename: path.resolve(logDirectory, logfileName),
-				handleExceptions: true,
+				handleExceptions: false,
 				json: true,
 				maxsize: 5242880, // 5MB
 				// maxFiles: 5,

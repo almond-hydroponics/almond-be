@@ -1,6 +1,6 @@
 // all fields  {{deny Null}}
 export interface IActivityLog {
-	_id: string;
+	_id?: string;
 	actionType: string;
 	actionDesc: string;
 	action: string;

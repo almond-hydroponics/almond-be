@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+// import fs from 'fs';
+// import path from 'path';
 import mqtt from 'mqtt';
 import { Service } from 'typedi';
 import { config } from '../../config';
@@ -9,29 +9,29 @@ import { Request } from 'express';
 import { deviceConnectionStatus } from '../api/middlewares/logActivity';
 import { IError } from '../shared/IError';
 
-const KEY = fs.readFileSync(
-	path.join(__dirname, '../..', 'certificates', '/tls-key.pem'),
-);
-const CERT = fs.readFileSync(
-	path.join(__dirname, '../..', 'certificates', '/tls-cert.crt'),
-);
-const TRUSTED_CA = fs.readFileSync(
-	path.join(__dirname, '../..', 'certificates', '/crt-ca.crt'),
-);
+// const KEY = fs.readFileSync(
+// 	path.join(__dirname, '../..', 'certificates', '/tls-key.pem'),
+// );
+// const CERT = fs.readFileSync(
+// 	path.join(__dirname, '../..', 'certificates', '/tls-cert.crt'),
+// );
+// const TRUSTED_CA = fs.readFileSync(
+// 	path.join(__dirname, '../..', 'certificates', '/crt-ca.crt'),
+// );
 
-const { host, password, protocol, port, user } = config.mqtt;
+// const { host, password, protocol, port, user } = config.mqtt;
 
-const options = {
-	port,
-	host,
-	user,
-	protocol,
-	password,
-	key: KEY,
-	cert: CERT,
-	ca: TRUSTED_CA,
-	rejectUnauthorized: true,
-};
+// const options = {
+// 	port,
+// 	host,
+// 	user,
+// 	protocol,
+// 	password,
+// 	key: KEY,
+// 	cert: CERT,
+// 	ca: TRUSTED_CA,
+// 	rejectUnauthorized: true,
+// };
 
 @Service()
 export default class MqttService {

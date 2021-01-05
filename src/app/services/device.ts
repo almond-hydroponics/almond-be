@@ -2,7 +2,7 @@ import { Inject, Service } from 'typedi';
 import { IDevice, IDeviceInputDTO } from '../interfaces/IDevice';
 import { IUser } from '../interfaces/IUser';
 import { AppLogger } from '../app.logger';
-import { DeepPartial } from '../_helpers/database';
+import { DeepPartial } from '../helpers/database';
 
 @Service()
 export default class DeviceService {

@@ -311,7 +311,7 @@ export default (app: Router): void => {
 		checkRole('Admin'),
 		getCache(path),
 		async (req: Request, res: Response, next: NextFunction) => {
-			logger.debug('[deviceGet] Calling GetAllDevices endpoint');
+			logger.debug('[devicesGet] Calling GetAllDevices endpoint');
 			try {
 				const deviceServiceInstance = Container.get(DeviceService);
 				const devices = await deviceServiceInstance.GetAllDevices();
@@ -352,7 +352,7 @@ export default (app: Router): void => {
 		checkRole('Admin'),
 		clearCache(path),
 		async (req: Request, res: Response, next: NextFunction) => {
-			logger.debug('[deviceDelete] Calling DeleteDeviceById endpoint');
+			logger.debug('[devicesDelete] Calling DeleteDeviceById endpoint');
 			try {
 				const {
 					params: { id },
@@ -393,7 +393,7 @@ export default (app: Router): void => {
 		}),
 		async (req: Request, res: Response) => {
 			logger.debug(
-				`[devicePatch] Calling PatchDevice endpoint with body: ${JSON.stringify(
+				`[devicesPatch] Calling PatchDevice endpoint with body: ${JSON.stringify(
 					req.body,
 				)}`,
 			);

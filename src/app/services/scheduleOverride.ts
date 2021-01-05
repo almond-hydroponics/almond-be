@@ -5,7 +5,7 @@ import {
 } from '../interfaces/IScheduleOverride';
 import { IUser } from '../interfaces/IUser';
 import { AppLogger } from '../app.logger';
-import { DeepPartial } from '../_helpers/database';
+import { DeepPartial } from '../helpers/database';
 
 @Service()
 export default class ScheduleOverrideService {

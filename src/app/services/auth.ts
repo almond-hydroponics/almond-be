@@ -15,7 +15,7 @@ import MailerService from './mailer';
 // import isArrayNotNull from '../utils/checkArrayEmpty';
 import { createAuthToken } from './jwt';
 import { IToken } from '../interfaces/IToken';
-import { DeepPartial } from '../_helpers/database';
+import { DeepPartial } from '../helpers/database';
 
 const { almond_admin } = config;
 
@@ -26,7 +26,7 @@ export default class AuthService {
 	constructor(
 		@Inject('userModel') private userModel: Models.UserModel,
 		@Inject('roleModel') private roleModel: Models.RoleModel,
-		@EventDispatcher() private eventDispatcher: EventDispatcherInterface,
+		// @EventDispatcher() private eventDispatcher: EventDispatcherInterface,
 		private mailer: MailerService,
 	) {
 		this.userModel = userModel;

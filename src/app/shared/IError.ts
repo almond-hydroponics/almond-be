@@ -1,3 +1,5 @@
 export interface IError {
-	[key: string]: any;
+	message: string;
+	stack: string;
+	statusCode: number;
 }

@@ -3,7 +3,7 @@ import redisClient from '../../loaders/redis';
 
 // const getUrlFromRequest = (req: Request) => req.protocol + '://' + req.headers.host + req.originalUrl;
 
-export const getCache = (path) => async (
+export const getCache = (path: string) => async (
 	req: Request,
 	res: Response,
 	next: NextFunction,
@@ -12,7 +12,7 @@ export const getCache = (path) => async (
 	redisClient.get(key, (err, data) => {
 		if (err) res.status(400).send(err);
 
-		if (data !== null) {
+		if (data === null) {
 			res.status(200).send({
 				success: true,
 				message: 'Data fetched successfully',

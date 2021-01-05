@@ -3,10 +3,14 @@ defaults: &defaults
     - image: circleci/node:14.14.0
   working_directory: ~/almond-be
 
-cmd_install_dependencies: &cmd_install_dependencies
+cmd_attach_workspace: &cmd_attach_workspace
+  attach_workspace:
+    at: ~/almond-be
+
+cmd_install_packages: &cmd_install_packages
   run:
     name: Install project dependencies
-    command: yarn install
+    command: sudo npm install -g yarn@1.12.x && yarn install
 
 cmd_restore_cache: &cmd_restore_cache
   restore_cache:
@@ -22,57 +26,84 @@ cmd_save_cache: &cmd_save_cache
 
 cmd_download_cc_test_reporter: &cmd_download_cc_test_reporter
   run:
-    name: Download cc-test-reporter
+    name: Install code climate test reporter
     command: |
-      mkdir -p tmp/
-      curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > /tmp/cc-test-reporter
-      chmod +x /tmp/cc-test-reporter
+      curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+      chmod +x ./cc-test-reporter
 
-cmd_attach_workspace: &cmd_attach_workspace
-  attach_workspace:
-    at: tmp/
+cmd_build_and_push_docker: &cmd_build_and_push_docker
+  run:
+    name: build image
+    command: |
+      export IMG_TAG=$(echo $CIRCLE_SHA1 | cut -c -7)
+      echo $IMG_TAG
+      docker login -u _json_key -p "$(echo $SERVICE_ACCOUNT)" https://gcr.io
+      docker build -t gcr.io/${GCP_PROJECT_ID}/${PROJECT_NAME}:${IMG_TAG} -f docker/release/Dockerfile .
+      docker push gcr.io/${GCP_PROJECT_ID}/${PROJECT_NAME}:${IMG_TAG}
 
 persist_to_workspace: &persist_to_workspace
   persist_to_workspace:
     root: .
     paths: .
 
+filters: &filters
+  filters:
+    branches:
+      only:
+        - /^(.*?(\bcircleci\b)[^$]*)$/
+        - develop
+        - master
+
 # The CircleCi Jobs Tree
 version: 2
 jobs:
-  build:
+  checkout_code:
     <<: *defaults
     steps:
       - checkout
       - *cmd_restore_cache
-      - *cmd_install_dependencies
+      - *cmd_install_packages
       - *cmd_save_cache
       - *persist_to_workspace
 
-  # Job to run unit tests
-  unit_tests:
+  package_vulnerability_check:
     <<: *defaults
     steps:
-      - checkout
-      - *cmd_restore_cache
-      - *cmd_install_dependencies
+      - *cmd_attach_workspace
+      - *cmd_install_packages
+      - run:
+          name: Run npm packages security vulnerabilty check
+          command: |
+            yarn check --integrity
+            npx nsp check
+
+  test_and_report:
+    <<: *defaults
+    steps:
+      - *cmd_attach_workspace
+      - *cmd_install_packages
       - *cmd_download_cc_test_reporter
       - run:
-          name: Run unit tests
+          name: Run tests
           command: |
-            yarn test:unit
-            /tmp/cc-test-reporter format-coverage -t lcov -o tmp/codeclimate.unittest.json coverage/unittest/lcov.info
-      - persist_to_workspace:
-          root: tmp
-          paths:
-            - codeclimate.unittest.json
+            ./cc-test-reporter before-build     # https://github.com/codeclimate/test-reporter/issues/260#issuecomment-369783913
+            yarn test:unit --coverage
+            ./cc-test-reporter after-build --exit-code $?
+      - *persist_to_workspace
 
-  # Job to upload test report/coverage to code climate
-  upload-coverage:
+  build_artifacts:
     <<: *defaults
     steps:
-      - checkout
-      - *cmd_download_cc_test_reporter
+      - *cmd_attach_workspace
+      - *cmd_install_packages
+      - run: yarn run build
+      - *persist_to_workspace
+
+  upload_coverage:
+    <<: *defaults
+    steps:
+#      - checkout
+#      - *cmd_download_cc_test_reporter
       - *cmd_attach_workspace
       - run:
           name: Upload coverage results to Code Climate
@@ -81,15 +112,76 @@ jobs:
             /tmp/cc-test-reporter upload-coverage -i /tmp/codeclimate.total.json
             sed -n -e 24p /tmp/codeclimate.total.json
 
+  docker_and_deploy:
+    docker:
+      - image: gcr.io/$GCP_PROJECT_ID/tembea-ci-image
+        auth:
+          username: _json_key
+          password: $SERVICE_ACCOUNT
+        environment:
+          GOOGLE_APPLICATION_CREDENTIALS: /root/tembea-backend/shared/account.json
+
+    working_directory: ~/tembea-backend
+    <<: *defaults
+    steps:
+      - checkout
+      - setup_remote_docker
+      - *cmd_attach_workspace
+#      - *cmd_login_gcp
+      - *cmd_build_and_push_docker
+      - run:
+          name: Clone the deployment scripts repo
+          command: |
+            mkdir ~/.ssh/ && echo -e "Host github.com\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
+            echo ${DEPLOYMENT_SCRIPTS_REPO}
+            if [ "${CIRCLE_BRANCH}" = "master" ]; then
+              git clone -b master ${DEPLOYMENT_SCRIPTS_REPO}
+            elif [ "${CIRCLE_BRANCH}" = "develop" ]; then
+              git clone -b develop ${DEPLOYMENT_SCRIPTS_REPO}
+            fi
+
+      - deploy:
+          name: Run K8s configurations to deploy the app
+          command: |
+            cd tembea-deployment-scripts/ansible/backend
+            export IMG_TAG=$(echo $CIRCLE_SHA1 | cut -c -7)
+            if [ "${CIRCLE_BRANCH}" = "master" ]; then
+              export NAMESPACE="production"
+              echo $NAMESPACE
+              export NODE_ENV=${NAMESPACE}
+              ansible-playbook playbook.yml --extra-vars "@prod-vars.yml" -vvv
+            elif [ "${CIRCLE_BRANCH}" = "develop" ]; then
+              export NAMESPACE="staging"
+              echo $NAMESPACE
+              export NODE_ENV=${NAMESPACE}
+              ansible-playbook playbook.yml --extra-vars "@dev-vars.yml" -vvv
+            fi
+
 # The Workflow tree
 workflows:
   version: 2
-  build_and_test:
+  check_build_deploy:
     jobs:
-      - build
-      - unit_tests:
+      - checkout_code
+#      - package_vulnerability_check:
+#          requires:
+#            - checkout_code
+      - test_and_report:
           requires:
             - build
-      - upload-coverage:
+      - upload_coverage:
           requires:
             - unit_tests
+      - build_artifacts:
+          requires:
+            - checkout_code
+            # - package_vulnerability_check
+            - test_and_report
+          <<: *filters
+      - docker_and_deploy:
+          requires:
+            - checkout_code
+            # - package_vulnerability_check
+            - test_and_report
+            - build_artifacts
+          <<: *filters
