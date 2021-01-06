@@ -125,7 +125,7 @@ export const config: Config = {
 		port: parseInt(process.env.MONGO_PORT, 10),
 		database: process.env.MONGO_DATABASE,
 	},
-	redisURL: process.env.REDIS_URL,
+	redisURL: process.env.REDIS_URL || 'no-redis',
 	siteUrl:
 		process.env.NODE_ENV === 'development'
 			? process.env.DEVELOPMENT_SITE_URL
