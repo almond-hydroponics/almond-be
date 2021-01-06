@@ -2,18 +2,13 @@ version: '3'
 
 services:
   app:
-    container_name: almond
     image: almond
+    container_name: almond
     restart: always
     build:
       context: .
       dockerfile: Dockerfile
     env_file: .env
-    volumes:
-      - .:/home/node/app
-      - node_modules:/home/node/app/node_modules
-    environment:
-      - MONGO_HOSTNAME=db
     ports:
       - '8080:8080'
     expose:
@@ -23,8 +18,8 @@ services:
       - redis
     networks:
       - app-network
-    stdin_open: true
-    tty: true
+#    stdin_open: true
+#    tty: true
 
   db:
     image: mongo:4.4.2-bionic
@@ -43,10 +38,27 @@ services:
     expose:
       - 27017
 
+  mongo-express:
+    image: mongo-express
+    container_name: mongo-express
+    restart: always
+    env_file: .env
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=${MONGO_USERNAME}
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=${MONGO_PASSWORD}
+      - ME_CONFIG_MONGODB_SERVER=${MONGO_HOSTNAME}
+      - ME_CONFIG_MONGODB_PORT=${MONGO_PORT}
+    ports:
+      - '8081:8081'
+    depends_on:
+      - db
+    networks:
+      - app-network
+
   redis:
+    image: redis:6.0.6-alpine
     container_name: redis
     restart: always
-    image: redis:6.0.6-alpine
     networks:
       - app-network
 
@@ -56,5 +68,4 @@ networks:
 
 volumes:
   dbdata:
-    external: true
-  node_modules:
+    driver: local

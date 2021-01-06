@@ -23,8 +23,8 @@ export default class LinkAccountService {
 			);
 
 			if (!userId) {
-				const err: IError = new Error('Invalid credentials');
-				err.status = 400;
+				const err = new Error('Invalid credentials');
+				err['status'] = 400;
 				this.logger.error(err.message, err.stack);
 			}
 
@@ -45,8 +45,8 @@ export default class LinkAccountService {
 			);
 
 			if (!userId) {
-				const err: IError = new Error('Invalid credentials');
-				err.status = 400;
+				const err = new Error('Invalid credentials');
+				err['status'] = 400;
 				this.logger.error(err.message, err.stack);
 			}
 

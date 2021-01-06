@@ -15,14 +15,8 @@
 						"header": [],
 						"url": {
 							"raw": "{{base-url}}/api/people/5e53fb9cbbb697ce4541331b",
-							"host": [
-								"{{base-url}}"
-							],
-							"path": [
-								"api",
-								"people",
-								"5e53fb9cbbb697ce4541331b"
-							]
+							"host": ["{{base-url}}"],
+							"path": ["api", "people", "5e53fb9cbbb697ce4541331b"]
 						}
 					},
 					"response": []
@@ -42,14 +36,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{base-url}}/people/5fc210df769db654dae9905e",
-							"host": [
-								"{{base-url}}"
-							],
-							"path": [
-								"people",
-								"5fc210df769db654dae9905e"
-							]
+							"raw": "{{base-url}}/people/{{user_id}}",
+							"host": ["{{base-url}}"],
+							"path": ["people", "{{user_id}}"]
 						}
 					},
 					"response": []
@@ -60,14 +49,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base-url}}/api/me",
-							"host": [
-								"{{base-url}}"
-							],
-							"path": [
-								"api",
-								"me"
-							]
+							"raw": "{{base-url}}/me",
+							"host": ["{{base-url}}"],
+							"path": ["me"]
 						}
 					},
 					"response": []
@@ -79,12 +63,8 @@
 						"header": [],
 						"url": {
 							"raw": "{{base-url}}/people",
-							"host": [
-								"{{base-url}}"
-							],
-							"path": [
-								"people"
-							]
+							"host": ["{{base-url}}"],
+							"path": ["people"]
 						}
 					},
 					"response": []
@@ -118,12 +98,37 @@
 						},
 						"url": {
 							"raw": "{{base-url}}/pump",
-							"host": [
-								"{{base-url}}"
-							],
-							"path": [
-								"pump"
-							]
+							"host": ["{{base-url}}"],
+							"path": ["pump"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Active device",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"enabled\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base-url}}/pump",
+							"host": ["{{base-url}}"],
+							"path": ["pump"]
 						}
 					},
 					"response": []
@@ -148,25 +153,37 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"id\": \"DEVICE\"\n}",
+							"raw": "{\n    \"id\": \"DEVICE2\"\n}",
 							"options": {
 								"raw": {}
 							}
 						},
 						"url": {
 							"raw": "{{base-url}}/devices",
-							"host": [
-								"{{base-url}}"
-							],
-							"path": [
-								"devices"
-							]
+							"host": ["{{base-url}}"],
+							"path": ["devices"]
 						}
 					},
 					"response": []
 				},
 				{
 					"name": "Verify device",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "ff23395d-c55c-417e-b304-751ddf063c20",
+								"exec": [
+									"// var res = JSON.parse(responseBody)",
+									"// if(res) {",
+									"//     pm.environment.set(\"token\",res.data.token.accessToken)",
+									"//     pm.environment.set(\"user_id\",res.data.user._id)",
+									"// }"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -185,20 +202,15 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"id\": \"ABC123\"\n}",
+							"raw": "{\n    \"id\": \"DEVICE2\"\n}",
 							"options": {
 								"raw": {}
 							}
 						},
 						"url": {
-							"raw": "{{base-url}}/api/my-device",
-							"host": [
-								"{{base-url}}"
-							],
-							"path": [
-								"api",
-								"my-device"
-							]
+							"raw": "{{base-url}}/my-device",
+							"host": ["{{base-url}}"],
+							"path": ["my-device"]
 						}
 					},
 					"response": []
@@ -210,12 +222,8 @@
 						"header": [],
 						"url": {
 							"raw": "{{base-url}}/devices",
-							"host": [
-								"{{base-url}}"
-							],
-							"path": [
-								"devices"
-							]
+							"host": ["{{base-url}}"],
+							"path": ["devices"]
 						}
 					},
 					"response": []
@@ -227,9 +235,7 @@
 					"script": {
 						"id": "7014298a-fef6-4841-bb9a-ef5791e3de1c",
 						"type": "text/javascript",
-						"exec": [
-							""
-						]
+						"exec": [""]
 					}
 				},
 				{
@@ -237,9 +243,7 @@
 					"script": {
 						"id": "bdfa67f3-bb39-4baa-bfc3-ec53bee2a686",
 						"type": "text/javascript",
-						"exec": [
-							""
-						]
+						"exec": [""]
 					}
 				}
 			],
@@ -275,12 +279,8 @@
 						},
 						"url": {
 							"raw": "{{base-url}}/schedules",
-							"host": [
-								"{{base-url}}"
-							],
-							"path": [
-								"schedules"
-							]
+							"host": ["{{base-url}}"],
+							"path": ["schedules"]
 						}
 					},
 					"response": []
@@ -308,14 +308,8 @@
 						},
 						"url": {
 							"raw": "{{base-url}}/api/schedules/5dbf296db2c53f8594a887c4",
-							"host": [
-								"{{base-url}}"
-							],
-							"path": [
-								"api",
-								"schedules",
-								"5dbf296db2c53f8594a887c4"
-							]
+							"host": ["{{base-url}}"],
+							"path": ["api", "schedules", "5dbf296db2c53f8594a887c4"]
 						}
 					},
 					"response": []
@@ -346,13 +340,8 @@
 						},
 						"url": {
 							"raw": "{{base-url}}/api/pump",
-							"host": [
-								"{{base-url}}"
-							],
-							"path": [
-								"api",
-								"pump"
-							]
+							"host": ["{{base-url}}"],
+							"path": ["api", "pump"]
 						}
 					},
 					"response": []
@@ -377,12 +366,8 @@
 						],
 						"url": {
 							"raw": "{{base-url}}/schedules?device=5e4a57ffa04a6d8445b5885b",
-							"host": [
-								"{{base-url}}"
-							],
-							"path": [
-								"schedules"
-							],
+							"host": ["{{base-url}}"],
+							"path": ["schedules"],
 							"query": [
 								{
 									"key": "user_id",
@@ -419,14 +404,8 @@
 						],
 						"url": {
 							"raw": "{{base-url}}/api/schedules/5e53ed48042427b6ff09aff2",
-							"host": [
-								"{{base-url}}"
-							],
-							"path": [
-								"api",
-								"schedules",
-								"5e53ed48042427b6ff09aff2"
-							]
+							"host": ["{{base-url}}"],
+							"path": ["api", "schedules", "5e53ed48042427b6ff09aff2"]
 						}
 					},
 					"response": []
@@ -451,14 +430,8 @@
 						],
 						"url": {
 							"raw": "{{base-url}}/api/schedules/5de9ff850279533bf5c9ad28",
-							"host": [
-								"{{base-url}}"
-							],
-							"path": [
-								"api",
-								"schedules",
-								"5de9ff850279533bf5c9ad28"
-							]
+							"host": ["{{base-url}}"],
+							"path": ["api", "schedules", "5de9ff850279533bf5c9ad28"]
 						}
 					},
 					"response": []
@@ -492,13 +465,8 @@
 						},
 						"url": {
 							"raw": "{{base-url}}/api/roles",
-							"host": [
-								"{{base-url}}"
-							],
-							"path": [
-								"api",
-								"roles"
-							]
+							"host": ["{{base-url}}"],
+							"path": ["api", "roles"]
 						}
 					},
 					"response": []
@@ -526,13 +494,8 @@
 						},
 						"url": {
 							"raw": "{{base-url}}/api/roles",
-							"host": [
-								"{{base-url}}"
-							],
-							"path": [
-								"api",
-								"roles"
-							]
+							"host": ["{{base-url}}"],
+							"path": ["api", "roles"]
 						}
 					},
 					"response": []
@@ -557,13 +520,8 @@
 						],
 						"url": {
 							"raw": "{{base-url}}/api/roles?include=permissions&include=resources",
-							"host": [
-								"{{base-url}}"
-							],
-							"path": [
-								"api",
-								"roles"
-							],
+							"host": ["{{base-url}}"],
+							"path": ["api", "roles"],
 							"query": [
 								{
 									"key": "include",
@@ -603,14 +561,8 @@
 						],
 						"url": {
 							"raw": "{{base-url}}/api/roles/5e4aa0efd9ad8c659abb6086",
-							"host": [
-								"{{base-url}}"
-							],
-							"path": [
-								"api",
-								"roles",
-								"5e4aa0efd9ad8c659abb6086"
-							]
+							"host": ["{{base-url}}"],
+							"path": ["api", "roles", "5e4aa0efd9ad8c659abb6086"]
 						}
 					},
 					"response": []
@@ -627,10 +579,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "0ffa9cf1-e3f9-4fc5-b574-81b90d01ac4d",
+								"id": "2d8ff546-0b16-4a0a-9f15-a8528d281d50",
 								"exec": [
 									"var res = JSON.parse(responseBody)",
-									"if(res) {",
+									"if(res.data) {",
 									"    pm.environment.set(\"verificationToken\",res.data.user.verificationToken)",
 									"    pm.environment.set(\"email\",res.data.user.email)",
 									"}",
@@ -641,6 +593,9 @@
 						}
 					],
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "POST",
 						"header": [
 							{
@@ -659,13 +614,8 @@
 						},
 						"url": {
 							"raw": "{{base-url}}/auth/register",
-							"host": [
-								"{{base-url}}"
-							],
-							"path": [
-								"auth",
-								"register"
-							]
+							"host": ["{{base-url}}"],
+							"path": ["auth", "register"]
 						}
 					},
 					"response": []
@@ -698,13 +648,8 @@
 						],
 						"url": {
 							"raw": "{{base-url}}/auth/verification?token={{verificationToken}}&email={{email}}",
-							"host": [
-								"{{base-url}}"
-							],
-							"path": [
-								"auth",
-								"verification"
-							],
+							"host": ["{{base-url}}"],
+							"path": ["auth", "verification"],
 							"query": [
 								{
 									"key": "token",
@@ -760,13 +705,8 @@
 						},
 						"url": {
 							"raw": "{{base-url}}/auth/login",
-							"host": [
-								"{{base-url}}"
-							],
-							"path": [
-								"auth",
-								"login"
-							]
+							"host": ["{{base-url}}"],
+							"path": ["auth", "login"]
 						}
 					},
 					"response": []
@@ -808,14 +748,8 @@
 						},
 						"url": {
 							"raw": "{{base-url}}/api/users/login",
-							"host": [
-								"{{base-url}}"
-							],
-							"path": [
-								"api",
-								"users",
-								"login"
-							]
+							"host": ["{{base-url}}"],
+							"path": ["api", "users", "login"]
 						}
 					},
 					"response": []
@@ -841,15 +775,8 @@
 						},
 						"url": {
 							"raw": "{{base-url}}/api/auth/social/google",
-							"host": [
-								"{{base-url}}"
-							],
-							"path": [
-								"api",
-								"auth",
-								"social",
-								"google"
-							]
+							"host": ["{{base-url}}"],
+							"path": ["api", "auth", "social", "google"]
 						}
 					},
 					"response": []
@@ -875,14 +802,8 @@
 						},
 						"url": {
 							"raw": "{{base-url}}/api/auth/social",
-							"host": [
-								"{{base-url}}"
-							],
-							"path": [
-								"api",
-								"auth",
-								"social"
-							]
+							"host": ["{{base-url}}"],
+							"path": ["api", "auth", "social"]
 						}
 					},
 					"response": []
@@ -903,9 +824,7 @@
 									"listen": "test",
 									"script": {
 										"id": "1b1e3366-3078-49a9-9232-e5917a458899",
-										"exec": [
-											""
-										],
+										"exec": [""],
 										"type": "text/javascript"
 									}
 								}
@@ -922,13 +841,8 @@
 								],
 								"url": {
 									"raw": "{{grafana-url}}/auth/keys",
-									"host": [
-										"{{grafana-url}}"
-									],
-									"path": [
-										"auth",
-										"keys"
-									],
+									"host": ["{{grafana-url}}"],
+									"path": ["auth", "keys"],
 									"query": [
 										{
 											"key": "includeExpired",
@@ -975,13 +889,8 @@
 								},
 								"url": {
 									"raw": "{{grafana-url}}/auth/keys",
-									"host": [
-										"{{grafana-url}}"
-									],
-									"path": [
-										"auth",
-										"keys"
-									]
+									"host": ["{{grafana-url}}"],
+									"path": ["auth", "keys"]
 								}
 							},
 							"response": []
@@ -1014,14 +923,8 @@
 								],
 								"url": {
 									"raw": "{{grafana-url}}/auth/keys/2",
-									"host": [
-										"{{grafana-url}}"
-									],
-									"path": [
-										"auth",
-										"keys",
-										"2"
-									],
+									"host": ["{{grafana-url}}"],
+									"path": ["auth", "keys", "2"],
 									"query": [
 										{
 											"key": "",
@@ -1047,12 +950,8 @@
 								"header": [],
 								"url": {
 									"raw": "{{grafana-url}}/org",
-									"host": [
-										"{{grafana-url}}"
-									],
-									"path": [
-										"org"
-									]
+									"host": ["{{grafana-url}}"],
+									"path": ["org"]
 								}
 							},
 							"response": []
@@ -1064,13 +963,8 @@
 								"header": [],
 								"url": {
 									"raw": "{{grafana-url}}/org/users",
-									"host": [
-										"{{grafana-url}}"
-									],
-									"path": [
-										"org",
-										"users"
-									]
+									"host": ["{{grafana-url}}"],
+									"path": ["org", "users"]
 								}
 							},
 							"response": []
@@ -1091,14 +985,8 @@
 								},
 								"url": {
 									"raw": "{{grafana-url}}/org/users/1",
-									"host": [
-										"{{grafana-url}}"
-									],
-									"path": [
-										"org",
-										"users",
-										"1"
-									]
+									"host": ["{{grafana-url}}"],
+									"path": ["org", "users", "1"]
 								}
 							},
 							"response": []
@@ -1110,14 +998,8 @@
 								"header": [],
 								"url": {
 									"raw": "{{grafana-url}}/org/users/lookup",
-									"host": [
-										"{{grafana-url}}"
-									],
-									"path": [
-										"org",
-										"users",
-										"lookup"
-									]
+									"host": ["{{grafana-url}}"],
+									"path": ["org", "users", "lookup"]
 								}
 							},
 							"response": []
@@ -1129,14 +1011,8 @@
 								"header": [],
 								"url": {
 									"raw": "{{grafana-url}}/org/users/1",
-									"host": [
-										"{{grafana-url}}"
-									],
-									"path": [
-										"org",
-										"users",
-										"1"
-									]
+									"host": ["{{grafana-url}}"],
+									"path": ["org", "users", "1"]
 								}
 							},
 							"response": []
@@ -1155,12 +1031,8 @@
 								"header": [],
 								"url": {
 									"raw": "{{grafana-url}}/datasources",
-									"host": [
-										"{{grafana-url}}"
-									],
-									"path": [
-										"datasources"
-									]
+									"host": ["{{grafana-url}}"],
+									"path": ["datasources"]
 								}
 							},
 							"response": []
@@ -1172,13 +1044,8 @@
 								"header": [],
 								"url": {
 									"raw": "{{grafana-url}}/datasources/2",
-									"host": [
-										"{{grafana-url}}"
-									],
-									"path": [
-										"datasources",
-										"2"
-									]
+									"host": ["{{grafana-url}}"],
+									"path": ["datasources", "2"]
 								}
 							},
 							"response": []
@@ -1190,13 +1057,8 @@
 								"header": [],
 								"url": {
 									"raw": "{{grafana-url}}/datasources/Almond-InfluxDB",
-									"host": [
-										"{{grafana-url}}"
-									],
-									"path": [
-										"datasources",
-										"Almond-InfluxDB"
-									]
+									"host": ["{{grafana-url}}"],
+									"path": ["datasources", "Almond-InfluxDB"]
 								}
 							},
 							"response": []
@@ -1217,12 +1079,8 @@
 								},
 								"url": {
 									"raw": "{{grafana-url}}/datasources",
-									"host": [
-										"{{grafana-url}}"
-									],
-									"path": [
-										"datasources"
-									]
+									"host": ["{{grafana-url}}"],
+									"path": ["datasources"]
 								}
 							},
 							"response": []
@@ -1243,13 +1101,8 @@
 								},
 								"url": {
 									"raw": "{{grafana-url}}/datasources/3",
-									"host": [
-										"{{grafana-url}}"
-									],
-									"path": [
-										"datasources",
-										"3"
-									]
+									"host": ["{{grafana-url}}"],
+									"path": ["datasources", "3"]
 								}
 							},
 							"response": []
@@ -1261,13 +1114,8 @@
 								"header": [],
 								"url": {
 									"raw": "{{grafana-url}}/datasources/3",
-									"host": [
-										"{{grafana-url}}"
-									],
-									"path": [
-										"datasources",
-										"3"
-									]
+									"host": ["{{grafana-url}}"],
+									"path": ["datasources", "3"]
 								}
 							},
 							"response": []
@@ -1295,13 +1143,8 @@
 								},
 								"url": {
 									"raw": "{{grafana-url}}/dashboards/db",
-									"host": [
-										"{{grafana-url}}"
-									],
-									"path": [
-										"dashboards",
-										"db"
-									]
+									"host": ["{{grafana-url}}"],
+									"path": ["dashboards", "db"]
 								}
 							},
 							"response": []
@@ -1313,14 +1156,8 @@
 								"header": [],
 								"url": {
 									"raw": "{{grafana-url}}/dashboards/uid/rWcK_A2Mk",
-									"host": [
-										"{{grafana-url}}"
-									],
-									"path": [
-										"dashboards",
-										"uid",
-										"rWcK_A2Mk"
-									]
+									"host": ["{{grafana-url}}"],
+									"path": ["dashboards", "uid", "rWcK_A2Mk"]
 								}
 							},
 							"response": []
@@ -1332,15 +1169,8 @@
 								"header": [],
 								"url": {
 									"raw": "{{grafana-url}}/datasources/proxy/2/query?db=almond_db&q=SELECT mean(\"temperature\") FROM \"data\" WHERE time >= now() - 1d GROUP BY time(5m) fill(null)&epoch=ms",
-									"host": [
-										"{{grafana-url}}"
-									],
-									"path": [
-										"datasources",
-										"proxy",
-										"2",
-										"query"
-									],
+									"host": ["{{grafana-url}}"],
+									"path": ["datasources", "proxy", "2", "query"],
 									"query": [
 										{
 											"key": "db",
@@ -1380,9 +1210,7 @@
 					"script": {
 						"id": "288a67e6-ff1e-4f05-8dd6-ab87b5d9da63",
 						"type": "text/javascript",
-						"exec": [
-							""
-						]
+						"exec": [""]
 					}
 				},
 				{
@@ -1390,9 +1218,7 @@
 					"script": {
 						"id": "bbd0c591-4fd4-481a-b519-07c59cff13c8",
 						"type": "text/javascript",
-						"exec": [
-							""
-						]
+						"exec": [""]
 					}
 				}
 			],
@@ -1408,12 +1234,8 @@
 						"header": [],
 						"url": {
 							"raw": "{{influx-server-url}}/air-temperature?q=time >= '2020-10-31T21:00:00.000Z' and time <= '2020-11-30T20:59:59.999Z'",
-							"host": [
-								"{{influx-server-url}}"
-							],
-							"path": [
-								"air-temperature"
-							],
+							"host": ["{{influx-server-url}}"],
+							"path": ["air-temperature"],
 							"query": [
 								{
 									"key": "q",
@@ -1444,9 +1266,7 @@
 			"script": {
 				"id": "a6d10aed-8e43-4255-a89c-eaf44baf8173",
 				"type": "text/javascript",
-				"exec": [
-					""
-				]
+				"exec": [""]
 			}
 		},
 		{
@@ -1454,9 +1274,7 @@
 			"script": {
 				"id": "9ee8b65d-e09b-49b0-b36a-6fefb3ece482",
 				"type": "text/javascript",
-				"exec": [
-					""
-				]
+				"exec": [""]
 			}
 		}
 	],

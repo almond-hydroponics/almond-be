@@ -1,5 +1,5 @@
 import { Secret, sign, verify } from 'jsonwebtoken';
-import { DeepPartial } from '../../_helpers/database';
+import { DeepPartial } from '../../helpers/database';
 import { config } from '../../../config';
 import { IUser } from '../../interfaces/IUser';
 import { IToken } from '../../interfaces/IToken';

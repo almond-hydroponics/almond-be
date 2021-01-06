@@ -1,0 +1,18 @@
+image:
+  file: .gitpod.Dockerfile
+tasks:
+  - name: Build
+    init: yarn install && gp sync-done install
+    command: yarn build
+  - name: Mongoose
+#    before: ./release.sh
+    command: |
+      cp .env.example .env
+      mkdir -p /workspace/data && mongod --dbpath /workspace/data
+  - name: Nodemon
+    init: gp sync-await install
+    command: yarn start:dev
+    openMode: split-right
+ports:
+  - port: 8080
+    onOpen: open-browser

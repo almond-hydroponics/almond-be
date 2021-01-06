@@ -11,6 +11,11 @@ import MqttService from '../../services/mqttService';
 import ScheduleOverrideService from '../../services/scheduleOverride';
 import middlewares from '../middlewares';
 import { ScheduleOverride } from '../../../config/enums';
+import {
+	addDeviceActivityLog,
+	manualOverrideActivityLog,
+} from '../middlewares/logActivity';
+import { IActivityLog } from '../../interfaces/IActivityLog';
 
 const {
 	isAuth,
@@ -23,7 +28,6 @@ const {
 } = middlewares;
 
 const logger = new AppLogger('Device');
-const logActivity = require('../middlewares/logActivity');
 
 const device = Router();
 
@@ -48,7 +52,7 @@ export default (app: Router): void => {
 			}),
 		}),
 		async (req: Request, res: Response, next: NextFunction) => {
-			logger.debug('Calling Pump endpoint');
+			logger.debug('[pumpPatch] Calling Pump endpoint');
 			try {
 				const user = req.currentUser;
 				const { enabled } = req.body;
@@ -61,17 +65,19 @@ export default (app: Router): void => {
 
 				// connect and send message via mqtt
 				mqttClient.connect(activityLogInstance, req);
-				mqttClient.sendMessage(topic, status, activityLogInstance, req);
+				await mqttClient.sendMessage(topic, status, activityLogInstance, req);
 
 				// save instance of the override
-				const scheduleOverride = await scheduleOverrideInstance.EditScheduleOverride(
+				const {
+					scheduleOverride,
+				} = await scheduleOverrideInstance.EditScheduleOverride(
 					req.body as IScheduleOverrideInputDTO,
 					user,
 				);
 				if (scheduleOverride) {
 					try {
 						const activityLogInstance = Container.get(ActivityLogService);
-						const logActivityItems = logActivity.manualOverrideActivityLog(
+						const logActivityItems = manualOverrideActivityLog(
 							req,
 							!!req.body.enabled,
 						);
@@ -81,7 +87,7 @@ export default (app: Router): void => {
 					}
 				}
 				// get instance override history of a particular user and attach to payload
-				let response: any = '';
+				let response: IActivityLog[] = [];
 				await activityLogInstance
 					.GetActivityLogs(user)
 					.then((res) => (response = res));
@@ -108,10 +114,10 @@ export default (app: Router): void => {
 		isAuth,
 		attachCurrentUser,
 		async (req: Request, res: Response) => {
-			logger.debug('Calling GetPumpById endpoint');
+			logger.debug('[pumpGet] Calling GetPumpById endpoint');
 			try {
 				const user = req.currentUser;
-				const deviceId = req.query.device;
+				const deviceId = req.query.device as string;
 
 				const pumpServiceInstance = Container.get(ScheduleOverrideService);
 				const pumpStatus = await pumpServiceInstance.GetScheduleOverride(
@@ -153,24 +159,20 @@ export default (app: Router): void => {
 				id: Joi.string().required(),
 			}),
 		}),
-		async (req: Request, res: Response) => {
-			logger.debug('Calling PostDevices endpoint');
+		async (req: Request, res: Response, next: NextFunction) => {
+			logger.debug('[devices] Calling PostDevices endpoint');
 			try {
 				const user = req.currentUser;
 				const deviceServiceInstance = Container.get(DeviceService);
 				const { device } = await deviceServiceInstance.AddDevice(
 					req.body as IDeviceInputDTO,
-					user,
 				);
 
 				if (device) {
 					const desc = 'Device added successfully';
 					try {
 						const activityLogInstance = Container.get(ActivityLogService);
-						const logActivityItems = logActivity.addDeviceActivityLog(
-							req,
-							desc,
-						);
+						const logActivityItems = addDeviceActivityLog(req, desc);
 						await activityLogInstance.CreateActivityLog(logActivityItems, user);
 					} catch (e) {
 						logger.error('🔥 error Creating Activity Log : %o', e);
@@ -182,9 +184,11 @@ export default (app: Router): void => {
 					});
 				}
 			} catch (e) {
-				logger.error('🔥 error: %o', e.stack);
-				const serverError = 'Server Error. Could not complete the request';
-				return res.json({ serverError }).status(500);
+				logger.error('🔥 error: %o', e.message);
+				if (e.code === 11000) {
+					e['status'] = 409;
+				}
+				return next(e);
 			}
 		},
 	);
@@ -205,7 +209,7 @@ export default (app: Router): void => {
 			}),
 		}),
 		async (req: Request, res: Response, next: NextFunction) => {
-			logger.debug('Calling My Device endpoint');
+			logger.debug('[myDevice] Calling My Device endpoint');
 			try {
 				const user = req.currentUser;
 				const { id } = req.body;
@@ -271,21 +275,22 @@ export default (app: Router): void => {
 			}),
 		}),
 		async (req: Request, res: Response, next: NextFunction) => {
-			logger.debug('Calling update current device endpoint');
+			logger.debug('[activeDevice] Calling update current device endpoint');
 			try {
 				const user = req.currentUser;
 				const { id } = req.body;
 
 				const activeDeviceInstance = Container.get(DeviceService);
-				const activeDevice = await activeDeviceInstance.UpdateCurrentDevice(
-					id,
-					user,
-				);
+				const {
+					selectedDevice,
+				} = await activeDeviceInstance.UpdateCurrentDevice(id, user);
 
 				return res.status(200).send({
 					success: true,
-					message: `Device with ID ${activeDevice.id} has been activated`,
-					data: activeDevice,
+					message: `Device with ID ${
+						typeof selectedDevice !== 'string' && selectedDevice?.id
+					} has been activated`,
+					data: selectedDevice,
 				});
 			} catch (e) {
 				logger.error('🔥 error: %o', e.stack);
@@ -306,7 +311,7 @@ export default (app: Router): void => {
 		checkRole('Admin'),
 		getCache(path),
 		async (req: Request, res: Response, next: NextFunction) => {
-			logger.debug('Calling GetAllDevices endpoint');
+			logger.debug('[devicesGet] Calling GetAllDevices endpoint');
 			try {
 				const deviceServiceInstance = Container.get(DeviceService);
 				const devices = await deviceServiceInstance.GetAllDevices();
@@ -347,13 +352,15 @@ export default (app: Router): void => {
 		checkRole('Admin'),
 		clearCache(path),
 		async (req: Request, res: Response, next: NextFunction) => {
-			logger.debug('Calling DeleteDeviceById endpoint');
+			logger.debug('[devicesDelete] Calling DeleteDeviceById endpoint');
 			try {
 				const {
 					params: { id },
 				} = req;
 				const deviceServiceInstance = Container.get(DeviceService);
 				const device = await deviceServiceInstance.DeleteDeviceById(id);
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+				// @ts-expect-error
 				if (device.n > 0) {
 					const message = 'Device has been deleted successfully';
 					return res.status(200).json({ message });
@@ -386,7 +393,9 @@ export default (app: Router): void => {
 		}),
 		async (req: Request, res: Response) => {
 			logger.debug(
-				`Calling PatchDevice endpoint with body: ${JSON.stringify(req.body)}`,
+				`[devicesPatch] Calling PatchDevice endpoint with body: ${JSON.stringify(
+					req.body,
+				)}`,
 			);
 			try {
 				const {

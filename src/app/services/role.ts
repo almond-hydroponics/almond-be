@@ -1,18 +1,19 @@
 import { Inject, Service } from 'typedi';
 import { IRole, IRoleInputDTO } from '../interfaces/IRole';
 import { AppLogger } from '../app.logger';
+import { DeepPartial } from '../helpers/database';
 
 @Service()
 export default class RoleService {
 	private logger = new AppLogger(RoleService.name);
 
-	constructor(@Inject('roleModel') private roleModel) {}
+	constructor(@Inject('roleModel') private roleModel: Models.RoleModel) {}
 
 	public async CreateRole(
 		roleInputDTO: IRoleInputDTO,
-	): Promise<{ role: IRole }> {
+	): Promise<{ role: DeepPartial<IRole> }> {
 		try {
-			this.logger.debug('Creating role db record');
+			this.logger.debug('[createRole] Creating role db record');
 			const roleItem = {
 				...roleInputDTO,
 				resourceAccessLevels: roleInputDTO.resourceAccessLevels.map(
@@ -23,7 +24,7 @@ export default class RoleService {
 				),
 			};
 
-			const roleRecord = await this.roleModel.create(roleItem);
+			const roleRecord = await this.roleModel.create(roleItem as any);
 			const role = roleRecord.toObject();
 			return { role };
 		} catch (e) {
@@ -32,8 +33,9 @@ export default class RoleService {
 		}
 	}
 
-	public async GetRoles() {
+	public async GetRoles(): Promise<IRole[]> {
 		try {
+			this.logger.debug('[getRoles] Fetching roles from db');
 			return this.roleModel
 				.find()
 				.populate('resourceAccessLevels.resource')
@@ -44,8 +46,9 @@ export default class RoleService {
 		}
 	}
 
-	public async DeleteRoleById(roleID) {
+	public async DeleteRoleById(roleID: string): Promise<IRole | void> {
 		try {
+			this.logger.debug('[deleteRole] Delete role db record');
 			return this.roleModel.deleteOne({ _id: Object(roleID) }).exec();
 		} catch (e) {
 			this.logger.error(e.message, e.stack);
@@ -54,15 +57,16 @@ export default class RoleService {
 	}
 
 	public async EditRole(
-		roleId,
+		roleId: string,
 		roleInputDTO: IRoleInputDTO,
 	): Promise<{ role: IRole }> {
 		try {
+			this.logger.debug('[editRole] Editing role in db record');
 			const roleItem = {
 				...roleInputDTO,
 				_id: roleId,
 			};
-			return this.roleModel.findOneAndUpdate({ _id: roleId }, roleItem, {
+			return this.roleModel.findOneAndUpdate({ _id: roleId }, roleItem as any, {
 				new: true,
 			});
 		} catch (e) {

@@ -6,7 +6,16 @@ import mongooseLoader from './mongoose';
 // We have to import at least all the events once so they can be triggered
 import './events';
 
-export default async ({ expressApp }) => {
+import * as schedule from '../models/schedule';
+import * as user from '../models/user';
+import * as scheduleOverride from '../models/scheduleOverride';
+import * as activityLog from '../models/activityLog';
+import * as device from '../models/device';
+import * as role from '../models/role';
+import * as resource from '../models/resource';
+import * as permissions from '../models/permissions';
+
+export default async ({ expressApp }): Promise<void> => {
 	const logger = new AppLogger('Loaders');
 	const mongoConnection = await mongooseLoader();
 	logger.log('✌️ Database loaded and connected!');
@@ -20,41 +29,41 @@ export default async ({ expressApp }) => {
 	const scheduleModel = {
 		name: 'scheduleModel',
 		// Notice the require syntax and the '.default'
-		model: require('../models/schedule').default,
+		model: schedule.default,
 	};
 
 	const userModel = {
 		name: 'userModel',
-		model: require('../models/user').default,
+		model: user.default,
 	};
 
 	const scheduleOverrideModel = {
 		name: 'scheduleOverrideModel',
-		model: require('../models/scheduleOverride').default,
+		model: scheduleOverride.default,
 	};
 	const activityLogModel = {
 		name: 'activityLogModel',
-		model: require('../models/activityLog').default,
+		model: activityLog.default,
 	};
 
 	const deviceModel = {
 		name: 'deviceModel',
-		model: require('../models/device').default,
+		model: device.default,
 	};
 
 	const roleModel = {
 		name: 'roleModel',
-		model: require('../models/role').default,
+		model: role.default,
 	};
 
 	const resourceModel = {
 		name: 'resourceModel',
-		model: require('../models/resource').default,
+		model: resource.default,
 	};
 
 	const permissionsModel = {
 		name: 'permissionsModel',
-		model: require('../models/permissions').default,
+		model: permissions.default,
 	};
 
 	// It returns the agenda instance because it's needed in the subsequent loaders

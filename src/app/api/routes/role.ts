@@ -21,7 +21,7 @@ const role = Router();
 
 const path = 'ROLE';
 
-export default (app: Router) => {
+export default (app: Router): void => {
 	app.use('/', role);
 
 	/**
@@ -76,10 +76,9 @@ export default (app: Router) => {
 		isAuth,
 		attachCurrentUser,
 		checkRole('Admin'),
-		getCache(path),
-
+		// getCache(path),
 		async (req: Request, res: Response, next: NextFunction) => {
-			logger.debug('Calling GetAllRoles endpoint');
+			logger.debug('[rolesGet] Calling GetAllRoles endpoint');
 			try {
 				const roleServiceInstance = Container.get(RoleService);
 				const resourceServiceInstance = Container.get(ResourceService);
@@ -188,6 +187,8 @@ export default (app: Router) => {
 				} = req;
 				const roleServiceInstance = Container.get(RoleService);
 				const role = await roleServiceInstance.DeleteRoleById(id);
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+				// @ts-expect-error
 				if (role.n > 0) {
 					const message = 'User role has been deleted successfully';
 					return res.status(200).json({ message });

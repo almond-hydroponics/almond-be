@@ -11,17 +11,15 @@ jobs:
   build_and_test:
     strategy:
       matrix:
-        platform: [ ubuntu-latest, macOS-latest ]
-        node: [ '12', '13', '14' ]
+        platform: [ubuntu-latest, macOS-latest]
+        node: ['12', '13', '14']
     name: test/node ${{ matrix.node }}/${{ matrix.platform }}
     runs-on: ${{ matrix.platform }}
     steps:
-    - uses: actions/checkout@v1
-    - uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node }}
-    - run: rm -rf .yarnrc.yml
-    - run: npm install -g yarn
-    - run: yarn set version berry
-    - run: yarn install
-    - run: yarn build
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm install -g yarn
+      - run: yarn install
+      - run: yarn build

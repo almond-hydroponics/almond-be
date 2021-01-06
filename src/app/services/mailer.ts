@@ -3,17 +3,16 @@ import * as Str from '@supercharge/strings';
 import { mail, renderTemplate } from '../../config/nodemailer';
 import { IUser } from '../interfaces/IUser';
 import { AppLogger } from '../app.logger';
-import { recoverPasswordEmail } from '../mail';
 import redisClient from '../loaders/redis';
 import { config } from '../../config';
-import { createToken } from './jwt';
+// import { createToken } from './jwt';
 
 @Service()
 export default class MailerService {
 	private logger = new AppLogger(MailerService.name);
 	constructor(@Inject('userModel') private userModel: Models.UserModel) {}
 
-	public async SendWelcomeEmail(user: Partial<IUser>) {
+	public async SendWelcomeEmail(user: Partial<IUser>): Promise<any> {
 		try {
 			this.logger.debug(
 				`[onSendWelcomeEmail] Sending verification email for user ${user.email}`,
@@ -21,7 +20,7 @@ export default class MailerService {
 			const messageStatus = await mail({
 				to: user.email,
 				subject: 'Welcome to Almond Hydroponics',
-				html: renderTemplate(`/mail/verify_registration.twig`, {
+				html: await renderTemplate(`/mail/verify_registration.twig`, {
 					user,
 					config,
 					token: user.verificationToken,
@@ -75,7 +74,11 @@ export default class MailerService {
 				from: '"Almond Hydroponics" <almond.noreply@gmail.com>',
 				to: userRecord.email,
 				subject: 'My Study Planner recover password link',
-				html: recoverPasswordEmail(userRecord.name, token, userRecord.email),
+				html: await renderTemplate(`/mail/verify_registration.twig`, {
+					userRecord,
+					config,
+					token,
+				}),
 			});
 
 			if (!messageStatus)

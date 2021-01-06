@@ -1,9 +1,7 @@
 import { Container } from 'typedi';
-import { AppLogger } from '../../app.logger';
 import AuthService from '../../services/auth';
 import { NextFunction, Request, Response } from 'express';
-
-const logger = new AppLogger('CurrentUser');
+import { Logger } from 'winston';
 
 /**
  * Attach user to req.user
@@ -16,12 +14,16 @@ const attachCurrentUser = async (
 	res: Response,
 	next: NextFunction,
 ): Promise<void> => {
+	const logger: Logger = Container.get('logger');
 	try {
 		const userService = Container.get(AuthService);
-		req.currentUser = await userService.UserProfile(req.token.id);
+		const currentUser = await userService.UserProfile(req.token.id);
+		Reflect.deleteProperty(currentUser, 'password');
+		Reflect.deleteProperty(currentUser, 'salt');
+		req.currentUser = currentUser;
 		return next();
 	} catch (e) {
-		logger.error('🔥 Error attaching user to req: %o', e.stack);
+		logger.error('🔥 Error attaching user to req: %o', e.message);
 		return next(e);
 	}
 };

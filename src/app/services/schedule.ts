@@ -3,27 +3,30 @@ import { ISchedule, IScheduleInputDTO } from '../interfaces/ISchedule';
 import { IUser } from '../interfaces/IUser';
 import { AppLogger } from '../app.logger';
 import ActivityLogService from './activityLog';
+import { DeepPartial } from '../helpers/database';
+import { IActivityLog } from '../interfaces/IActivityLog';
 
 @Service()
 export default class ScheduleService {
 	private logger = new AppLogger(ScheduleService.name);
 	private activityLogInstance = Container.get(ActivityLogService);
 
-	constructor(@Inject('scheduleModel') private scheduleModel) {}
+	constructor(
+		@Inject('scheduleModel') private scheduleModel: Models.ScheduleModel,
+	) {}
 
 	public async CreateSchedule(
 		scheduleInputDTO: IScheduleInputDTO,
 		user: IUser,
-	): Promise<{ schedule: ISchedule }> {
+	): Promise<{ schedule: DeepPartial<ISchedule> }> {
 		try {
-			this.logger.debug('Creating schedule db record');
-			const scheduleItem = {
+			this.logger.debug('[createSchedule] Creating schedule db record');
+			let response: IActivityLog[] = [];
+			const scheduleRecord = await this.scheduleModel.create({
 				...scheduleInputDTO,
 				user: user._id,
 				device: scheduleInputDTO.device,
-			};
-			let response: any = '';
-			const scheduleRecord = await this.scheduleModel.create(scheduleItem);
+			});
 			const schedule = scheduleRecord.toObject();
 			await this.activityLogInstance.GetActivityLogs(user).then((res) => {
 				response = res;
@@ -36,8 +39,11 @@ export default class ScheduleService {
 		}
 	}
 
-	public async GetSchedules(user: IUser, device: string | string[] | any) {
+	public async GetSchedules(user: IUser, device: string): Promise<ISchedule[]> {
 		try {
+			this.logger.debug(
+				`[getSchedules] Fetching schedules records for ${device}`,
+			);
 			return await this.scheduleModel.find({
 				user: { $eq: user._id },
 				device: { $eq: device },
@@ -48,8 +54,12 @@ export default class ScheduleService {
 		}
 	}
 
-	public async GetScheduleById(scheduleId: string, user) {
+	public async GetScheduleById(
+		scheduleId: string,
+		user: IUser,
+	): Promise<ISchedule> {
 		try {
+			this.logger.debug('[getSchedulesById] Fetching schedules record');
 			return await this.scheduleModel
 				.findById({
 					_id: scheduleId,
@@ -62,9 +72,13 @@ export default class ScheduleService {
 		}
 	}
 
-	public async DeleteScheduleById(scheduleId, user) {
+	public async DeleteScheduleById(
+		scheduleId: string,
+		user: IUser,
+	): Promise<ISchedule | void> {
 		try {
-			return await this.scheduleModel
+			this.logger.debug('[deleteScheduleById] Deleting schedule record');
+			return this.scheduleModel
 				.deleteOne({
 					_id: Object(scheduleId),
 					user: user._id,
@@ -77,12 +91,12 @@ export default class ScheduleService {
 	}
 
 	public async EditSchedule(
-		scheduleId,
+		scheduleId: string,
 		scheduleInputDTO: IScheduleInputDTO,
-		user,
+		user: IUser,
 	): Promise<{ schedule: ISchedule }> {
 		try {
-			this.logger.silly('Editing schedule db record');
+			this.logger.debug('[editSchedule] Editing schedule db record');
 			const scheduleItem = {
 				...scheduleInputDTO,
 				_id: scheduleId,

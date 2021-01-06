@@ -8,16 +8,16 @@ import {
 	EventDispatcher,
 	EventDispatcherInterface,
 } from '../decorators/eventDispatcher';
-import { IUser, IUserInputDTO } from '../interfaces/IUser';
+import { IProfile, IUser, IUserInputDTO } from '../interfaces/IUser';
 import { AppLogger } from '../app.logger';
 import events from '../subscribers/events';
 import MailerService from './mailer';
-import isArrayNotNull from '../utils/checkArrayEmpty';
+// import isArrayNotNull from '../utils/checkArrayEmpty';
 import { createAuthToken } from './jwt';
 import { IToken } from '../interfaces/IToken';
-import { DeepPartial } from '../_helpers/database';
+import { DeepPartial } from '../helpers/database';
 
-const { almond_admin, jwtSecret } = config;
+const { almond_admin } = config;
 
 @Service()
 export default class AuthService {
@@ -26,19 +26,20 @@ export default class AuthService {
 	constructor(
 		@Inject('userModel') private userModel: Models.UserModel,
 		@Inject('roleModel') private roleModel: Models.RoleModel,
-		@EventDispatcher() private eventDispatcher: EventDispatcherInterface,
+		// @EventDispatcher() private eventDispatcher: EventDispatcherInterface,
 		private mailer: MailerService,
 	) {
 		this.userModel = userModel;
 		this.roleModel = roleModel;
 	}
 
-	public async SignUp(userInputDTO: IUserInputDTO): Promise<{ user: IUser }> {
+	public async SignUp(
+		userInputDTO: IUserInputDTO,
+	): Promise<{ user: DeepPartial<IUser> }> {
 		try {
 			const salt = randomBytes(32);
-			this.logger.log('Hashing password');
 			const hashedPassword = await argon2.hash(userInputDTO.password, { salt });
-			this.logger.log('Creating user db record');
+			this.logger.log('[signup] Creating user db record');
 
 			const verificationToken = Str.random(32);
 
@@ -55,16 +56,11 @@ export default class AuthService {
 			});
 
 			if (!userRecord) {
-				this.logger.error('Error:', 'User cannot be created');
+				this.logger.error('Signup Error:', 'User cannot be created');
 				throw new Error('User cannot be created');
 			}
-			const messageStatus = await this.mailer.SendWelcomeEmail(userRecord);
+			await this.mailer.SendWelcomeEmail(userRecord);
 			// await this.eventDispatcher.dispatch(events.user.signUp, userRecord);
-
-			if (messageStatus.status !== 'ok') {
-				this.logger.error('Error:', "Couldn't send welcome message to user.");
-				throw new Error("Couldn't send welcome message to user.");
-			}
 
 			/**
 			 * @TODO This is not the best way to deal with this
@@ -80,14 +76,20 @@ export default class AuthService {
 			return { user };
 		} catch (e) {
 			this.logger.error(e.message, e.stack);
-			throw e;
+			const error = new Error(
+				`User ${userInputDTO.email} already exists. Kindly login`,
+			);
+			if (e.code === 11000) {
+				error['status'] = 409;
+			}
+			throw error;
 		}
 	}
 
 	public async VerifyEmail(
 		email: string,
 		token: string,
-	): Promise<{ user: IUser }> {
+	): Promise<{ user: DeepPartial<IUser> }> {
 		try {
 			const userRecord = await this.userModel.findOneAndUpdate(
 				{ email, verificationToken: token },
@@ -103,7 +105,7 @@ export default class AuthService {
 			const user = userRecord.toObject();
 			Reflect.deleteProperty(user, 'password');
 
-			return user;
+			return { user };
 		} catch (e) {
 			this.logger.error(e.message, e.stack);
 			throw e;
@@ -113,37 +115,34 @@ export default class AuthService {
 	public async SignIn(
 		email: string,
 		password: string,
-	): Promise<{ user: IUser; token: IToken }> {
-		let userRecord = await this.userModel.findOne({ email });
-
-		// populate user role
-		userRecord = await userRecord
-			.populate({ path: 'roles', select: 'title' })
-			.execPopulate();
+	): Promise<{ user: DeepPartial<IUser>; token: IToken }> {
+		const userRecord = await this.userModel
+			.findOne({ email })
+			.populate({ path: 'roles', select: 'title' });
 
 		if (!userRecord) {
-			throw new Error('User not registered');
+			const error = new Error('User does not exist. Kindly register');
+			error['status'] = 404;
+			throw error;
 		}
-		/**
-		 * We use verify from argon2 to prevent 'timing based' attacks
-		 */
+
+		// We use verify from argon2 to prevent 'timing based' attacks
 		this.logger.silly('Checking password');
 		const validPassword = await argon2.verify(userRecord.password, password);
-		if (validPassword) {
-			this.logger.silly('Password is valid!');
-			this.logger.silly('Generating JWT');
-			const token = createAuthToken(userRecord);
 
+		if (validPassword) {
+			const token = createAuthToken(userRecord);
 			const user = userRecord.toObject();
 			Reflect.deleteProperty(user, 'password');
 			Reflect.deleteProperty(user, 'salt');
 			Reflect.deleteProperty(user, 'verificationToken');
-			/**
-			 * Easy as pie, you don't need passport.js anymore :)
-			 */
+
 			return { user, token };
+		} else {
+			const error = new Error('Invalid Password');
+			error['status'] = 400;
+			throw error;
 		}
-		throw new Error('Invalid Password');
 	}
 
 	public async LoginAs(email: string): Promise<any> {
@@ -157,11 +156,11 @@ export default class AuthService {
 				email: userRecord.email,
 				name: userRecord.name,
 			},
-			token: this.generateToken(userRecord),
+			token: createAuthToken(userRecord),
 		};
 	}
 
-	public async SocialLogin(profile): Promise<IUser | string> {
+	public async SocialLogin(profile: IProfile): Promise<IUser | string> {
 		try {
 			let userRecord = await this.userModel
 				.findOne({ email: profile.email })
@@ -204,9 +203,9 @@ export default class AuthService {
 		}
 	}
 
-	public async UserProfile(id: string): Promise<IUser> {
+	public async UserProfile(id: string): Promise<DeepPartial<IUser>> {
 		try {
-			this.logger.debug('[UserProfile] Fetching user details');
+			this.logger.debug('[userProfile] Fetching user details');
 			const userRecord = await this.userModel
 				.findById(id)
 				.populate({
@@ -294,7 +293,7 @@ export default class AuthService {
 
 	public async GetUsers(): Promise<IUser[]> {
 		try {
-			this.logger.debug('Fetching all user from record');
+			this.logger.debug('[getUsers] Fetching all user from record');
 			return this.userModel
 				.find()
 				.populate({ path: 'roles', select: 'title' })
@@ -306,56 +305,56 @@ export default class AuthService {
 		}
 	}
 
-	public async deserializeUser(email: string) {
+	public async deserializeUser(email: string): Promise<IUser> {
 		const userRecord = await this.userModel.findOne({ email });
-		this.logger.silly('Finding user record...');
+		this.logger.silly('[deserializeUser] Finding user record');
 
 		if (!userRecord) throw new Error('User not found');
 
 		return userRecord;
 	}
 
-	public generateToken(user: IUser) {
-		const today = new Date();
-		const exp = new Date(today);
-		exp.setDate(today.getDate() + 60);
+	// public generateToken(user: IUser) {
+	// 	const today = new Date();
+	// 	const exp = new Date(today);
+	// 	exp.setDate(today.getDate() + 60);
 
-		/**
-		 * A JWT means JSON Web Token, so basically it's a json that is _hashed_ into a string
-		 * The cool thing is that you can add custom properties a.k.a metadata
-		 * Here we are adding the userId, role and name
-		 * Beware that the metadata is public and can be decoded without _the secret_
-		 * but the client cannot craft a JWT to fake a userId
-		 * because it doesn't have _the secret_ to sign it
-		 */
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-expect-error
-		const role = user.roles.reduce(
-			(obj, role) => Object.assign(obj, { [role.title]: role._id }),
-			{},
-		);
-		const userData = {
-			role,
-			_id: user._id, // We are gonna use this in the middleware 'isAuth'
-			name: user.name,
-			photo: user.photo,
-			email: user.email,
-			isVerified: user.isVerified,
-			deviceVerified: isArrayNotNull(user.devices)
-				? user.devices[0].verified
-				: false,
-			activeDevice: user.activeDevice,
-		};
+	// 	/**
+	// 	 * A JWT means JSON Web Token, so basically it's a json that is _hashed_ into a string
+	// 	 * The cool thing is that you can add custom properties a.k.a metadata
+	// 	 * Here we are adding the userId, role and name
+	// 	 * Beware that the metadata is public and can be decoded without _the secret_
+	// 	 * but the client cannot craft a JWT to fake a userId
+	// 	 * because it doesn't have _the secret_ to sign it
+	// 	 */
+	// 	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+	// 	// @ts-expect-error
+	// 	const role = user.roles.reduce(
+	// 		(obj, role) => Object.assign(obj, { [role.title]: role._id }),
+	// 		{},
+	// 	);
+	// 	const userData = {
+	// 		role,
+	// 		_id: user._id, // We are gonna use this in the middleware 'isAuth'
+	// 		name: user.name,
+	// 		photo: user.photo,
+	// 		email: user.email,
+	// 		isVerified: user.isVerified,
+	// 		deviceVerified: isArrayNotNull(user.devices)
+	// 			? user.devices[0].verified
+	// 			: false,
+	// 		activeDevice: user.activeDevice,
+	// 	};
 
-		return jwt.sign(
-			{
-				userData,
-				iat: Date.now(),
-				exp: exp.getTime() / 1000,
-				iss: 'almond.com',
-				aud: 'almond users',
-			},
-			jwtSecret,
-		);
-	}
+	// 	return jwt.sign(
+	// 		{
+	// 			userData,
+	// 			iat: Date.now(),
+	// 			exp: exp.getTime() / 1000,
+	// 			iss: 'almond.com',
+	// 			aud: 'almond users',
+	// 		},
+	// 		jwtSecret,
+	// 	);
+	// }
 }

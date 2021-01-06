@@ -1,4 +1,5 @@
 import * as mongoose from 'mongoose';
+import validator from 'validator';
 import { IUser } from '../interfaces/IUser';
 
 const User = new mongoose.Schema(
@@ -10,9 +11,11 @@ const User = new mongoose.Schema(
 		},
 		email: {
 			type: String,
+			required: [true, 'Please enter email'],
 			lowercase: true,
 			unique: true,
 			index: true,
+			validate: (value) => validator.isEmail(value),
 		},
 		password: String,
 		salt: String,
@@ -30,10 +33,11 @@ const User = new mongoose.Schema(
 		photo: {
 			type: String,
 			default:
-				'https://res.cloudinary.com/mashafrancis/image/upload/v1552641620/kari4me/nan.jpg',
+				'https://res.cloudinary.com/almondgreen/image/upload/v1608196073/Almond/avatar_lwhtoy.jpg',
 		},
 		isVerified: {
 			type: Boolean,
+			required: true,
 			default: false,
 		},
 		verificationToken: String,

@@ -24,6 +24,7 @@ interface Config {
 	serverUrl: string;
 	clientUrl: string;
 	jwtSecret: string;
+	jwtAlgorithm: string;
 	sessionSecret: string;
 	cookiesDomain: string;
 	nodeMailer: {
@@ -114,7 +115,7 @@ interface Config {
 
 export const config: Config = {
 	isProduction: process.env.NODE_ENV === 'production',
-	port: parseInt(process.env.PORT, 10),
+	port: +process.env.PORT,
 	host: process.env.APP_HOST,
 	databaseURL: process.env.MONGODB_URI,
 	mongo: {
@@ -138,6 +139,7 @@ export const config: Config = {
 			? process.env.DEVELOPMENT_REDIRECT_URL
 			: process.env.PRODUCTION_REDIRECT_URL,
 	jwtSecret: process.env.JWT_SECRET,
+	jwtAlgorithm: process.env.JWT_ALGORITHM,
 	sessionSecret: process.env.SESSION_SECRET,
 	cookiesDomain:
 		process.env.NODE_ENV === 'development'

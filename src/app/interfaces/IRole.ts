@@ -1,31 +1,34 @@
+import { IResource } from './IResource';
+import { IPermissions } from './IPermissions';
+
 export interface IRole {
-	_id: string;
+	_id?: string;
 	title: string;
 	description: string;
 	userCount: number;
-	resourceAccessLevels: [
-		{
-			resource: {
-				type: string;
-				_id: string;
-			};
-			permissions: {
-				name: string;
-				_id: string;
-			};
-		},
-	];
+	resourceAccessLevels: ResourceAccessLevels[] | IResourceAccessLevels[];
 	deleted: boolean;
+}
+
+interface ResourceAccessLevels {
+	_id: string;
+	permissions: string[];
+	resource: string;
+}
+
+interface IResourceAccessLevels {
+	resource: IResource;
+	permissions: IPermissions;
+}
+
+interface IResourceAccessLevelsDTO {
+	resourceId: string;
+	name: string;
+	permissionIds: string[];
 }
 
 export interface IRoleInputDTO {
 	title: string;
 	description: string;
-	resourceAccessLevels: [
-		{
-			resourceId: string;
-			name: string;
-			permissionIds: string[];
-		},
-	];
+	resourceAccessLevels: IResourceAccessLevelsDTO[];
 }
