@@ -1,4 +1,4 @@
-import isArrayNotNull from './isArrayNotNull';
+import isArrayNotNull from '../isArrayNotNull';
 
 describe('The isArrayNotNull function', () => {
 	it('should return true if the array has a value', () => {
