@@ -3,14 +3,10 @@ defaults: &defaults
     - image: circleci/node:14.14.0
   working_directory: ~/almond-be
 
-cmd_attach_workspace: &cmd_attach_workspace
-  attach_workspace:
-    at: ~/almond-be
-
 cmd_install_packages: &cmd_install_packages
   run:
     name: Install project dependencies
-    command: sudo npm install -g yarn@1.12.x && yarn install
+    command: yarn install
 
 cmd_restore_cache: &cmd_restore_cache
   restore_cache:
@@ -28,8 +24,9 @@ cmd_download_cc_test_reporter: &cmd_download_cc_test_reporter
   run:
     name: Install code climate test reporter
     command: |
-      curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-      chmod +x ./cc-test-reporter
+      mkdir -p tmp/
+      curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > /tmp/cc-test-reporter
+      chmod +x /tmp/cc-test-reporter
 
 cmd_build_and_push_docker: &cmd_build_and_push_docker
   run:
@@ -40,6 +37,10 @@ cmd_build_and_push_docker: &cmd_build_and_push_docker
       docker login -u _json_key -p "$(echo $SERVICE_ACCOUNT)" https://gcr.io
       docker build -t gcr.io/${GCP_PROJECT_ID}/${PROJECT_NAME}:${IMG_TAG} -f docker/release/Dockerfile .
       docker push gcr.io/${GCP_PROJECT_ID}/${PROJECT_NAME}:${IMG_TAG}
+
+cmd_attach_workspace: &cmd_attach_workspace
+  attach_workspace:
+    at: tmp/
 
 persist_to_workspace: &persist_to_workspace
   persist_to_workspace:
@@ -80,16 +81,20 @@ jobs:
   test_and_report:
     <<: *defaults
     steps:
+      - checkout
+      - *cmd_restore_cache
       - *cmd_attach_workspace
       - *cmd_install_packages
       - *cmd_download_cc_test_reporter
       - run:
           name: Run tests
           command: |
-            ./cc-test-reporter before-build     # https://github.com/codeclimate/test-reporter/issues/260#issuecomment-369783913
             yarn test:unit --coverage
-            ./cc-test-reporter after-build --exit-code $?
-      - *persist_to_workspace
+            /tmp/cc-test-reporter format-coverage -t lcov -o tmp/codeclimate.unittest.json coverage/unittest/lcov.info
+      - persist_to_workspace:
+          root: tmp
+          paths:
+            - codeclimate.unittest.json
 
   build_artifacts:
     <<: *defaults
@@ -102,11 +107,11 @@ jobs:
   upload_coverage:
     <<: *defaults
     steps:
-#      - checkout
-#      - *cmd_download_cc_test_reporter
+      - checkout
+      - *cmd_download_cc_test_reporter
       - *cmd_attach_workspace
       - run:
-          name: Upload coverage results to Code Climate
+          name: Upload coverage results to code climate
           command: |
             /tmp/cc-test-reporter sum-coverage -p 1 -o /tmp/codeclimate.total.json tmp/codeclimate.*.json
             /tmp/cc-test-reporter upload-coverage -i /tmp/codeclimate.total.json
@@ -119,15 +124,15 @@ jobs:
           username: _json_key
           password: $SERVICE_ACCOUNT
         environment:
-          GOOGLE_APPLICATION_CREDENTIALS: /root/tembea-backend/shared/account.json
+          GOOGLE_APPLICATION_CREDENTIALS: /root/almond-be/shared/account.json
 
-    working_directory: ~/tembea-backend
+    working_directory: ~/almond-be
     <<: *defaults
     steps:
       - checkout
       - setup_remote_docker
       - *cmd_attach_workspace
-#      - *cmd_login_gcp
+      #      - *cmd_login_gcp
       - *cmd_build_and_push_docker
       - run:
           name: Clone the deployment scripts repo
@@ -163,15 +168,15 @@ workflows:
   check_build_deploy:
     jobs:
       - checkout_code
-#      - package_vulnerability_check:
-#          requires:
-#            - checkout_code
+      #      - package_vulnerability_check:
+      #          requires:
+      #            - checkout_code
       - test_and_report:
           requires:
-            - build
+            - checkout_code
       - upload_coverage:
           requires:
-            - unit_tests
+            - test_and_report
       - build_artifacts:
           requires:
             - checkout_code
