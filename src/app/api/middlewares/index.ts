@@ -14,3 +14,18 @@ export default {
 	clearAllCache,
 	rateLimiterUsingThirdParty,
 };
+
+// const middlewares = {
+//   attachCurrentUser,
+//   isAuth,
+//   checkRole,
+//   getCache,
+//   setCache,
+//   clearCache,
+//   clearAllCache,
+//   rateLimiterUsingThirdParty,
+// }
+//
+// export default middlewares;
+
+// should be defined this way to enable testing of the middlewares
