@@ -64,8 +64,8 @@ export default (app: Router): void => {
 				const activityLogInstance = Container.get(ActivityLogService);
 
 				// connect and send message via mqtt
-				mqttClient.connect(activityLogInstance, req);
-				await mqttClient.sendMessage(topic, status, activityLogInstance, req);
+				mqttClient.connect();
+				await mqttClient.sendMessage(topic, status);
 
 				// save instance of the override
 				const {
