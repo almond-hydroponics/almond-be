@@ -117,20 +117,6 @@ export default (app: Router): void => {
 					);
 				});
 				manager.start(`${schedule._id}`);
-
-				if (schedule) {
-					// update activity log
-					const activityLogInstance = Container.get(ActivityLogService);
-					try {
-						const logActivityItems = createScheduleActivityLogItem(req);
-						await activityLogInstance.CreateActivityLog(logActivityItems, user);
-						activityLogInstance.GetActivityLogs(user).then((res) => {
-							schedule.activityHistory = res;
-						});
-					} catch (e) {
-						logger.error('🔥 error Creating Activity Log : %o', e);
-					}
-				}
 				message = 'Time schedule added successfully';
 				return HttpResponse.sendResponse(res, 201, true, message, schedule);
 			} catch (e) {
@@ -256,14 +242,6 @@ export default (app: Router): void => {
 				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 				// @ts-expect-error
 				if (schedule.n > 0) {
-					// update activity log
-					const activityLogInstance = Container.get(ActivityLogService);
-					try {
-						const logActivityItems = deleteScheduleActivityLogItem(req);
-						await activityLogInstance.CreateActivityLog(logActivityItems, user);
-					} catch (e) {
-						logger.error('🔥 error Creating Activity Log : %o', e);
-					}
 					const message = 'Time schedule deleted successfully';
 					return res.status(200).json({ message });
 				}
