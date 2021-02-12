@@ -59,16 +59,22 @@ export default class RoleService {
 	public async EditRole(
 		roleId: string,
 		roleInputDTO: IRoleInputDTO,
-	): Promise<{ role: IRole }> {
+	): Promise<{ role: DeepPartial<IRole> }> {
 		try {
 			this.logger.debug('[editRole] Editing role in db record');
 			const roleItem = {
 				...roleInputDTO,
 				_id: roleId,
 			};
-			return this.roleModel.findOneAndUpdate({ _id: roleId }, roleItem as any, {
-				new: true,
-			});
+			const roleRecord = await this.roleModel.findOneAndUpdate(
+				{ _id: roleId },
+				roleItem as any,
+				{
+					new: true,
+				},
+			);
+			const role = roleRecord.toObject();
+			return { role };
 		} catch (e) {
 			this.logger.error(e.message, e.stack);
 			throw e;

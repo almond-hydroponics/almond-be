@@ -35,7 +35,7 @@ export default class AuthService {
 
 	public async SignUp(
 		userInputDTO: IUserInputDTO,
-	): Promise<{ user: DeepPartial<IUser> }> {
+	): Promise<{ verificationToken: string }> {
 		try {
 			const salt = randomBytes(32);
 			const hashedPassword = await argon2.hash(userInputDTO.password, { salt });
@@ -62,18 +62,16 @@ export default class AuthService {
 			await this.mailer.SendWelcomeEmail(userRecord);
 			// await this.eventDispatcher.dispatch(events.user.signUp, userRecord);
 
-			/**
-			 * @TODO This is not the best way to deal with this
-			 * There should exist a 'Mapper' layer
-			 * that transforms data from layer to layer
-			 * but that's too over-engineering for now
-			 */
-			const user = userRecord
-				.populate({ path: 'roles', select: 'title' })
-				.toObject();
-			Reflect.deleteProperty(user, 'password');
-			Reflect.deleteProperty(user, 'salt');
-			return { user };
+			// /**
+			//  * @TODO This is not the best way to deal with this
+			//  * There should exist a 'Mapper' layer
+			//  * that transforms data from layer to layer
+			//  * but that's too over-engineering for now
+			//  */
+			// const user = userRecord
+			// 	.populate({ path: 'roles', select: 'title' })
+			// 	.toObject();
+			return { verificationToken };
 		} catch (e) {
 			this.logger.error(e.message, e.stack);
 			const error = new Error(
@@ -154,7 +152,7 @@ export default class AuthService {
 		return {
 			user: {
 				email: userRecord.email,
-				name: userRecord.name,
+				name: userRecord.firstName,
 			},
 			token: createAuthToken(userRecord),
 		};
@@ -171,7 +169,8 @@ export default class AuthService {
 				const data = profile._json;
 				const userInfo = {
 					googleId: profile.id,
-					name: data.name,
+					firstName: data.given_name,
+					lastName: data.family_name,
 					photo: data.picture,
 					email: data.email,
 					isVerified: data.email_verified,

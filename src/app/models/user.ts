@@ -1,12 +1,17 @@
-import * as mongoose from 'mongoose';
+import mongoose from 'mongoose';
 import validator from 'validator';
 import { IUser } from '../interfaces/IUser';
 
 const User = new mongoose.Schema(
 	{
-		name: {
+		firstName: {
 			type: String,
-			required: [true, 'Please enter your full name'],
+			required: [true, 'Please enter your first name'],
+			index: true,
+		},
+		lastName: {
+			type: String,
+			required: [true, 'Please enter your last name'],
 			index: true,
 		},
 		email: {

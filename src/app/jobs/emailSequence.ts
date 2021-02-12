@@ -7,11 +7,11 @@ export default class EmailSequenceJob {
 		const logger = new AppLogger('Schedule');
 		try {
 			logger.debug('✌️ Email Sequence Job triggered!');
-			const { email, name }: { [key: string]: string } = job.data;
+			const { email, firstName }: { [key: string]: string } = job.data;
 			const mailerServiceInstance = Container.get(MailerService);
 			await mailerServiceInstance.StartEmailSequence('WelcomeSequence', {
 				email,
-				name,
+				firstName,
 			});
 			done();
 		} catch (e) {

@@ -36,7 +36,7 @@ export default class UserSubscriber {
 	}
 
 	@On(events.user.signUp)
-	public onUserSignUp({ name, email, _id }: Partial<IUser>) {
+	public onUserSignUp({ firstName, email, _id }: Partial<IUser>) {
 		try {
 			/**
 			 * @TODO implement this

@@ -2,7 +2,8 @@ import { IDevice } from './IDevice';
 
 export interface IUser {
 	_id?: string;
-	name: string;
+	firstName: string;
+	lastName: string;
 	email: string;
 	password?: string;
 	salt?: string;
@@ -17,7 +18,8 @@ export interface IUser {
 }
 
 export interface IUserInputDTO {
-	name: string;
+	firstName: string;
+	lastName: string;
 	email: string;
 	password?: string;
 	photo?: string;
@@ -30,7 +32,8 @@ export interface IProfile extends IUser {
 	id: string;
 	_json: {
 		id: string;
-		name: string;
+		given_name: string;
+		family_name: string;
 		photo: string;
 		email: string;
 		picture: string;
