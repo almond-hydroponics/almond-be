@@ -64,8 +64,8 @@ export default (app: Router): void => {
 				const activityLogInstance = Container.get(ActivityLogService);
 
 				// connect and send message via mqtt
-				mqttClient.connect(activityLogInstance, req);
-				await mqttClient.sendMessage(topic, status, activityLogInstance, req);
+				mqttClient.connect();
+				await mqttClient.sendMessage(topic, status);
 
 				// save instance of the override
 				const {
@@ -170,13 +170,6 @@ export default (app: Router): void => {
 
 				if (device) {
 					const desc = 'Device added successfully';
-					try {
-						const activityLogInstance = Container.get(ActivityLogService);
-						const logActivityItems = addDeviceActivityLog(req, desc);
-						await activityLogInstance.CreateActivityLog(logActivityItems, user);
-					} catch (e) {
-						logger.error('🔥 error Creating Activity Log : %o', e);
-					}
 					return res.status(201).send({
 						success: true,
 						message: desc,

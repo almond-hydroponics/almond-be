@@ -37,7 +37,7 @@ export default class ActivityLogService {
 		try {
 			this.logger.log('[getActivityLogs] Fetching Activity Logs');
 			return this.activityLogModel
-				.find({ user: { $eq: user._id } })
+				.find({ user: { $eq: user._id }, actionDesc: { $regex: /^Manual/ } })
 				.select({
 					actionDesc: 1,
 					createdAt: 1,

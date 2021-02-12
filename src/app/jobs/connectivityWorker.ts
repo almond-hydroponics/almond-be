@@ -21,26 +21,7 @@ export default class ConnectivityWorker {
 			status().then(
 				async () => {
 					if (!connectivity) {
-						logger.log('[connectivityWorker] Internet Connection Unavailable');
-						const activityLogInstance = Container.get(ActivityLogService);
-						try {
-							const logActivityItems = internetConnectionStatus();
-							await activityLogInstance.CreateActivityLog(
-								logActivityItems,
-								user,
-							);
-							logger.debug('[connectivityWorker] Activity Logged');
-							// .then(
-							// 	(resp) => {
-							// 		logger.debug('Activity Logged');
-							// 	},
-							// 	(err) => {
-							// 		logger.error('An Error Occurred ', err);
-							// 	},
-							// );
-						} catch (e) {
-							logger.error('🔥 error Creating Activity Log : %o', e.message);
-						}
+						logger.log('🔥 Worker Online');
 					}
 				},
 				(err) => {
