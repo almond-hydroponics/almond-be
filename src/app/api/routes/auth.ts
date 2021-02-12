@@ -28,7 +28,8 @@ export default (app: Router): void => {
 		'/register',
 		celebrate({
 			body: Joi.object({
-				name: Joi.string().required(),
+				firstName: Joi.string().required(),
+				lastName: Joi.string().required(),
 				email: Joi.string().required(),
 				password: Joi.string().required(),
 			}),
@@ -41,7 +42,7 @@ export default (app: Router): void => {
 			);
 			try {
 				const authServiceInstance = Container.get(AuthService);
-				const { user } = await authServiceInstance.SignUp(
+				const { verificationToken } = await authServiceInstance.SignUp(
 					req.body as IUserInputDTO,
 				);
 				passport.authenticate('local')(req, res, () => {
@@ -55,8 +56,9 @@ export default (app: Router): void => {
 					});
 					return res.status(201).send({
 						success: true,
-						message: 'Account registration successful',
-						data: { user },
+						message:
+							'Account registration was successful. Kindly check your email to verify your account before proceeding.',
+						data: { verificationToken },
 					});
 				});
 			} catch (e) {

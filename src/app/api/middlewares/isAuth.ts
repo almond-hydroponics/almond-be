@@ -1,5 +1,8 @@
 import jwt from 'express-jwt';
 import { config } from '../../../config';
+import { AppLogger } from '../../app.logger';
+
+const logger = new AppLogger('isAuth');
 
 /**
  * We are assuming that the JWT will come in a header with the form
@@ -11,19 +14,23 @@ import { config } from '../../../config';
  * Luckily this API follow _common sense_ ergo a _good design_ and don't allow that ugly stuff
  */
 const getTokenFromHeader = (req) => {
-	/**
-	 * @TODO Edge and Internet Explorer do some weird things with the headers
-	 * So I believe that this should handle more 'edge' cases ;)
-	 */
-	if (
-		(req.headers.authorization &&
-			req.headers.authorization.split(' ')[0] === 'Token') ||
-		(req.headers.authorization &&
-			req.headers.authorization.split(' ')[0] === 'Bearer')
-	) {
-		return req.headers.authorization.split(' ')[1];
+	try {
+		/**
+		 * @TODO Edge and Internet Explorer do some weird things with the headers
+		 * So I believe that this should handle more 'edge' cases ;)
+		 */
+		if (
+			(req.headers.authorization &&
+				req.headers.authorization.split(' ')[0] === 'Token') ||
+			(req.headers.authorization &&
+				req.headers.authorization.split(' ')[0] === 'Bearer')
+		) {
+			return req.headers.authorization.split(' ')[1];
+		}
+		return null;
+	} catch (e) {
+		logger.error('🔥 Error getting token from header: %o', e.message);
 	}
-	return null;
 };
 
 const isAuth = jwt({

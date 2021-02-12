@@ -103,9 +103,9 @@ export default ({
 		return next(err);
 	});
 
-	app.use((err, req: Request, res: Response, next: NextFunction) => {
+	app.use((err, req, res, next) => {
 		// winston.error('', winston.combinedFormat(err, req, res));
-		res.status(500);
+		res.status(err.states || 500);
 		res.json({
 			errors: {
 				message: err.message,

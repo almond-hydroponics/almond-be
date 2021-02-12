@@ -6,7 +6,9 @@ defaults: &defaults
 cmd_install_packages: &cmd_install_packages
   run:
     name: Install project dependencies
-    command: yarn install
+    command: |
+      yarn install
+      yarn add argon2
 
 cmd_restore_cache: &cmd_restore_cache
   restore_cache:
@@ -89,6 +91,12 @@ jobs:
       - run:
           name: Run tests
           command: |
+            # copy env vars from the ci environment
+            env >> .env
+            echo "NODE_ENV=development" >> .env
+            echo "JWT_SECRET=blahblahblah" >> .env
+            echo "JWT_ALGORITHM=HS256" >> .env
+            cat .env
             yarn test:unit --coverage
             /tmp/cc-test-reporter format-coverage -t lcov -o tmp/codeclimate.unittest.json coverage/unittest/lcov.info
       - persist_to_workspace:
