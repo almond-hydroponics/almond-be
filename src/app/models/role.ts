@@ -1,4 +1,4 @@
-import * as mongoose from 'mongoose';
+import mongoose from 'mongoose';
 import { IRole } from '../interfaces/IRole';
 
 const Role = new mongoose.Schema({
