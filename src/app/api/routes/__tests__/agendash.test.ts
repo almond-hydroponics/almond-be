@@ -2,31 +2,46 @@ import express from 'express';
 import basicAuth from 'express-basic-auth';
 import { Container } from 'typedi';
 import { config } from '../../../../config';
-import * as x from '../agendash';
-import agendaFactory from '../../../loaders/dependencyInjector';
-import mongoConnection from '../../../loaders';
-import mongooseLoader from '../../../loaders/mongoose';
+import mongooseLoader from "../../../loaders/mongoose";
+import agendaFactory from "../../../loaders/agenda";
+import * as x from '../agendash'
+import {fakeTimers} from "./_common";
 
+fakeTimers();
 const app = express();
-let agendaInstance;
+let  mongoConnection;
+let  agendaInstance;
 describe('this should test agendash /dash route', () => {
-	beforeEach(() => {
-		basicAuth({
-			users: {
-				[config.agendash.user]: config.agendash.password,
-			},
-			challenge: true,
-		});
-		const con = mongooseLoader();
-		//agenda.default({mongoConnection})
-		jest.mock('mongoConnection');
-		Container.set(
-			'agendaInstance',
-			agendaFactory({ mongoConnection, models: [] }),
-		);
-	});
+	beforeEach(async () => {
 
-	test('should expect to load the /dash route', async () => {
+    fakeTimers();
+    basicAuth({
+      users: {
+        [config.agendash.user]: config.agendash.password,
+      },
+      challenge: true,
+    });
+
+    /*
+    ### REFACTOR MONGO CONNECTION SERVICE TO BE TESTABLE WITH THIS
+     */
+
+    fakeTimers();
+    mongoConnection = await mongooseLoader().then(() => {
+
+    });
+    fakeTimers();
+    agendaInstance = agendaFactory({ mongoConnection });
+    Container.set('agendaInstance',agendaInstance);
+  })
+
+	it('should expect to load the /dash route',  () => {
+    /*
+    ### REFACTOR MONGO CONNECTION SERVICE TO BE LOADED BEFORE THIS IS EXECUTED
+     */
+    //#### TEMPORARILY INVOKE THE MAIN FUNCTION
+
+    expect(agendaInstance).toBeDefined();
 		x.default(app);
 	});
 });
