@@ -39,7 +39,8 @@ describe('this should test agendash /dash route', () => {
   //   jest.autoMockOn();
   //   agendaInstance = agendaFactory({ mongoConnection });
   //   Container.set('agendaInstance',agendaInstance);
-  // })
+  })
+
 
 	it('should expect to load the /dash route',  () => {
     /*
