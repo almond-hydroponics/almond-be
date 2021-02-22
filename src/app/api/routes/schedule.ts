@@ -55,15 +55,14 @@ export default (app: Router): void => {
 				);
 
 				// set schedules data to redis
-				setCache(`${req.currentUser._id}/${path}`, schedules);
+				// setCache(`${req.currentUser._id}/${path}`, schedules);
 
 				if (isArrayNotNull(schedules)) {
 					message = 'You have not created any time schedules';
 					HttpError.throwErrorIfNull(schedules, message);
-				} else {
-					message = 'Time schedules fetched successfully';
-					return HttpResponse.sendResponse(res, 200, true, message, schedules);
 				}
+        message = 'Time schedules fetched successfully';
+        return HttpResponse.sendResponse(res, 200, true, message, schedules);
 			} catch (error) {
 				logger.error('🔥 error: %o', error.stack);
 				HttpError.sendErrorResponse(error, res);
@@ -102,35 +101,35 @@ export default (app: Router): void => {
 					user,
 				);
 
-				const date = new Date(schedule.schedule);
-				const minutes = date.getMinutes();
-				const hour = date.getHours();
+				// const date = new Date(schedule.schedule);
+				// const minutes = date.getMinutes();
+				// const hour = date.getHours();
+        //
+				// if (await manager.exists(`${schedule._id}`)) {
+				// 	manager.stop(`${schedule._id}`);
+				// 	manager.deleteJob(`${schedule._id}`);
+				// }
+        //
+				// manager.add(`${schedule._id}`, `${minutes} ${hour} * * *`, () => {
+				// 	logger.debug(
+				// 		`Pump time for ${schedule._id} running at ${hour}:${minutes}`,
+				// 	);
+				// });
+				// manager.start(`${schedule._id}`);
 
-				if (await manager.exists(`${schedule._id}`)) {
-					manager.stop(`${schedule._id}`);
-					manager.deleteJob(`${schedule._id}`);
-				}
-
-				manager.add(`${schedule._id}`, `${minutes} ${hour} * * *`, () => {
-					logger.debug(
-						`Pump time for ${schedule._id} running at ${hour}:${minutes}`,
-					);
-				});
-				manager.start(`${schedule._id}`);
-
-				if (schedule) {
-					// update activity log
-					const activityLogInstance = Container.get(ActivityLogService);
-					try {
-						const logActivityItems = createScheduleActivityLogItem(req);
-						await activityLogInstance.CreateActivityLog(logActivityItems, user);
-						activityLogInstance.GetActivityLogs(user).then((res) => {
-							schedule.activityHistory = res;
-						});
-					} catch (e) {
-						logger.error('🔥 error Creating Activity Log : %o', e);
-					}
-				}
+				// if (schedule) {
+				// 	// update activity log
+				// 	const activityLogInstance = Container.get(ActivityLogService);
+				// 	try {
+				// 		const logActivityItems = createScheduleActivityLogItem(req);
+				// 		await activityLogInstance.CreateActivityLog(logActivityItems, user);
+				// 		activityLogInstance.GetActivityLogs(user).then((res) => {
+				// 			schedule.activityHistory = res;
+				// 		});
+				// 	} catch (e) {
+				// 		logger.error('🔥 error Creating Activity Log : %o', e);
+				// 	}
+				// }
 				message = 'Time schedule added successfully';
 				return HttpResponse.sendResponse(res, 201, true, message, schedule);
 			} catch (e) {

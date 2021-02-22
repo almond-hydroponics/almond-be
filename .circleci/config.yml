@@ -90,12 +90,10 @@ jobs:
       - *cmd_download_cc_test_reporter
       - run:
           name: Run tests
+          no_output_timeout: 30m
           command: |
             # copy env vars from the ci environment
             env >> .env
-            echo "NODE_ENV=development" >> .env
-            echo "JWT_SECRET=blahblahblah" >> .env
-            echo "JWT_ALGORITHM=HS256" >> .env
             cat .env
             yarn test:unit --coverage
             /tmp/cc-test-reporter format-coverage -t lcov -o tmp/codeclimate.unittest.json coverage/unittest/lcov.info

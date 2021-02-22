@@ -2,15 +2,10 @@ version: '3'
 
 services:
   app:
-    image: almond
-    container_name: almond
+    container_name: app
     restart: always
-    build:
-      context: .
-      dockerfile: Dockerfile
+    build: ./
     env_file: .env
-    ports:
-      - '8080:8080'
     expose:
       - 8080
     depends_on:
@@ -18,8 +13,6 @@ services:
       - redis
     networks:
       - app-network
-#    stdin_open: true
-#    tty: true
 
   db:
     image: mongo:4.4.2-bionic
@@ -34,7 +27,7 @@ services:
     networks:
       - app-network
     ports:
-      - '27018:27017'
+      - '27017:27017'
     expose:
       - 27017
 
@@ -49,7 +42,7 @@ services:
       - ME_CONFIG_MONGODB_SERVER=${MONGO_HOSTNAME}
       - ME_CONFIG_MONGODB_PORT=${MONGO_PORT}
     ports:
-      - '8081:8081'
+      - '8082:8081'
     depends_on:
       - db
     networks:
@@ -61,6 +54,23 @@ services:
     restart: always
     networks:
       - app-network
+
+  nginx:
+    container_name: nginx
+    build: ./nginx
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - /etc/ssl:/etc/ssl
+      - /var/run/docker.sock:/tmp/docker.sock
+    depends_on:
+      - app
+    networks:
+      - app-network
+    command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
 
 networks:
   app-network:

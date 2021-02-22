@@ -21,17 +21,17 @@ export default class ScheduleService {
 	): Promise<{ schedule: DeepPartial<ISchedule> }> {
 		try {
 			this.logger.debug('[createSchedule] Creating schedule db record');
-			let response: IActivityLog[] = [];
+			// let response: IActivityLog[] = [];
 			const scheduleRecord = await this.scheduleModel.create({
 				...scheduleInputDTO,
 				user: user._id,
 				device: scheduleInputDTO.device,
 			});
 			const schedule = scheduleRecord.toObject();
-			await this.activityLogInstance.GetActivityLogs(user).then((res) => {
-				response = res;
-			});
-			schedule.activityHistory = response;
+			// await this.activityLogInstance.GetActivityLogs(user).then((res) => {
+			// 	response = res;
+			// });
+			// schedule.activityHistory = response;
 			return { schedule };
 		} catch (e) {
 			this.logger.error(e.message, e.stack);
