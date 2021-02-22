@@ -45,7 +45,7 @@ start:
 	@ ${INFO} "Build Completed successfully"
 	@ echo " "
 	@ ${INFO} "Starting local development server"
-	@ docker-compose -f $(DOCKER_DEV_COMPOSE_FILE) up
+	@ docker-compose -f $(DOCKER_DEV_COMPOSE_FILE) up -d
 
 #@-- command to stop the application container --@#
 stop:
@@ -56,7 +56,7 @@ stop:
 #@-- command to test the application --@#
 test:background
 	@ ${INFO} "Running tests in docker container"
-	@ docker-compose -f $(DOCKER_DEV_COMPOSE_FILE) exec web yarn test
+	@ docker-compose -f $(DOCKER_DEV_COMPOSE_FILE) exec app yarn test
 
 #@-- command to remove the images created --@#
 clean:

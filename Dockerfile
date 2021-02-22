@@ -1,15 +1,12 @@
-# STAGE 1: build
+## 1. BUILD STAGE
 # base image
-FROM node:14-alpine AS build
+FROM node:14.15.0-alpine AS build
 
 LABEL maintainer="Francis Masha" MAINTAINER="Francis Masha <francismasha96@gmail.com>"
 LABEL application="almond-be"
 
-ARG NODE_ENV=$NODE_ENV
-ENV TERM=xterm-256color
-ENV APP_HOME=/home/app
-#ENV PATH="./node_modules/.bin:$PATH"
-
+EXPOSE 8080
+ENV APP_HOME=/home/node/app
 RUN mkdir -p $APP_HOME && chown -R node:node $APP_HOME
 WORKDIR $APP_HOME
 
@@ -26,23 +23,50 @@ RUN echo 'http://dl-cdn.alpinelinux.org/alpine/v3.9/community' >> /etc/apk/repos
 
 RUN apk upgrade --update
 RUN apk add --no-cache mongodb
-#RUN apk add mongodb-tools
 RUN apk add --no-cache mongodb-tools && \
     rm -rf /var/cache/apk/*
 
-RUN npm config set unsafe-perm true
-#RUN npm install -g yarn@1.22.5 --force
-RUN rm -rf package-lock.json
-COPY --chown=node:node . $APP_HOME
+# Set non-root user and folder
+USER node
+# Copy source code (and all other relevant files)
+COPY --chown=node:node . ./
+RUN yarn install --frozen-lockfile
+# Build code
+RUN yarn build
+COPY --chown=node:node src/data/ $APP_HOME/build/data/
 
-#COPY yarn.lock $APP_HOME
-#COPY package.json $APP_HOME
-#COPY --chown=node:node . $APP_HOME
-#COPY --chown=node:node . .
-#RUN yarn install --only=dev
-RUN yarn install
-RUN yarn run build
+#RUN yarn seed:data
+#CMD ["node", "build/index.js"]
 
+RUN chmod 777 /home/node/app/entrypoint.sh
+ENTRYPOINT ["/home/node/app/entrypoint.sh"]
+
+## 2. RUNTIME STAGE
+#FROM node:14.15.0-alpine
+#
+### installing alpine Dependencies
+#RUN apk add --no-cache --virtual .build-deps1 g++ gcc libgcc libstdc++ linux-headers make python && \
+#    apk add --no-cache --virtual .npm-deps cairo-dev jpeg-dev libjpeg-turbo-dev pango pango-dev && \
+#    apk add bash
+#
+## Set non-root user and expose port 3000
+#USER node
+#EXPOSE 8080
+#ENV APP_HOME=/home/node/app
+#RUN mkdir -p $APP_HOME && chown -R node:node $APP_HOME
+#WORKDIR $APP_HOME
+## Copy dependency information and install production-only dependencies
+#COPY --chown=node:node package.json yarn.lock ./
+#RUN yarn install --frozen-lockfile --production
+#
+#COPY --chown=node:node --from=build $APP_HOME/build ./build
+#COPY --chown=node:node tsconfig.json ./
+#COPY --chown=node:node src/data/ $APP_HOME/build/data/
+#
+##RUN chmod 777 /home/app/entrypoint.sh
+##ENTRYPOINT ["/home/app/entrypoint.sh"]
+#RUN yarn seed:data
+#CMD ["node", "build/index.js"]
 #COPY --chown=node:node . .
 #USER node
 
@@ -78,13 +102,13 @@ RUN yarn run build
 #COPY entrypoint.sh ./
 #COPY release.sh ./
 #COPY .env ./
-COPY src/data/ $APP_HOME/build/data/
-
-# expose port 8080 for accessing  the app
-EXPOSE 8080
-
-RUN chmod 777 /home/app/entrypoint.sh
-ENTRYPOINT ["/home/app/entrypoint.sh"]
+#COPY src/data/ $APP_HOME/build/data/
+#
+## expose port 8080 for accessing  the app
+#EXPOSE 8080
+#
+#RUN chmod 777 /home/app/entrypoint.sh
+#ENTRYPOINT ["/home/app/entrypoint.sh"]
 
 ## seed data if they dont exist
 #RUN yarn seed:data
