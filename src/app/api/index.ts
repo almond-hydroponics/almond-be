@@ -6,6 +6,7 @@ import user from './routes/user';
 import agendash from './routes/agendash';
 import device from './routes/device';
 import linkAccount from './routes/linkAccount';
+import dashboard from './routes/dashboard';
 
 // guaranteed to get dependencies
 export default () => {
@@ -17,6 +18,6 @@ export default () => {
 	device(app);
 	linkAccount(app);
 	role(app);
-
+	dashboard(app);
 	return app;
 };
