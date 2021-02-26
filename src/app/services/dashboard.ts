@@ -13,9 +13,8 @@ export default class DashboardService {
 	public async GetDeviceSummary(): Promise<any> {
 		try {
 			this.logger.debug(`[COUNT] Getting the number of Devices`);
-			return await this.deviceModel.find().count();
+			return await this.deviceModel.find().countDocuments();
 		} catch (e) {
-			this.logger.error(e.message, e.stack);
 			throw e;
 		}
 	}
@@ -23,10 +22,9 @@ export default class DashboardService {
 	public async GetUsersSummary(): Promise<any> {
 		try {
 			this.logger.debug(`[COUNT] Getting the number of Users`);
-			return await this.userModel.find().count();
+			return await this.userModel.find().countDocuments();
 		} catch (e) {
-			this.logger.error(e.message, e.stack);
-			throw e;
+		  throw e;
 		}
 	}
 }
