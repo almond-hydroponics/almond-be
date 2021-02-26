@@ -12,7 +12,7 @@
 		"start": "NODE_ENV=production yarn run serve",
 		"kill": "kill-port",
 		"inspect": "nodemon --inspect src/index.ts",
-		"test:unit": "cross-env NODE_ENV=testing jest --no-cache  --watchAll --detectOpenHandles --runInBand --forceExit --testTimeout=10000 --coverage",
+    "test:unit": "cross-env NODE_ENV=testing jest --no-cache  --detectOpenHandles --runInBand --forceExit",
 		"eslint": "eslint .",
 		"eslint:fix": "eslint \"*/**/*.{js,ts}\" --fix",
 		"tslint": "tsc --noEmit && eslint \"*/**/*.{js,ts}\" --quiet",
