@@ -12,7 +12,7 @@ export default class DashboardService {
 
 	public async GetDeviceSummary(): Promise<any> {
 		try {
-			this.logger.debug(`[COUNT] Getting the number of Devices`);
+      this.DashboardLogger('devices');
 			return await this.deviceModel.find().countDocuments();
 		} catch (e) {
 			throw e;
@@ -21,10 +21,14 @@ export default class DashboardService {
 
 	public async GetUsersSummary(): Promise<any> {
 		try {
-			this.logger.debug(`[COUNT] Getting the number of Users`);
+		  this.DashboardLogger('users');
 			return await this.userModel.find().countDocuments();
 		} catch (e) {
 		  throw e;
 		}
 	}
+
+	 private DashboardLogger(msg: string){
+    this.logger.debug(`[COUNT] Getting the number of ${msg}`);
+  }
 }
