@@ -2915,10 +2915,10 @@ domexception@^2.0.1:
   dependencies:
     webidl-conversions "^5.0.0"
 
-dot-json@^1.2.0:
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/dot-json/-/dot-json-1.2.1.tgz#d32f67dd4e258711c786b3450bde427a9793c394"
-  integrity sha512-sHtCsDBBzhTUFhS12cAvUbP9JTr59LLNxnpNr6dlgbjZlN+nrWFs+uHXgsJvFmc5HoMFR4e60rdqd+GdSUlM3w==
+dot-json@^1.2.1:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/dot-json/-/dot-json-1.2.2.tgz#7d35abece4aa22aa75a761388953f98495401bcc"
+  integrity sha512-AKL+GsO4wSEU4LU+fAk/PqN4nQ6PB1vT3HpMiZous9xCzK5S0kh4DzfUY0EfU67jsIXLlu0ty71659N9Nmg+Tw==
   dependencies:
     detect-indent "~6.0.0"
     docopt "~0.6.2"
@@ -9050,12 +9050,12 @@ use@^3.1.0:
   resolved "https://registry.yarnpkg.com/use/-/use-3.1.1.tgz#d50c8cac79a19fbc20f2911f56eb973f4e10070f"
   integrity sha512-cwESVXlO3url9YWlFW/TA9cshCEhtu7IKJ/p5soJ/gGpj7vbvFrAY/eIioQ6Dw23KjZhYgiIo8HOs1nQ2vr/oQ==
 
-user-agents@1.0.559:
-  version "1.0.559"
-  resolved "https://registry.yarnpkg.com/user-agents/-/user-agents-1.0.559.tgz#389817f79dff667d9e5c8803631c41043e8eccd8"
-  integrity sha512-HdAlNS3vDxOGMRwmv8or05xL96MV3CEwQhUSFTCRoOvTOEnWhTEBPAHRry/xZpVTTOtx77UHMal8YKcx6fs7Lg==
+user-agents@1.0.561:
+  version "1.0.561"
+  resolved "https://registry.yarnpkg.com/user-agents/-/user-agents-1.0.561.tgz#b0636ab21e82e25eb78202cfbe7a5f631fd5c8bd"
+  integrity sha512-KlA1ELMP/gwfk9GG/frOxs0r83ncuMKLnnfZvPWDmivNa09yBgFPIjkoVWlJDV9fcSmlAHYPXuDF9LwgBrpzkg==
   dependencies:
-    dot-json "^1.2.0"
+    dot-json "^1.2.1"
     lodash.clonedeep "^4.5.0"
 
 utf8-binary-cutter@^0.9.2:
