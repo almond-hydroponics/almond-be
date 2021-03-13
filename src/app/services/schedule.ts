@@ -21,17 +21,17 @@ export default class ScheduleService {
 	): Promise<{ schedule: DeepPartial<ISchedule> }> {
 		try {
 			this.logger.debug('[createSchedule] Creating schedule db record');
-			let response: IActivityLog[] = [];
+			// let response: IActivityLog[] = [];
 			const scheduleRecord = await this.scheduleModel.create({
 				...scheduleInputDTO,
 				user: user._id,
 				device: scheduleInputDTO.device,
 			});
 			const schedule = scheduleRecord.toObject();
-			await this.activityLogInstance.GetActivityLogs(user).then((res) => {
-				response = res;
-			});
-			schedule.activityHistory = response;
+			// await this.activityLogInstance.GetActivityLogs(user).then((res) => {
+			// 	response = res;
+			// });
+			// schedule.activityHistory = response;
 			return { schedule };
 		} catch (e) {
 			this.logger.error(e.message, e.stack);
@@ -44,7 +44,7 @@ export default class ScheduleService {
 			this.logger.debug(
 				`[getSchedules] Fetching schedules records for ${device}`,
 			);
-			return await this.scheduleModel.find({
+			return this.scheduleModel.find({
 				user: { $eq: user._id },
 				device: { $eq: device },
 			});
@@ -60,7 +60,7 @@ export default class ScheduleService {
 	): Promise<ISchedule> {
 		try {
 			this.logger.debug('[getSchedulesById] Fetching schedules record');
-			return await this.scheduleModel
+			return this.scheduleModel
 				.findById({
 					_id: scheduleId,
 					user: user._id,
@@ -75,7 +75,7 @@ export default class ScheduleService {
 	public async DeleteScheduleById(
 		scheduleId: string,
 		user: IUser,
-	): Promise<ISchedule | void> {
+	): Promise<DeepPartial<ISchedule> | void> {
 		try {
 			this.logger.debug('[deleteScheduleById] Deleting schedule record');
 			return this.scheduleModel

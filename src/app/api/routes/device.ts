@@ -309,7 +309,7 @@ export default (app: Router): void => {
 		isAuth,
 		attachCurrentUser,
 		checkRole('Admin'),
-		getCache(path),
+		// getCache(path),
 		async (req: Request, res: Response, next: NextFunction) => {
 			logger.debug('[devicesGet] Calling GetAllDevices endpoint');
 			try {
@@ -317,7 +317,7 @@ export default (app: Router): void => {
 				const devices = await deviceServiceInstance.GetAllDevices();
 
 				// set schedules data to redis
-				setCache(`${req.currentUser._id}/${path}`, devices);
+				// setCache(`${req.currentUser._id}/${path}`, devices);
 
 				if (devices.length !== null) {
 					return res.status(200).send({

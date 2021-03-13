@@ -125,7 +125,7 @@ export default class AuthService {
 		}
 
 		// We use verify from argon2 to prevent 'timing based' attacks
-		this.logger.silly('Checking password');
+		this.logger.log('Checking password');
 		const validPassword = await argon2.verify(userRecord.password, password);
 
 		if (validPassword) {
@@ -145,7 +145,7 @@ export default class AuthService {
 
 	public async LoginAs(email: string): Promise<any> {
 		const userRecord = await this.userModel.findOne({ email });
-		this.logger.silly('Finding user record...');
+		this.logger.log('Finding user record...');
 		if (!userRecord) {
 			throw new Error('User not found');
 		}
@@ -306,7 +306,7 @@ export default class AuthService {
 
 	public async deserializeUser(email: string): Promise<IUser> {
 		const userRecord = await this.userModel.findOne({ email });
-		this.logger.silly('[deserializeUser] Finding user record');
+		this.logger.log('[deserializeUser] Finding user record');
 
 		if (!userRecord) throw new Error('User not found');
 
