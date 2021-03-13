@@ -24,6 +24,7 @@ import { IError } from '../shared/IError';
 
 import * as swaggerDocument from '../api/docs/swagger.json';
 import statusMonitor from '../../config/statusMonitor';
+import { errorHandler } from '../utils/errorHandler';
 
 const { isProduction, clientUrl, api } = config;
 const winston = new AppLogger('Express');
@@ -84,6 +85,15 @@ export default ({
 
 	// Load API routes
 	app.use(api.prefix, routes());
+
+	app.use(
+		async (err: Error, req: Request, res: Response, next: NextFunction) => {
+			if (!errorHandler.isTrustedError(err)) {
+				next(err);
+			}
+			await errorHandler.handleError(err);
+		},
+	);
 
 	// Catch 404 and forward to error handler
 	app.use((req, res, next) => {

@@ -12,7 +12,7 @@
 		"start": "NODE_ENV=production yarn run serve",
 		"kill": "kill-port",
 		"inspect": "nodemon --inspect src/index.ts",
-    "test:unit": "cross-env NODE_ENV=testing jest --no-cache  --detectOpenHandles --runInBand --forceExit",
+		"test:unit": "cross-env NODE_ENV=testing jest --no-cache  --detectOpenHandles --runInBand --forceExit",
 		"eslint": "eslint .",
 		"eslint:fix": "eslint \"*/**/*.{js,ts}\" --fix",
 		"format-staged": "pretty-quick --staged",
@@ -21,7 +21,8 @@
 		"prettier": "prettier --write src/app/**/*",
 		"postinstall": "husky install",
 		"prepublishOnly": "pinst --disable",
-		"postpublish": "pinst --enable"
+		"postpublish": "pinst --enable",
+		"husky": "pretty-quick --staged && yarn prettier && yarn tslint"
 	},
 	"repository": {
 		"type": "git",
@@ -78,7 +79,7 @@
 		"method-override": "^3.0.0",
 		"moment": "^2.29.1",
 		"moment-timezone": "^0.5.33",
-		"mongoose": "^5.11.17",
+		"mongoose": "^5.11.15",
 		"morgan": "1.10.0",
 		"mqtt": "^4.2.6",
 		"newrelic": "^7.1.1",
@@ -147,5 +148,4 @@
 	"bugs": {
 		"url": "https://github.com/almond-hydroponics/almond-be/issues"
 	}
-
 }

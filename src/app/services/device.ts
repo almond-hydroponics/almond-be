@@ -114,7 +114,9 @@ export default class DeviceService {
 
 	public async GetAllDevices(): Promise<IDevice[]> {
 		try {
-			return this.deviceModel.find().populate({ path: 'user', select: 'name' });
+			return this.deviceModel
+				.find()
+				.populate({ path: 'user', select: 'firstName lastName' });
 		} catch (e) {
 			this.logger.error(e.message, e.stack);
 			throw e;

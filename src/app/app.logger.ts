@@ -1,7 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 import clfDate from 'clf-date';
-import { createLogger, format, Logger, transports } from 'winston';
+import { createLogger, format, Logger, transports, addColors } from 'winston';
 import appRoot from 'app-root-path';
 import { config } from '../config';
 import { LoggerService } from '../types/logger-service';
@@ -16,10 +16,42 @@ fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory);
 const now = new Date();
 const logfileName = `app-${now.getFullYear()}-${now.getMonth()}-${now.getDate()}.log`;
 
+const customLevels = {
+	levels: {
+		trace: 5,
+		debug: 4,
+		info: 3,
+		warn: 2,
+		error: 1,
+		fatal: 0,
+	},
+	colors: {
+		trace: 'white',
+		debug: 'blue',
+		info: 'green',
+		warn: 'yellow',
+		error: 'red',
+		fatal: 'red',
+	},
+};
+
 export class AppLogger implements LoggerService {
 	private logger: Logger;
 
 	constructor(label: string) {
+		const formatter = combine(
+			format.label({ label }),
+			timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+			format.splat(),
+			format.json(),
+			printf((info) => {
+				const { timestamp, level, message, label, ...meta } = info;
+				return `${timestamp} [${label}] [${level.toUpperCase()}]: ${message} ${
+					Object.keys(meta).length ? JSON.stringify(meta, null, 2) : ''
+				}`;
+			}),
+		);
+
 		const options = {
 			file: {
 				level: 'info' || 'error',
@@ -37,17 +69,9 @@ export class AppLogger implements LoggerService {
 		};
 
 		this.logger = createLogger({
-			format: combine(
-				format.label({ label }),
-				timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-				format.splat(),
-				format.json(),
-				printf(
-					({ level, message, label, timestamp }) =>
-						`${timestamp} [${label}] ${level.toUpperCase()} - ${message}`,
-				),
-			),
+			format: formatter,
 			level: config.logs.level,
+			levels: customLevels.levels,
 			transports: [
 				process.env.NODE_ENV !== 'development'
 					? new transports.File(options.file)
@@ -55,6 +79,7 @@ export class AppLogger implements LoggerService {
 			],
 			exitOnError: false,
 		});
+		addColors(customLevels.colors);
 	}
 
 	stream(): void {
@@ -63,28 +88,28 @@ export class AppLogger implements LoggerService {
 		});
 	}
 
-	error(message: string, trace: string): void {
-		this.logger.error(message, trace);
+	trace(message: string, meta?: any): void {
+		this.logger.log('trace', message, meta);
 	}
 
-	warn(message: string): void {
-		this.logger.warn(message);
+	debug(message: string, meta?: any): void {
+		this.logger.debug(message, meta);
 	}
 
-	log(message: string): void {
-		this.logger.info(message);
+	log(message: string, meta?: any): void {
+		this.logger.info(message, meta);
 	}
 
-	verbose(message: string): void {
-		this.logger.verbose(message);
+	warn(message: string, meta?: any): void {
+		this.logger.warn(message, meta);
 	}
 
-	debug(message: string): void {
-		this.logger.debug(message);
+	error(message: string, meta?: any): void {
+		this.logger.error(message, meta);
 	}
 
-	silly(message: string): void {
-		this.logger.silly(message);
+	fatal(message: string, meta?: any) {
+		this.logger.log('fatal', message, meta);
 	}
 	// :remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent"
 	combinedFormat(err: any, req: Request, res: Response): string {

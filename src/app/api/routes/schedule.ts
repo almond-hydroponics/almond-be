@@ -11,9 +11,11 @@ import {
 	createScheduleActivityLogItem,
 	deleteScheduleActivityLogItem,
 } from '../middlewares/logActivity';
-import HttpResponse from '../../utils/responseHelper';
-import HttpError from '../../utils/errorHandler';
+import HttpResponse from '../../utils/httpResponse';
+import HttpError from '../../utils/httpError';
 import isArrayNotNull from '../../utils/isArrayNotNull';
+import APIError from '../../utils/apiError';
+import { HttpStatusCode } from '../../utils/errorHandler';
 
 const manager = new CronJobManager();
 const logger = new AppLogger('Schedule');
@@ -57,15 +59,21 @@ export default (app: Router): void => {
 				// set schedules data to redis
 				// setCache(`${req.currentUser._id}/${path}`, schedules);
 
-				if (isArrayNotNull(schedules)) {
+				if (!isArrayNotNull(schedules)) {
 					message = 'You have not created any time schedules';
-					HttpError.throwErrorIfNull(schedules, message);
+					return new APIError(
+						'NOT_FOUND',
+						HttpStatusCode.NOT_FOUND,
+						true,
+						message,
+					);
 				}
-        message = 'Time schedules fetched successfully';
-        return HttpResponse.sendResponse(res, 200, true, message, schedules);
+				logger.log(JSON.stringify(schedules));
+				message = 'Time schedules fetched successfully';
+				return HttpResponse.sendResponse(res, 200, true, message, schedules);
 			} catch (error) {
 				logger.error('🔥 error: %o', error.stack);
-				HttpError.sendErrorResponse(error, res);
+				return next(error);
 			}
 		},
 	);
@@ -86,7 +94,7 @@ export default (app: Router): void => {
 				device: Joi.string().required(),
 			}),
 		}),
-		async (req: Request, res: Response) => {
+		async (req: Request, res: Response, next: NextFunction) => {
 			let message;
 			logger.debug(
 				`[schedulesCreate] Calling CreateSchedule endpoint with body: ${JSON.stringify(
@@ -104,12 +112,12 @@ export default (app: Router): void => {
 				// const date = new Date(schedule.schedule);
 				// const minutes = date.getMinutes();
 				// const hour = date.getHours();
-        //
+				//
 				// if (await manager.exists(`${schedule._id}`)) {
 				// 	manager.stop(`${schedule._id}`);
 				// 	manager.deleteJob(`${schedule._id}`);
 				// }
-        //
+				//
 				// manager.add(`${schedule._id}`, `${minutes} ${hour} * * *`, () => {
 				// 	logger.debug(
 				// 		`Pump time for ${schedule._id} running at ${hour}:${minutes}`,
@@ -134,7 +142,7 @@ export default (app: Router): void => {
 				return HttpResponse.sendResponse(res, 201, true, message, schedule);
 			} catch (e) {
 				logger.error('🔥 error: %o', e.message);
-				HttpError.sendErrorResponse(e, res);
+				next(e);
 			}
 		},
 	);
@@ -163,14 +171,18 @@ export default (app: Router): void => {
 				);
 				if (!schedule) {
 					message = 'Time schedule does not exist';
-					return HttpError.throwErrorIfNull(schedule, message);
+					return new APIError(
+						'NOT_FOUND',
+						HttpStatusCode.NOT_FOUND,
+						true,
+						message,
+					);
 				}
 				message = 'Time schedule has been fetched successfully';
 				return HttpResponse.sendResponse(res, 200, true, message, schedule);
 			} catch (e) {
 				logger.error('🔥 error: %o', e.stack);
-				const serverError = 'Server Error. Could not complete the request';
-				return res.json({ serverError }).status(500);
+				next(e);
 			}
 		},
 	);
@@ -192,7 +204,7 @@ export default (app: Router): void => {
 				device: Joi.string().required(),
 			}),
 		}),
-		async (req: Request, res: Response) => {
+		async (req: Request, res: Response, next: NextFunction) => {
 			logger.debug(
 				`Calling PatchSchedule endpoint with body: ${JSON.stringify(req.body)}`,
 			);
@@ -214,18 +226,16 @@ export default (app: Router): void => {
 						data: schedule,
 					});
 				}
-				return res.status(404).send({
-					success: false,
-					message: 'Time schedule does not exist',
-				});
+				const message = 'Time schedule does not exist';
+				return new APIError(
+					'NOT_FOUND',
+					HttpStatusCode.NOT_FOUND,
+					true,
+					message,
+				);
 			} catch (e) {
 				logger.error('🔥 error: %o', e.stack);
-				return res
-					.send({
-						success: false,
-						message: 'Server Error. Could not complete the request',
-					})
-					.status(500);
+				next(e);
 			}
 		},
 	);
@@ -266,12 +276,16 @@ export default (app: Router): void => {
 					const message = 'Time schedule deleted successfully';
 					return res.status(200).json({ message });
 				}
-				const error = 'Time schedule does not exist';
-				return res.status(404).json({ error });
+				const message = 'Time schedule does not exist';
+				return new APIError(
+					'NOT_FOUND',
+					HttpStatusCode.NOT_FOUND,
+					true,
+					message,
+				);
 			} catch (e) {
 				logger.error('🔥 error: %o', e.stack);
-				const serverError = 'Server Error. Could not complete the request';
-				return res.json({ serverError }).status(500);
+				next(e);
 			}
 		},
 	);
