@@ -2927,10 +2927,10 @@ domexception@^2.0.1:
   dependencies:
     webidl-conversions "^5.0.0"
 
-dot-json@^1.2.1:
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/dot-json/-/dot-json-1.2.1.tgz#d32f67dd4e258711c786b3450bde427a9793c394"
-  integrity sha512-sHtCsDBBzhTUFhS12cAvUbP9JTr59LLNxnpNr6dlgbjZlN+nrWFs+uHXgsJvFmc5HoMFR4e60rdqd+GdSUlM3w==
+dot-json@^1.2.2:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/dot-json/-/dot-json-1.2.2.tgz#7d35abece4aa22aa75a761388953f98495401bcc"
+  integrity sha512-AKL+GsO4wSEU4LU+fAk/PqN4nQ6PB1vT3HpMiZous9xCzK5S0kh4DzfUY0EfU67jsIXLlu0ty71659N9Nmg+Tw==
   dependencies:
     detect-indent "~6.0.0"
     docopt "~0.6.2"
@@ -6263,10 +6263,10 @@ mongoose-legacy-pluralize@1.0.2:
   resolved "https://registry.yarnpkg.com/mongoose-legacy-pluralize/-/mongoose-legacy-pluralize-1.0.2.tgz#3ba9f91fa507b5186d399fb40854bff18fb563e4"
   integrity sha512-Yo/7qQU4/EyIS8YDFSeenIvXxZN+ld7YdV9LqFVQJzTLye8unujAWPZ4NWKfFA+RNjh+wvTWKY9Z3E5XM6ZZiQ==
 
-mongoose@^5.11.15:
-  version "5.11.18"
-  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-5.11.18.tgz#76fdcefeb2afc7409705fc44b58045953bba5ee1"
-  integrity sha512-RsrPR9nhkXZbO3ml0DcmdbfeMvFNhgFrP81S6o1P+lFnDTNEKYnGNRCIL+ojD69wj7H5jJaAdZ0SJ5IlKxCHqw==
+mongoose@^5.11.17:
+  version "5.12.0"
+  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-5.12.0.tgz#5d644a936c208f11467a60e282c5990d67beafb1"
+  integrity sha512-s0Qpgf5lOk3AXtKnE+FA0HZhFKa2hesGVcTmx1wfTQ+7Q7ph0E79B6KUp1ZQERQyCwuE8WQ4wWllEhd7VPkxOg==
   dependencies:
     "@types/mongodb" "^3.5.27"
     bson "^1.1.4"
@@ -9112,12 +9112,12 @@ use@^3.1.0:
   resolved "https://registry.yarnpkg.com/use/-/use-3.1.1.tgz#d50c8cac79a19fbc20f2911f56eb973f4e10070f"
   integrity sha512-cwESVXlO3url9YWlFW/TA9cshCEhtu7IKJ/p5soJ/gGpj7vbvFrAY/eIioQ6Dw23KjZhYgiIo8HOs1nQ2vr/oQ==
 
-user-agents@1.0.569:
-  version "1.0.569"
-  resolved "https://registry.yarnpkg.com/user-agents/-/user-agents-1.0.569.tgz#844f8c791e0f9fa0a8421ca7cb9d275922e77367"
-  integrity sha512-5aWr0hpTze6ZkdpaIyL1CxpJaKSyeB3fGcclnlVXn4umsGULT2nNHN34djjDn+nMrqjHKclMBmclVgS1yBA0ww==
+user-agents@1.0.571:
+  version "1.0.571"
+  resolved "https://registry.yarnpkg.com/user-agents/-/user-agents-1.0.571.tgz#c34133ae4d56b79ccbd1a9d4ce01ee0773d7fa5b"
+  integrity sha512-t7zp0qkcOxktWb6et5EXl63ExDYpumy2RVfRL4OwyaJwKZx2PsYRBxC7jcAnkJ/LfBwETkSgWOeti3bI/5/ggQ==
   dependencies:
-    dot-json "^1.2.1"
+    dot-json "^1.2.2"
     lodash.clonedeep "^4.5.0"
 
 utf8-binary-cutter@^0.9.2:
