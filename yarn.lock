@@ -346,10 +346,10 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
-"@grpc/grpc-js@^1.2.5":
-  version "1.2.6"
-  resolved "https://registry.yarnpkg.com/@grpc/grpc-js/-/grpc-js-1.2.6.tgz#579c433ab9b9dda8a62080db1ac0c86dce58bbaa"
-  integrity sha512-wfYwFy7CvVEmBKzeDX1kQQYrv5NBpe8Z+VwXipFvqof3lCXKch7k+4T3grKtptaH5GQ5KP9iKwPr9hMDSynIUw==
+"@grpc/grpc-js@^1.2.7":
+  version "1.2.11"
+  resolved "https://registry.yarnpkg.com/@grpc/grpc-js/-/grpc-js-1.2.11.tgz#68faa56bded64844294dc6429185503376f05ff1"
+  integrity sha512-DZqx3nHBm2OGY7NKq4sppDEfx4nBAsQH/d/H/yxo/+BwpVLWLGs+OorpwQ+Fqd6EgpDEoi4MhqndjGUeLl/5GA==
   dependencies:
     "@types/node" ">=12.12.47"
     google-auth-library "^6.1.1"
@@ -567,10 +567,10 @@
   resolved "https://registry.yarnpkg.com/@jsdevtools/ono/-/ono-7.1.3.tgz#9df03bbd7c696a5c58885c34aa06da41c8543796"
   integrity sha512-4JQNk+3mVzK3xh2rqd6RB4J46qUR19azEHBneZyTZM+c456qOrbbM/5xcR8huNCCcbVt7+UmizG6GuUvPvKUYg==
 
-"@newrelic/aws-sdk@^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@newrelic/aws-sdk/-/aws-sdk-3.0.0.tgz#00d5e75e2206cdf3d71418e4f031b52b45991f9f"
-  integrity sha512-8sS0MBrvmdCOVsCe7NpNReKU06fhNnvsT60+VmzZNbv1nqPNbtOuUVERzukF/85XWU7Lk/r+ikUyGHX+Emlb4w==
+"@newrelic/aws-sdk@^3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@newrelic/aws-sdk/-/aws-sdk-3.1.0.tgz#0f8dd504a37ad92be608c340e5f836d848abdefa"
+  integrity sha512-SBFqCz1Hhn2HQvlFCEm2VwfHCGpemeokJ+NH7XphlfQ211OVVANQf49DOQCCS0uhnLHGbKMLmir8Layx57y48A==
 
 "@newrelic/koa@^5.0.0":
   version "5.0.0"
@@ -6263,10 +6263,10 @@ mongoose-legacy-pluralize@1.0.2:
   resolved "https://registry.yarnpkg.com/mongoose-legacy-pluralize/-/mongoose-legacy-pluralize-1.0.2.tgz#3ba9f91fa507b5186d399fb40854bff18fb563e4"
   integrity sha512-Yo/7qQU4/EyIS8YDFSeenIvXxZN+ld7YdV9LqFVQJzTLye8unujAWPZ4NWKfFA+RNjh+wvTWKY9Z3E5XM6ZZiQ==
 
-mongoose@^5.11.15:
-  version "5.11.18"
-  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-5.11.18.tgz#76fdcefeb2afc7409705fc44b58045953bba5ee1"
-  integrity sha512-RsrPR9nhkXZbO3ml0DcmdbfeMvFNhgFrP81S6o1P+lFnDTNEKYnGNRCIL+ojD69wj7H5jJaAdZ0SJ5IlKxCHqw==
+mongoose@^5.11.17:
+  version "5.12.0"
+  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-5.12.0.tgz#5d644a936c208f11467a60e282c5990d67beafb1"
+  integrity sha512-s0Qpgf5lOk3AXtKnE+FA0HZhFKa2hesGVcTmx1wfTQ+7Q7ph0E79B6KUp1ZQERQyCwuE8WQ4wWllEhd7VPkxOg==
   dependencies:
     "@types/mongodb" "^3.5.27"
     bson "^1.1.4"
@@ -6440,14 +6440,14 @@ new-github-release-url@^1.0.0:
   dependencies:
     type-fest "^0.4.1"
 
-newrelic@^7.1.1:
-  version "7.1.1"
-  resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-7.1.1.tgz#fd4db4c94a6c41fa33cdcaf56890664c5501090a"
-  integrity sha512-aESSdT4mOXsdLbUp/Mcn+LkEx5qkgRvI1Y7k7netnis6qjn2i1dAkS780Wjy+IsK8Wr/bqnJCbSAVZH1iVrryg==
+newrelic@^7.1.2:
+  version "7.1.3"
+  resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-7.1.3.tgz#9ba32f73bb52edfc3ebeb2ba1723144fddf55e27"
+  integrity sha512-l5FPCIv+SKY8pE5YKmJnKo8DIsvD0Oe/qgCcCEUb/pnn0Oy/vkeQQMiAvbh90CQhaNDf+XoViL1NRNWFhb167A==
   dependencies:
-    "@grpc/grpc-js" "^1.2.5"
+    "@grpc/grpc-js" "^1.2.7"
     "@grpc/proto-loader" "^0.5.5"
-    "@newrelic/aws-sdk" "^3.0.0"
+    "@newrelic/aws-sdk" "^3.1.0"
     "@newrelic/koa" "^5.0.0"
     "@newrelic/superagent" "^4.0.0"
     "@tyriar/fibonacci-heap" "^2.0.7"
