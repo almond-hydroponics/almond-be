@@ -262,8 +262,6 @@ export default (app: Router): void => {
 					id,
 					user,
 				);
-				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-				// @ts-expect-error
 				if (schedule.n > 0) {
 					// update activity log
 					const activityLogInstance = Container.get(ActivityLogService);
