@@ -3,6 +3,7 @@ import { IDevice, IDeviceInputDTO } from '../interfaces/IDevice';
 import { IUser } from '../interfaces/IUser';
 import { AppLogger } from '../app.logger';
 import { DeepPartial } from '../helpers/database';
+import Bluebird from 'bluebird';
 
 @Service()
 export default class DeviceService {
@@ -152,8 +153,13 @@ export default class DeviceService {
 		}
 	}
 
-	public async DeleteDeviceById(deviceId: string): Promise<void> {
+	public async DeleteDeviceById(
+		deviceId: string,
+	): Promise<
+		Bluebird<{ ok?: number; n?: number } & { deletedCount?: number }>
+	> {
 		try {
+			this.logger.debug('[deleteDevice] Delete device db record');
 			return this.deviceModel.deleteOne({ _id: Object(deviceId) }).exec();
 		} catch (e) {
 			this.logger.error(e.message, e.stack);
@@ -166,7 +172,7 @@ export default class DeviceService {
 		deviceInputDTO: IDeviceInputDTO,
 	): Promise<{ device: IDevice }> {
 		try {
-			this.logger.silly('Editing device db record');
+			this.logger.log('Editing device db record');
 			const deviceItem = {
 				...deviceInputDTO,
 				// _id: deviceId,

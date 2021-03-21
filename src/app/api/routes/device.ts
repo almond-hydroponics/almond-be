@@ -359,8 +359,6 @@ export default (app: Router): void => {
 				} = req;
 				const deviceServiceInstance = Container.get(DeviceService);
 				const device = await deviceServiceInstance.DeleteDeviceById(id);
-				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-				// @ts-expect-error
 				if (device.n > 0) {
 					const message = 'Device has been deleted successfully';
 					return res.status(200).json({ message });

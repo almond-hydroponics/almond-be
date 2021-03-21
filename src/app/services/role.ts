@@ -2,6 +2,7 @@ import { Inject, Service } from 'typedi';
 import { IRole, IRoleInputDTO } from '../interfaces/IRole';
 import { AppLogger } from '../app.logger';
 import { DeepPartial } from '../helpers/database';
+import Bluebird from 'bluebird';
 
 @Service()
 export default class RoleService {
@@ -46,7 +47,11 @@ export default class RoleService {
 		}
 	}
 
-	public async DeleteRoleById(roleID: string): Promise<IRole | void> {
+	public async DeleteRoleById(
+		roleID: string,
+	): Promise<
+		Bluebird<{ ok?: number; n?: number } & { deletedCount?: number }>
+	> {
 		try {
 			this.logger.debug('[deleteRole] Delete role db record');
 			return this.roleModel.deleteOne({ _id: Object(roleID) }).exec();

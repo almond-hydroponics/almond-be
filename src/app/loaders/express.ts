@@ -39,6 +39,8 @@ export default ({
 	agendaInstance,
 }: {
 	app: Application;
+	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+	// @ts-ignore
 	agendaInstance: Agenda;
 }): void => {
 	app.use(expressStatusMonitor(statusMonitor));

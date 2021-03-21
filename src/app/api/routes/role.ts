@@ -187,8 +187,6 @@ export default (app: Router): void => {
 				} = req;
 				const roleServiceInstance = Container.get(RoleService);
 				const role = await roleServiceInstance.DeleteRoleById(id);
-				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-				// @ts-expect-error
 				if (role.n > 0) {
 					const message = 'User role has been deleted successfully';
 					return res.status(200).json({ message });

@@ -5,6 +5,7 @@ import { AppLogger } from '../app.logger';
 import ActivityLogService from './activityLog';
 import { DeepPartial } from '../helpers/database';
 import { IActivityLog } from '../interfaces/IActivityLog';
+import Bluebird from 'bluebird';
 
 @Service()
 export default class ScheduleService {
@@ -75,7 +76,9 @@ export default class ScheduleService {
 	public async DeleteScheduleById(
 		scheduleId: string,
 		user: IUser,
-	): Promise<DeepPartial<ISchedule> | void> {
+	): Promise<
+		Bluebird<{ ok?: number; n?: number } & { deletedCount?: number }>
+	> {
 		try {
 			this.logger.debug('[deleteScheduleById] Deleting schedule record');
 			return this.scheduleModel
