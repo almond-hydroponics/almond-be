@@ -59,18 +59,12 @@ export default (app: Router): void => {
 				// set schedules data to redis
 				// setCache(`${req.currentUser._id}/${path}`, schedules);
 
-				if (!isArrayNotNull(schedules)) {
-					message = 'You have not created any time schedules';
-					return new APIError(
-						'NOT_FOUND',
-						HttpStatusCode.NOT_FOUND,
-						true,
-						message,
-					);
+				if (schedules.length !== null) {
+					message = 'Time schedules fetched successfully';
+					return HttpResponse.sendResponse(res, 200, true, message, schedules);
 				}
-				logger.log(JSON.stringify(schedules));
-				message = 'Time schedules fetched successfully';
-				return HttpResponse.sendResponse(res, 200, true, message, schedules);
+				message = 'You have not created any time schedules';
+				return HttpResponse.sendResponse(res, 404, false, message, schedules);
 			} catch (error) {
 				logger.error('🔥 error: %o', error.stack);
 				return next(error);
@@ -171,12 +165,7 @@ export default (app: Router): void => {
 				);
 				if (!schedule) {
 					message = 'Time schedule does not exist';
-					return new APIError(
-						'NOT_FOUND',
-						HttpStatusCode.NOT_FOUND,
-						true,
-						message,
-					);
+					return HttpResponse.sendResponse(res, 404, true, message, schedule);
 				}
 				message = 'Time schedule has been fetched successfully';
 				return HttpResponse.sendResponse(res, 200, true, message, schedule);
@@ -209,6 +198,7 @@ export default (app: Router): void => {
 				`Calling PatchSchedule endpoint with body: ${JSON.stringify(req.body)}`,
 			);
 			try {
+				let message;
 				const user = req.currentUser;
 				const {
 					params: { id },
@@ -220,19 +210,11 @@ export default (app: Router): void => {
 					user,
 				);
 				if (schedule) {
-					return res.status(200).send({
-						success: true,
-						message: 'Time schedule updated successfully',
-						data: schedule,
-					});
+					message = 'Time schedule updated successfully';
+					return HttpResponse.sendResponse(res, 200, true, message, schedule);
 				}
-				const message = 'Time schedule does not exist';
-				return new APIError(
-					'NOT_FOUND',
-					HttpStatusCode.NOT_FOUND,
-					true,
-					message,
-				);
+				message = 'Time schedule does not exist';
+				return HttpResponse.sendResponse(res, 404, false, message, schedule);
 			} catch (e) {
 				logger.error('🔥 error: %o', e.stack);
 				next(e);
@@ -253,6 +235,7 @@ export default (app: Router): void => {
 		async (req: Request, res: Response, next: NextFunction) => {
 			logger.debug('Calling DeleteScheduleById endpoint');
 			try {
+				let message;
 				const user = req.currentUser;
 				const {
 					params: { id },
@@ -263,7 +246,6 @@ export default (app: Router): void => {
 					user,
 				);
 				if (schedule.n > 0) {
-					// update activity log
 					const activityLogInstance = Container.get(ActivityLogService);
 					try {
 						const logActivityItems = deleteScheduleActivityLogItem(req);
@@ -271,16 +253,11 @@ export default (app: Router): void => {
 					} catch (e) {
 						logger.error('🔥 error Creating Activity Log : %o', e);
 					}
-					const message = 'Time schedule deleted successfully';
-					return res.status(200).json({ message });
+					message = 'Time schedule deleted successfully';
+					return HttpResponse.sendResponse(res, 200, true, message, schedule);
 				}
-				const message = 'Time schedule does not exist';
-				return new APIError(
-					'NOT_FOUND',
-					HttpStatusCode.NOT_FOUND,
-					true,
-					message,
-				);
+				message = 'Time schedule does not exist';
+				return HttpResponse.sendResponse(res, 404, false, message, schedule);
 			} catch (e) {
 				logger.error('🔥 error: %o', e.stack);
 				next(e);

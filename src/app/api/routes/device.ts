@@ -16,6 +16,7 @@ import {
 	manualOverrideActivityLog,
 } from '../middlewares/logActivity';
 import { IActivityLog } from '../../interfaces/IActivityLog';
+import HttpResponse from '../../utils/httpResponse';
 
 const {
 	isAuth,
@@ -41,13 +42,73 @@ export default (app: Router): void => {
 	 * @description Edit pump override
 	 * @access Private
 	 */
-	device.patch(
+	// device.patch(
+	// 	'/pump-override',
+	// 	isAuth,
+	// 	attachCurrentUser,
+	// 	celebrate({
+	// 		body: Joi.object({
+	// 			enabled: Joi.boolean(),
+	// 			device: Joi.string(),
+	// 		}),
+	// 	}),
+	// 	async (req: Request, res: Response, next: NextFunction) => {
+	// 		logger.debug('Calling Pump endpoint');
+	// 		try {
+	// 			const user = req.currentUser;
+	// 			const { enabled } = req.body;
+	// 			const topic = config.mqtt.scheduleTopic;
+	// 			const status = enabled ? ScheduleOverride.ON : ScheduleOverride.OFF;
+	// 			// instantiate module services
+	// 			const scheduleOverrideInstance = Container.get(ScheduleOverrideService);
+	// 			const mqttClient = Container.get(MqttService);
+	// 			const activityLogInstance = Container.get(ActivityLogService);
+	//
+	// 			// connect and send message via mqtt
+	// 			mqttClient.connect(activityLogInstance, req);
+	// 			await mqttClient.sendMessage(topic, status, activityLogInstance, req);
+	//
+	// 			// save instance of the override
+	// 			const scheduleOverride = await scheduleOverrideInstance.EditScheduleOverride(
+	// 				req.body as IScheduleOverrideInputDTO,
+	// 				user,
+	// 			);
+	// 			if (scheduleOverride) {
+	// 				try {
+	// 					const activityLogInstance = Container.get(ActivityLogService);
+	// 					const logActivityItems = manualOverrideActivityLog(
+	// 						req,
+	// 						!!req.body.enabled,
+	// 					);
+	// 					await activityLogInstance.CreateActivityLog(logActivityItems, user);
+	// 				} catch (e) {
+	// 					logger.error('🔥 error on Overriding device : %o', e);
+	// 				}
+	// 			}
+	// 			// get instance override history of a particular user and attach to payload
+	// 			let response: any = '';
+	// 			await activityLogInstance
+	// 				.GetActivityLogs(user)
+	// 				.then((res) => (response = res));
+	//
+	// 			return res.status(200).send({
+	// 				success: true,
+	// 				message: `Manual Override ${enabled ? 'ON' : 'OFF'} successfully`,
+	// 				data: { scheduleOverride, activityHistory: response },
+	// 			});
+	// 		} catch (e) {
+	// 			logger.error('🔥 error: %o', e.stack);
+	// 			return next(e);
+	// 		}
+	// 	},
+	// );
+	device.put(
 		'/pump',
 		isAuth,
 		attachCurrentUser,
 		celebrate({
 			body: Joi.object({
-				enabled: Joi.boolean(),
+				enabled: Joi.boolean().required(),
 				device: Joi.string(),
 			}),
 		}),
@@ -74,6 +135,7 @@ export default (app: Router): void => {
 					req.body as IScheduleOverrideInputDTO,
 					user,
 				);
+
 				if (scheduleOverride) {
 					try {
 						const activityLogInstance = Container.get(ActivityLogService);
@@ -92,14 +154,20 @@ export default (app: Router): void => {
 					.GetActivityLogs(user)
 					.then((res) => (response = res));
 
-				return res.status(200).send({
-					success: true,
-					message: `Manual Override ${enabled ? 'ON' : 'OFF'} successfully`,
-					data: { scheduleOverride, activityHistory: response },
+				const message = `Manual Override ${
+					enabled ? 'ON' : 'OFF'
+				} successfully`;
+
+				logger.warn(JSON.stringify(message));
+
+				return HttpResponse.sendResponse(res, 200, true, message, {
+					scheduleOverride,
+					activityHistory: response,
 				});
 			} catch (e) {
-				logger.error('🔥 error: %o', e.stack);
-				return next(e);
+				logger.error('🔥 error: %o', e);
+				const serverError = 'Server Error. Could not complete the request';
+				return res.json({ serverError }).status(500);
 			}
 		},
 	);
@@ -116,25 +184,33 @@ export default (app: Router): void => {
 		async (req: Request, res: Response) => {
 			logger.debug('[pumpGet] Calling GetPumpById endpoint');
 			try {
+				let scheduleOverride;
 				const user = req.currentUser;
 				const deviceId = req.query.device as string;
 
 				const pumpServiceInstance = Container.get(ScheduleOverrideService);
-				const pumpStatus = await pumpServiceInstance.GetScheduleOverride(
+				scheduleOverride = await pumpServiceInstance.GetScheduleOverride(
 					user,
 					deviceId,
 				);
-				if (!pumpStatus) {
-					return res.status(404).send({
-						success: false,
-						message: 'Pump status does not exist',
-					});
+
+				const message = 'Pump status has been fetched successfully';
+				if (!scheduleOverride) {
+					({
+						scheduleOverride,
+					} = await pumpServiceInstance.EditScheduleOverride(
+						{ enabled: false },
+						user,
+					));
 				}
-				return res.status(200).send({
-					success: true,
-					message: 'Pump status has been fetched successfully',
-					data: pumpStatus,
-				});
+
+				return HttpResponse.sendResponse(
+					res,
+					200,
+					true,
+					message,
+					scheduleOverride,
+				);
 			} catch (e) {
 				logger.error('🔥 error: %o', e);
 				const serverError = 'Server Error. Could not complete the request';
@@ -285,13 +361,18 @@ export default (app: Router): void => {
 					selectedDevice,
 				} = await activeDeviceInstance.UpdateCurrentDevice(id, user);
 
-				return res.status(200).send({
-					success: true,
-					message: `Device with ID ${
-						typeof selectedDevice !== 'string' && selectedDevice?.id
-					} has been activated`,
-					data: selectedDevice,
-				});
+				logger.warn(JSON.stringify(selectedDevice));
+
+				const message = `Device with ID ${
+					typeof selectedDevice !== 'string' && selectedDevice?.id
+				} has been activated`;
+				return HttpResponse.sendResponse(
+					res,
+					200,
+					true,
+					message,
+					selectedDevice,
+				);
 			} catch (e) {
 				logger.error('🔥 error: %o', e.stack);
 				return next(e);

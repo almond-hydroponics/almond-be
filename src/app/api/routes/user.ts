@@ -76,8 +76,8 @@ export default (app: Router): void => {
 		'/people',
 		isAuth,
 		attachCurrentUser,
-		checkRole('Admin'),
-		getCache(path),
+		// checkRole('Admin'),
+		// getCache(path),
 		async (req: Request, res: Response, next: NextFunction) => {
 			logger.debug('[people] Calling FetchingAllUsers endpoint');
 			try {
@@ -85,7 +85,7 @@ export default (app: Router): void => {
 				const users = await userService.GetUsers();
 
 				// set users data to redis
-				setCache(`${req.currentUser._id}/${path}`, users);
+				// setCache(`${req.currentUser._id}/${path}`, users);
 
 				return res.status(200).send({
 					success: true,

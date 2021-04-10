@@ -8,7 +8,7 @@ class HttpResponse {
 		message: string,
 		data?: any,
 	): Response<never> {
-		return res.status(code).json({
+		return res.status(code).send({
 			success,
 			message,
 			data,

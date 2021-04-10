@@ -21,17 +21,17 @@ export default (app: Router): void => {
 		isAuth,
 		attachCurrentUser,
 		async (req: Request, res: Response, next: NextFunction) => {
-			log.debug('[DASHBOARD] calling the dashboard endpoint');
+			log.debug('[dashboard] calling the dashboard endpoint');
 			try {
 				const dashboardService = Container.get(DashboardService);
 
 				await dashboardService.GetUsersSummary().then((res) => {
-					log.debug(`[USERS] populating ${res.valueOf()} user(s)`);
+					log.debug(`[users] populating ${res.valueOf()} user(s)`);
 					summary.users = res.valueOf();
 				});
 
 				await dashboardService.GetDeviceSummary().then((res) => {
-					log.debug(`[DEVICES] populating ${res.valueOf()} device(s)`);
+					log.debug(`[devices] populating ${res.valueOf()} device(s)`);
 					summary.devices = res.valueOf();
 				});
 

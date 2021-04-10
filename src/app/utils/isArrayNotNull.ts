@@ -4,7 +4,7 @@
  * @param {array} array
  * @returns {boolean}
  */
-const isArrayNotNull = (array: number | string[] | any[]): boolean => {
+const isArrayNotNull = (array: unknown[]): boolean => {
 	return Array.isArray(array) && Object.keys(array).length > 0;
 };
 //

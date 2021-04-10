@@ -1,4 +1,5 @@
 import passport from 'passport';
+import argon2 from 'argon2';
 import { Strategy as LocalStrategy } from 'passport-local';
 import {
 	Strategy as GoogleStrategy,
@@ -10,6 +11,7 @@ import { AppLogger } from '../app';
 import AuthService from '../app/services/auth';
 import { config } from './index';
 import { Request } from 'express';
+import { createAuthToken } from '../app/services/jwt';
 
 const logger = new AppLogger('Auth');
 

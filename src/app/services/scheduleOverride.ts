@@ -21,6 +21,9 @@ export default class ScheduleOverrideService {
 		device: string,
 	): Promise<IScheduleOverride> {
 		try {
+			this.logger.debug(
+				'[getScheduleOverride] Fetch schedule override db record',
+			);
 			return this.scheduleOverrideModel.findOne({
 				device: { $eq: device },
 				user: { $eq: user._id },
@@ -32,7 +35,7 @@ export default class ScheduleOverrideService {
 	}
 
 	public async EditScheduleOverride(
-		scheduleInputOverrideDTO: IScheduleOverrideInputDTO,
+		scheduleInputOverrideDTO: DeepPartial<IScheduleOverrideInputDTO>,
 		user: DeepPartial<IUser>,
 	): Promise<{ scheduleOverride: IScheduleOverride }> {
 		try {

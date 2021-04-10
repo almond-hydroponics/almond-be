@@ -1,5 +1,5 @@
 import { Application, NextFunction, Request, Response } from 'express';
-import bodyParser from 'body-parser';
+import express from 'express';
 import cors from 'cors';
 import passport from 'passport';
 import expressSession from 'express-session';
@@ -27,7 +27,7 @@ import statusMonitor from '../../config/statusMonitor';
 import { errorHandler } from '../utils/errorHandler';
 
 const { isProduction, clientUrl, api } = config;
-const winston = new AppLogger('Express');
+const logger = new AppLogger('Express');
 
 const rateLimiter = expressRateLimit({
 	windowMs: 15 * 60 * 1000, // 15 minutes
@@ -55,14 +55,16 @@ export default ({
 	// app.use(morgan('dev'));
 	// app.use(morgan('combined', { stream: winston.stream }));
 	app.use(methodOverride());
-	app.use(bodyParser.json({ limit: '2mb' }));
-	app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+	// parse application/json
+	app.use(express.json({ limit: '2mb' }));
+	// parse application/x-www-form-urlencoded
+	app.use(express.urlencoded({ limit: '50mb', extended: true }));
 	isProduction && app.use(helmet());
 	const redisStore = connectRedis(expressSession);
 	app.use(
 		expressSession({
 			secret: config.sessionSecret,
-			resave: true,
+			resave: false,
 			saveUninitialized: true,
 			cookie: {
 				secure: false,
@@ -88,17 +90,17 @@ export default ({
 	// Load API routes
 	app.use(api.prefix, routes());
 
-	app.use(
-		async (err: Error, req: Request, res: Response, next: NextFunction) => {
-			if (!errorHandler.isTrustedError(err)) {
-				next(err);
-			}
-			await errorHandler.handleError(err);
-		},
-	);
+	// app.use(
+	// 	async (err: Error, req: Request, res: Response, next: NextFunction) => {
+	// 		if (!errorHandler.isTrustedError(err)) {
+	// 			next(err);
+	// 		}
+	// 		await errorHandler.handleError(err);
+	// 	},
+	// );
 
 	// Catch 404 and forward to error handler
-	app.use((req, res, next) => {
+	app.use((req: Request, res: Response, next: NextFunction) => {
 		const err = new Error('Not Found');
 		err['status'] = 404;
 		next(err);
@@ -117,7 +119,7 @@ export default ({
 
 	app.use((err, req, res, next) => {
 		// winston.error('', winston.combinedFormat(err, req, res));
-		res.status(err.states || 500);
+		res.status(err.status || 500);
 		res.json({
 			errors: {
 				message: err.message,

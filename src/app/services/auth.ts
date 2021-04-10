@@ -62,12 +62,12 @@ export default class AuthService {
 			await this.mailer.SendWelcomeEmail(userRecord);
 			// await this.eventDispatcher.dispatch(events.user.signUp, userRecord);
 
-			// /**
-			//  * @TODO This is not the best way to deal with this
-			//  * There should exist a 'Mapper' layer
-			//  * that transforms data from layer to layer
-			//  * but that's too over-engineering for now
-			//  */
+			/**
+			 * @TODO This is not the best way to deal with this
+			 * There should exist a 'Mapper' layer
+			 * that transforms data from layer to layer
+			 * but that's too over-engineering for now
+			 */
 			// const user = userRecord
 			// 	.populate({ path: 'roles', select: 'title' })
 			// 	.toObject();
@@ -95,7 +95,7 @@ export default class AuthService {
 			);
 
 			if (!userRecord) {
-				const err = new Error('Invalid token');
+				const err = new Error('Invalid token. Kindly try again');
 				err['status'] = 400;
 				this.logger.error(err.message, err.stack);
 			}
@@ -137,7 +137,7 @@ export default class AuthService {
 
 			return { user, token };
 		} else {
-			const error = new Error('Invalid Password');
+			const error = new Error('Invalid Password. Kindly check again.');
 			error['status'] = 400;
 			throw error;
 		}
@@ -305,7 +305,9 @@ export default class AuthService {
 	}
 
 	public async deserializeUser(email: string): Promise<IUser> {
-		const userRecord = await this.userModel.findOne({ email });
+		const userRecord = await this.userModel
+			.findOne({ email })
+			.populate({ path: 'roles', select: 'title' });
 		this.logger.log('[deserializeUser] Finding user record');
 
 		if (!userRecord) throw new Error('User not found');
