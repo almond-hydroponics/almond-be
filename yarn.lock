@@ -1359,10 +1359,10 @@ agenda@4.1.0:
     moment-timezone "~0.5.27"
     mongodb "~3.6.2"
 
-agendash@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/agendash/-/agendash-2.0.0.tgz#a29fc3c0c01b9bacd7c41e63bf72917a7c0cc68c"
-  integrity sha512-GWPD+KS6hCiU/h+7jPnRqEUgMyf5M+C1VOU4Imk9OtUAsJFo9dennWwCu5KOlMJRCEKzT1VJgcam5jRFO2ci9A==
+agendash@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/agendash/-/agendash-2.1.1.tgz#6d89280bdf9f88a980761f84369278b3a5b031f4"
+  integrity sha512-6xPvPLQ8L9DSjvgMdbcetyU8q9wr2WZHm3O0sa7YLe6IjdSvo74TPYt/zpooaRoo/o+g7434eUrKFj8Lo+xLOQ==
   dependencies:
     agenda "^3.1.0 || ^4.0.0"
     body-parser "^1.15.0"

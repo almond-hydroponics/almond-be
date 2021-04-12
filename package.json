@@ -38,7 +38,7 @@
 		"@commercetools/http-user-agent": "2.1.2",
 		"@supercharge/strings": "^1.18.0",
 		"agenda": "4.1.0",
-		"agendash": "^2.0.0",
+		"agendash": "^2.1.1",
 		"app-root-path": "3.0.0",
 		"argon2": "0.27.1",
 		"async-exit-hook": "2.0.1",
