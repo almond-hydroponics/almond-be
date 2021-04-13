@@ -33,7 +33,7 @@ export default (app: Router): void => {
 				firstName: Joi.string().required(),
 				lastName: Joi.string().required(),
 				email: Joi.string().required(),
-				password: Joi.string().required(),
+				password: Joi.string().min(6).required(),
 			}),
 		}),
 		async (req: Request, res: Response, next: NextFunction) => {
