@@ -38,7 +38,7 @@ export default class MailerService {
 		}
 	}
 
-	public async SendRecoveryPasswordEmail(email: string) {
+	public async SendRecoveryPasswordEmail(email: string): Promise<any> {
 		try {
 			const userRecord = await this.userModel.findOne({ email });
 
@@ -74,7 +74,7 @@ export default class MailerService {
 				from: '"Almond Hydroponics" <almond.noreply@gmail.com>',
 				to: userRecord.email,
 				subject: 'Almond recover password link',
-				html: await renderTemplate(`/mail/verify_registration.twig`, {
+				html: await renderTemplate(`/mail/password_reset.twig`, {
 					userRecord,
 					config,
 					token,
@@ -84,6 +84,33 @@ export default class MailerService {
 			if (!messageStatus)
 				throw new Error("Couldn't send welcome message to user.");
 
+			return { delivered: 1, status: 'ok' };
+		} catch (e) {
+			this.logger.error(e.message, e.stack);
+		}
+	}
+
+	public async SendPasswordResetConfirmation(email: string): Promise<any> {
+		try {
+			this.logger.debug(
+				`[onSendPasswordResetConfirmation] Sending verification email for user ${email}`,
+			);
+			const messageStatus = await mail({
+				to: email,
+				subject: 'Password change',
+				html: await renderTemplate(`/mail/password_new.twig`, {}),
+			});
+
+			if (!messageStatus) {
+				this.logger.error(
+					'Error:',
+					"Couldn't send password change email to user.",
+				);
+				throw new Error("Couldn't send password change to user.");
+			}
+			this.logger.debug(
+				`[onSendPasswordResetConfirmation] Password reset email sent`,
+			);
 			return { delivered: 1, status: 'ok' };
 		} catch (e) {
 			this.logger.error(e.message, e.stack);
