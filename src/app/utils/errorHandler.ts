@@ -36,7 +36,7 @@ export class BaseError extends Error {
 class ErrorHandler {
 	public async handleError(err: Error): Promise<void> {
 		logger.error(
-			'Error message from the centralized error-handling component',
+			'Error message from the centralized error-handling component: ',
 			err,
 		);
 		// await sendMailToAdminIfCritical();

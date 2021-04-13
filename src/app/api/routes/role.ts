@@ -75,7 +75,7 @@ export default (app: Router): void => {
 		'/roles',
 		isAuth,
 		attachCurrentUser,
-		checkRole('Admin'),
+		// checkRole('Admin'),
 		// getCache(path),
 		async (req: Request, res: Response, next: NextFunction) => {
 			logger.debug('[rolesGet] Calling GetAllRoles endpoint');
@@ -99,7 +99,7 @@ export default (app: Router): void => {
 				}
 
 				// set roles data to redis
-				setCache(`${req.currentUser._id}/${path}`, role);
+				// setCache(`${req.currentUser._id}/${path}`, role);
 
 				return res.status(202).send({
 					success: false,

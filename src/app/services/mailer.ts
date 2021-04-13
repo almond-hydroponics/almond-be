@@ -43,7 +43,7 @@ export default class MailerService {
 			const userRecord = await this.userModel.findOne({ email });
 
 			if (!userRecord) {
-				const err = new Error('Invalid email');
+				const err = new Error('Invalid email. Kindly try again.');
 				err['status'] = 400;
 				throw err;
 			}
@@ -73,7 +73,7 @@ export default class MailerService {
 			const messageStatus = await mail({
 				from: '"Almond Hydroponics" <almond.noreply@gmail.com>',
 				to: userRecord.email,
-				subject: 'My Study Planner recover password link',
+				subject: 'Almond recover password link',
 				html: await renderTemplate(`/mail/verify_registration.twig`, {
 					userRecord,
 					config,

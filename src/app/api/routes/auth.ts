@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response, Router } from 'express';
+import argon2 from 'argon2';
 import { Container } from 'typedi';
 import { celebrate, Joi } from 'celebrate';
 import passport from 'passport';
@@ -9,6 +10,7 @@ import { IUserInputDTO } from '../../interfaces/IUser';
 import middlewares from '../middlewares';
 // import csrf from 'csurf';
 import { createAuthToken } from '../../services/jwt';
+import HttpError from '../../utils/httpError';
 
 const logger = new AppLogger('Auth');
 const auth = Router();
@@ -89,7 +91,7 @@ export default (app: Router): void => {
 					req.query.token as string,
 				);
 
-				res.redirect(config.siteUrl);
+				res.redirect(`${config.siteUrl}/login`);
 			} catch (e) {
 				logger.error('🔥 error: %o', e.message);
 				return next(e);
