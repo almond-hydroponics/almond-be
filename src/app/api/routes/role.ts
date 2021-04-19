@@ -118,7 +118,7 @@ export default (app: Router): void => {
 	 * @description Edit a role
 	 * @access Private
 	 */
-	role.patch(
+	role.put(
 		'/role/:id',
 		isAuth,
 		attachCurrentUser,

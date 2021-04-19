@@ -240,11 +240,8 @@ export default class AuthService {
 			this.logger.debug('Updating user role');
 			let userRecord;
 			userRecord = await this.userModel.findOne({ _id: { $eq: id } });
-			this.logger.debug(JSON.stringify(userRecord));
-			this.logger.debug(JSON.stringify(userDetails));
 
 			const roleExists = userRecord.roles.includes(userDetails.role);
-			this.logger.debug(JSON.stringify(roleExists));
 			if (!roleExists) {
 				await this.userModel.findByIdAndUpdate(
 					id,

@@ -3,6 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import passport from 'passport';
 import expressSession from 'express-session';
+import bodyParser from 'body-parser';
 import helmet from 'helmet';
 import csrf from 'csurf';
 import requestIp from 'request-ip';
@@ -56,9 +57,9 @@ export default ({
 	// app.use(morgan('combined', { stream: winston.stream }));
 	app.use(methodOverride());
 	// parse application/json
-	app.use(express.json({ limit: '2mb' }));
+	app.use(bodyParser.json({ limit: '2mb' }));
 	// parse application/x-www-form-urlencoded
-	app.use(express.urlencoded({ limit: '50mb', extended: true }));
+	app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 	isProduction && app.use(helmet());
 	const redisStore = connectRedis(expressSession);
 	app.use(

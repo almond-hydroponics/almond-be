@@ -181,7 +181,7 @@ export default (app: Router): void => {
 	 * @description Edit a schedule
 	 * @access Private
 	 */
-	schedule.patch(
+	schedule.put(
 		'/schedules/:id',
 		isAuth,
 		attachCurrentUser,
