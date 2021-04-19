@@ -54,6 +54,7 @@ export default class RoleService {
 	> {
 		try {
 			this.logger.debug('[deleteRole] Delete role db record');
+			this.logger.warn(roleID);
 			return this.roleModel.deleteOne({ _id: Object(roleID) }).exec();
 		} catch (e) {
 			this.logger.error(e.message, e.stack);
