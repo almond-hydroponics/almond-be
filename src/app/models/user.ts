@@ -22,8 +22,8 @@ const User = new mongoose.Schema(
 			index: true,
 			validate: (value) => validator.isEmail(value),
 		},
-		password: String,
-		salt: String,
+		password: { type: String, select: false },
+		salt: { type: String, select: false },
 		googleId: String,
 		roles: [
 			{
@@ -45,7 +45,7 @@ const User = new mongoose.Schema(
 			required: true,
 			default: false,
 		},
-		verificationToken: String,
+		verificationToken: { type: String, select: false },
 		devices: [
 			{
 				type: mongoose.Schema.Types.ObjectId,

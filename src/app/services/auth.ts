@@ -33,6 +33,11 @@ export default class AuthService {
 		this.roleModel = roleModel;
 	}
 
+	/**
+	 *
+	 * @param userInputDTO user input data for registration
+	 * @returns verificationToken
+	 */
 	public async SignUp(
 		userInputDTO: IUserInputDTO,
 	): Promise<{ verificationToken: string }> {
@@ -84,15 +89,23 @@ export default class AuthService {
 		}
 	}
 
+	/**
+	 *
+	 * @param email user email to be verified
+	 * @param token
+	 * @returns user verified user
+	 */
 	public async VerifyEmail(
 		email: string,
 		token: string,
 	): Promise<{ user: DeepPartial<IUser> }> {
 		try {
-			const userRecord = await this.userModel.findOneAndUpdate(
-				{ email, verificationToken: token },
-				{ $set: { isVerified: true } },
-			);
+			const userRecord = await this.userModel
+				.findOneAndUpdate(
+					{ email, verificationToken: token },
+					{ $set: { isVerified: true } },
+				)
+				.exec();
 
 			if (!userRecord) {
 				const err = new Error('Invalid token. Kindly try again');
@@ -101,7 +114,6 @@ export default class AuthService {
 			}
 
 			const user = userRecord.toObject();
-			Reflect.deleteProperty(user, 'password');
 
 			return { user };
 		} catch (e) {
@@ -116,6 +128,7 @@ export default class AuthService {
 	): Promise<{ user: DeepPartial<IUser>; token: IToken }> {
 		const userRecord = await this.userModel
 			.findOne({ email })
+			.select('+password')
 			.populate({ path: 'roles', select: 'title' });
 
 		if (!userRecord) {
@@ -132,8 +145,6 @@ export default class AuthService {
 			const token = createAuthToken(userRecord);
 			const user = userRecord.toObject();
 			Reflect.deleteProperty(user, 'password');
-			Reflect.deleteProperty(user, 'salt');
-			Reflect.deleteProperty(user, 'verificationToken');
 
 			return { user, token };
 		} else {
@@ -221,9 +232,6 @@ export default class AuthService {
 				.exec();
 
 			const user = userRecord.toObject();
-			Reflect.deleteProperty(user, 'password');
-			Reflect.deleteProperty(user, 'salt');
-			Reflect.deleteProperty(user, 'verificationToken');
 
 			return user;
 		} catch (e) {
@@ -232,6 +240,46 @@ export default class AuthService {
 		}
 	}
 
+	/**
+	 *
+	 * @param id user id
+	 * @param userDetails user details to update
+	 * @returns updatedUser updated user record
+	 */
+	public async UpdateUserDetails(
+		id: string,
+		userDetails: IUserInputDTO,
+	): Promise<DeepPartial<IUser>> {
+		try {
+			const userRecord = await this.userModel
+				.findByIdAndUpdate(
+					{ _id: id },
+					{
+						$set: {
+							firstName: userDetails.firstName,
+							lastName: userDetails.lastName,
+							email: userDetails.email,
+							photo: userDetails.photo,
+						},
+					},
+					{ new: true },
+				)
+				.exec();
+			const updatedUser = userRecord.toObject();
+
+			return updatedUser;
+		} catch (e) {
+			this.logger.error(e.message, e.stack);
+			throw e;
+		}
+	}
+
+	/**
+	 *
+	 * @param id user id
+	 * @param userDetails user role to update
+	 * @returns user updated user record
+	 */
 	public async UpdateCurrentUserRole(
 		id: string,
 		userDetails: DeepPartial<IUserInputDTO>,
@@ -276,9 +324,6 @@ export default class AuthService {
 
 			const user = userRecord.toObject();
 			this.logger.debug(JSON.stringify(user));
-			Reflect.deleteProperty(user, 'password');
-			Reflect.deleteProperty(user, 'salt');
-			Reflect.deleteProperty(user, 'verificationToken');
 
 			return user;
 		} catch (e) {
@@ -287,6 +332,9 @@ export default class AuthService {
 		}
 	}
 
+	/**
+	 * @returns userRecord Retrieve all users
+	 */
 	public async GetUsers(): Promise<IUser[]> {
 		try {
 			this.logger.debug('[getUsers] Fetching all user from record');
