@@ -7,7 +7,7 @@ cmd_install_packages: &cmd_install_packages
   run:
     name: Install project dependencies
     command: |
-      yarn install
+      yarn install --frozen-lockfile
       yarn add argon2
 
 cmd_restore_cache: &cmd_restore_cache

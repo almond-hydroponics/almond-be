@@ -1,16 +1,10 @@
 import argon2 from 'argon2';
 import { randomBytes } from 'crypto';
 import * as Str from '@supercharge/strings';
-import jwt from 'jsonwebtoken';
 import { Inject, Service } from 'typedi';
 import { config } from '../../config';
-import {
-	EventDispatcher,
-	EventDispatcherInterface,
-} from '../decorators/eventDispatcher';
 import { IProfile, IUser, IUserInputDTO } from '../interfaces/IUser';
 import { AppLogger } from '../app.logger';
-import events from '../subscribers/events';
 import MailerService from './mailer';
 // import isArrayNotNull from '../utils/checkArrayEmpty';
 import { createAuthToken } from './jwt';
@@ -43,7 +37,9 @@ export default class AuthService {
 	): Promise<{ verificationToken: string }> {
 		try {
 			const salt = randomBytes(32);
-			const hashedPassword = await argon2.hash(userInputDTO.password, { salt });
+			const hashedPassword = await argon2.hash(userInputDTO.password, {
+				salt,
+			});
 			this.logger.log('[signup] Creating user db record');
 
 			const verificationToken = Str.random(32);
@@ -222,8 +218,7 @@ export default class AuthService {
 					path: 'roles',
 					select: '_id title description resourceAccessLevels',
 					populate: {
-						path:
-							'resourceAccessLevels.resource resourceAccessLevels.permissions',
+						path: 'resourceAccessLevels.resource resourceAccessLevels.permissions',
 					},
 				})
 				.populate({ path: 'activeDevice' })
@@ -231,9 +226,7 @@ export default class AuthService {
 				.populate({ path: 'devices' })
 				.exec();
 
-			const user = userRecord.toObject();
-
-			return user;
+			return userRecord.toObject();
 		} catch (e) {
 			this.logger.error(e.message, e.stack);
 			throw e;
@@ -248,26 +241,19 @@ export default class AuthService {
 	 */
 	public async UpdateUserDetails(
 		id: string,
-		userDetails: IUserInputDTO,
+		userDetails: Partial<IUserInputDTO>,
 	): Promise<DeepPartial<IUser>> {
 		try {
 			const userRecord = await this.userModel
 				.findByIdAndUpdate(
 					{ _id: id },
 					{
-						$set: {
-							firstName: userDetails.firstName,
-							lastName: userDetails.lastName,
-							email: userDetails.email,
-							photo: userDetails.photo,
-						},
+						$set: userDetails,
 					},
 					{ new: true },
 				)
 				.exec();
-			const updatedUser = userRecord.toObject();
-
-			return updatedUser;
+			return userRecord.toObject();
 		} catch (e) {
 			this.logger.error(e.message, e.stack);
 			throw e;
@@ -308,13 +294,16 @@ export default class AuthService {
 			}
 
 			userRecord = await this.userModel
-				.findByIdAndUpdate(id, { currentRole: userDetails.role }, { new: true })
+				.findByIdAndUpdate(
+					id,
+					{ currentRole: userDetails.role },
+					{ new: true },
+				)
 				.populate({
 					path: 'roles',
 					select: '_id title description resourceAccessLevels',
 					populate: {
-						path:
-							'resourceAccessLevels.resource resourceAccessLevels.permissions',
+						path: 'resourceAccessLevels.resource resourceAccessLevels.permissions',
 					},
 				})
 				.populate({ path: 'currentRole', select: 'title' })
@@ -322,10 +311,7 @@ export default class AuthService {
 				.populate({ path: 'devices' })
 				.exec();
 
-			const user = userRecord.toObject();
-			this.logger.debug(JSON.stringify(user));
-
-			return user;
+			return userRecord.toObject();
 		} catch (e) {
 			this.logger.error(e.message, e.stack);
 			throw e;
@@ -348,6 +334,39 @@ export default class AuthService {
 			throw e;
 		}
 	}
+
+	// public async UploadProfileImage(
+	// 	user: IUser,
+	// 	image: string,
+	// ): Promise<string> {
+	// 	try {
+	// 		const result: Express.CloudinaryResult =
+	// 			await cloudinary.uploader.upload(image, {
+	// 				width: 200,
+	// 				height: 200,
+	// 				crop: 'pad',
+	// 			});
+	//
+	// 		if (!result) throw new Error("Couldn't upload image to Cloudinary");
+	//
+	// 		const userRecord = await this.userModel.findOneAndUpdate(
+	// 			{ _id: user._id },
+	// 			{
+	// 				$set: {
+	// 					picture: result.secure_url,
+	// 				},
+	// 			},
+	// 			{ new: true },
+	// 		);
+	//
+	// 		if (!userRecord) throw new Error("Couldn't add image to user");
+	//
+	// 		return userRecord.picture;
+	// 	} catch (e) {
+	// 		this.logger.log(e);
+	// 		throw e;
+	// 	}
+	// }
 
 	public async deserializeUser(email: string): Promise<IUser> {
 		const userRecord = await this.userModel

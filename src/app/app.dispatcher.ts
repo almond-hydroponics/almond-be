@@ -24,9 +24,12 @@ export class AppDispatcher {
 	}
 
 	private async startServer(): Promise<void> {
-		process.on('unhandledRejection', (reason: Error, promise: Promise<any>) => {
-			throw reason;
-		});
+		process.on(
+			'unhandledRejection',
+			(reason: Error, promise: Promise<any>) => {
+				throw reason;
+			},
+		);
 
 		process.on('uncaughtException', (error: Error) => {
 			errorHandler.handleError(error);

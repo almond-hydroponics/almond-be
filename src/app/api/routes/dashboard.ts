@@ -26,12 +26,12 @@ export default (app: Router): void => {
 				const dashboardService = Container.get(DashboardService);
 
 				await dashboardService.GetUsersSummary().then((res) => {
-					log.debug(`[users] populating ${res.valueOf()} user(s)`);
+					log.debug(`[dashboard] populating ${res.valueOf()} user(s)`);
 					summary.users = res.valueOf();
 				});
 
 				await dashboardService.GetDeviceSummary().then((res) => {
-					log.debug(`[devices] populating ${res.valueOf()} device(s)`);
+					log.debug(`[dashboard] populating ${res.valueOf()} device(s)`);
 					summary.devices = res.valueOf();
 				});
 

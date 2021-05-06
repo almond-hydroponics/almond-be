@@ -120,7 +120,9 @@ export default (app: Router): void => {
 				const topic = config.mqtt.scheduleTopic;
 				const status = enabled ? ScheduleOverride.ON : ScheduleOverride.OFF;
 				// instantiate module services
-				const scheduleOverrideInstance = Container.get(ScheduleOverrideService);
+				const scheduleOverrideInstance = Container.get(
+					ScheduleOverrideService,
+				);
 				const mqttClient = Container.get(MqttService);
 				const activityLogInstance = Container.get(ActivityLogService);
 
@@ -129,12 +131,11 @@ export default (app: Router): void => {
 				await mqttClient.sendMessage(topic, status, activityLogInstance, req);
 
 				// save instance of the override
-				const {
-					scheduleOverride,
-				} = await scheduleOverrideInstance.EditScheduleOverride(
-					req.body as IScheduleOverrideInputDTO,
-					user,
-				);
+				const { scheduleOverride } =
+					await scheduleOverrideInstance.EditScheduleOverride(
+						req.body as IScheduleOverrideInputDTO,
+						user,
+					);
 
 				if (scheduleOverride) {
 					try {
@@ -143,7 +144,10 @@ export default (app: Router): void => {
 							req,
 							!!req.body.enabled,
 						);
-						await activityLogInstance.CreateActivityLog(logActivityItems, user);
+						await activityLogInstance.CreateActivityLog(
+							logActivityItems,
+							user,
+						);
 					} catch (e) {
 						logger.error('🔥 error on Overriding device : %o', e);
 					}
@@ -196,12 +200,11 @@ export default (app: Router): void => {
 
 				const message = 'Pump status has been fetched successfully';
 				if (!scheduleOverride) {
-					({
-						scheduleOverride,
-					} = await pumpServiceInstance.EditScheduleOverride(
-						{ enabled: false },
-						user,
-					));
+					({ scheduleOverride } =
+						await pumpServiceInstance.EditScheduleOverride(
+							{ enabled: false },
+							user,
+						));
 				}
 
 				return HttpResponse.sendResponse(
@@ -249,7 +252,10 @@ export default (app: Router): void => {
 					try {
 						const activityLogInstance = Container.get(ActivityLogService);
 						const logActivityItems = addDeviceActivityLog(req, desc);
-						await activityLogInstance.CreateActivityLog(logActivityItems, user);
+						await activityLogInstance.CreateActivityLog(
+							logActivityItems,
+							user,
+						);
 					} catch (e) {
 						logger.error('🔥 error Creating Activity Log : %o', e);
 					}
@@ -340,7 +346,7 @@ export default (app: Router): void => {
 	 * @description Update active device
 	 * @access Private
 	 */
-	device.patch(
+	device.put(
 		'/active-device',
 		isAuth,
 		attachCurrentUser,
@@ -357,9 +363,8 @@ export default (app: Router): void => {
 				const { id } = req.body;
 
 				const activeDeviceInstance = Container.get(DeviceService);
-				const {
-					selectedDevice,
-				} = await activeDeviceInstance.UpdateCurrentDevice(id, user);
+				const { selectedDevice } =
+					await activeDeviceInstance.UpdateCurrentDevice(id, user);
 
 				logger.warn(JSON.stringify(selectedDevice));
 
