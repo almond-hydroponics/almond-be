@@ -18,8 +18,6 @@ const attachCurrentUser = async (
 	try {
 		const userService = Container.get(AuthService);
 		const currentUser = await userService.UserProfile(req.token.id);
-		Reflect.deleteProperty(currentUser, 'password');
-		Reflect.deleteProperty(currentUser, 'salt');
 		req.currentUser = currentUser;
 		return next();
 	} catch (e) {

@@ -23,6 +23,11 @@ const path = 'USERS';
 export default (app: Router): void => {
 	app.use('/', user);
 
+	/**
+	 * @api {GET} api/me
+	 * @description Retrieve person's profile
+	 * @access Private
+	 */
 	user.get(
 		'/me',
 		isAuth,
@@ -46,6 +51,11 @@ export default (app: Router): void => {
 		},
 	);
 
+	/**
+	 * @api {GET} api/people/:id
+	 * @description Retrieve person's details by id
+	 * @access Private
+	 */
 	user.get(
 		'/people/:id',
 		isAuth,
@@ -72,6 +82,11 @@ export default (app: Router): void => {
 		},
 	);
 
+	/**
+	 * @api {GET} api/people
+	 * @description Retrieve all users
+	 * @access Private
+	 */
 	user.get(
 		'/people',
 		isAuth,
@@ -100,12 +115,54 @@ export default (app: Router): void => {
 	);
 
 	/**
-	 * @api {PATCH} api/role/:id
-	 * @description Edit a role
+	 * @api {PUT} api/people/:id
+	 * @description Edit person details
 	 * @access Private
 	 */
 	user.put(
 		'/people/:id',
+		isAuth,
+		celebrate({
+			body: Joi.object({
+				firstName: Joi.string(),
+				lastName: Joi.string(),
+				email: Joi.string(),
+				photo: Joi.string(),
+			}),
+		}),
+
+		async (req: Request, res: Response) => {
+			try {
+				logger.debug('[peopleId] Calling PatchUserDetails endpoint');
+				const {
+					params: { id },
+				} = req;
+				const userService = Container.get(AuthService);
+				const user = await userService.UpdateUserDetails(id, req.body);
+				return res.status(200).send({
+					success: true,
+					message: 'User details updated successfully',
+					data: user,
+				});
+			} catch (e) {
+				logger.error('🔥 error: %o', e.stack);
+				return res
+					.send({
+						success: false,
+						message: 'Server Error. Could not complete the request',
+					})
+					.status(500);
+			}
+		},
+	);
+
+	/**
+	 * @api {PUT} api/role/:id
+	 * @description Edit a role
+	 * @access Private
+	 */
+	user.put(
+		'/people/role/:id',
 		isAuth,
 		attachCurrentUser,
 		checkRole('User'),
@@ -117,7 +174,7 @@ export default (app: Router): void => {
 			}),
 		}),
 		async (req: Request, res: Response) => {
-			logger.debug('[peopleId] Calling PatchUserDetails endpoint');
+			logger.debug('[peopleId] Calling PatchUserRole endpoint');
 			try {
 				const {
 					params: { id },
