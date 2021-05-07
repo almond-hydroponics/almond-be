@@ -6458,10 +6458,10 @@ new-github-release-url@^1.0.0:
   dependencies:
     type-fest "^0.4.1"
 
-newrelic@^7.3.0:
-  version "7.3.0"
-  resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-7.3.0.tgz#99a21bf571350c99358ac264b23d450b073ffacd"
-  integrity sha512-oZcFphigeiWsHSPdv1wiDVVitFaw1b6Y+iAryyeIM/qmeAkxrW8+42E3yDDZ5KYSoYoos9L9ZJrS1MOr4muyfw==
+newrelic@^7.3.1:
+  version "7.3.1"
+  resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-7.3.1.tgz#2ab15cf057c7b27b3899f12add643bcc752101fb"
+  integrity sha512-PtFIJqaZnrj8+blZrE/kEpOYsL4rYZjs2L2mWRgfdAl7KJfmbAalRHFyae7Pn2o5wYSXGrIoUqHJY7hcKZNXKQ==
   dependencies:
     "@grpc/grpc-js" "^1.2.11"
     "@grpc/proto-loader" "^0.5.6"
