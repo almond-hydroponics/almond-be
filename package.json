@@ -88,7 +88,7 @@
 		"passport": "^0.4.1",
 		"passport-google-oauth2": "^0.2.0",
 		"passport-local": "1.0.0",
-		"redis": "^3.1.0",
+		"redis": "^3.1.2",
 		"redisscan": "^2.0.0",
 		"reflect-metadata": "^0.1.13",
 		"request-ip": "^2.1.3",
