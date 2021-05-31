@@ -47,11 +47,12 @@ export default class ScheduleOverrideService {
 				user: user._id,
 			};
 			const options = { upsert: true, new: true, setDefaultsOnInsert: true };
-			const scheduleOverride = await this.scheduleOverrideModel.findOneAndUpdate(
-				{ user: { $eq: user._id } },
-				scheduleOverrideItem,
-				options,
-			);
+			const scheduleOverride =
+				await this.scheduleOverrideModel.findOneAndUpdate(
+					{ user: { $eq: user._id } },
+					scheduleOverrideItem,
+					options,
+				);
 			// .populate({ path: 'user' });
 			return { scheduleOverride };
 		} catch (e) {

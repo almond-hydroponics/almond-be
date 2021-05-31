@@ -1,5 +1,4 @@
 import { Application, NextFunction, Request, Response } from 'express';
-import express from 'express';
 import cors from 'cors';
 import passport from 'passport';
 import expressSession from 'express-session';

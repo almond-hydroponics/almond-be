@@ -3,6 +3,7 @@ import isAuth from './isAuth';
 import checkRole from './checkRole';
 import { clearAllCache, clearCache, getCache, setCache } from './cache';
 import { rateLimiterUsingThirdParty } from './rateLimit';
+import profilePhotoUploadLimiter from './profilePhotoUploadLimiter';
 
 export default {
 	attachCurrentUser,
@@ -13,6 +14,7 @@ export default {
 	clearCache,
 	clearAllCache,
 	rateLimiterUsingThirdParty,
+	profilePhotoUploadLimiter,
 };
 
 // const middlewares = {

@@ -20,13 +20,8 @@ import { HttpStatusCode } from '../../utils/errorHandler';
 const manager = new CronJobManager();
 const logger = new AppLogger('Schedule');
 
-const {
-	isAuth,
-	attachCurrentUser,
-	getCache,
-	setCache,
-	clearCache,
-} = middlewares;
+const { isAuth, attachCurrentUser, getCache, setCache, clearCache } =
+	middlewares;
 const schedule = Router();
 
 const path = 'SCHEDULES';
@@ -195,7 +190,9 @@ export default (app: Router): void => {
 		}),
 		async (req: Request, res: Response, next: NextFunction) => {
 			logger.debug(
-				`Calling PatchSchedule endpoint with body: ${JSON.stringify(req.body)}`,
+				`Calling PatchSchedule endpoint with body: ${JSON.stringify(
+					req.body,
+				)}`,
 			);
 			try {
 				let message;
@@ -249,7 +246,10 @@ export default (app: Router): void => {
 					const activityLogInstance = Container.get(ActivityLogService);
 					try {
 						const logActivityItems = deleteScheduleActivityLogItem(req);
-						await activityLogInstance.CreateActivityLog(logActivityItems, user);
+						await activityLogInstance.CreateActivityLog(
+							logActivityItems,
+							user,
+						);
 					} catch (e) {
 						logger.error('🔥 error Creating Activity Log : %o', e);
 					}

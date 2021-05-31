@@ -1,4 +1,5 @@
 import { Router, Request, Response, NextFunction } from 'express';
+import multer from 'multer';
 import { Container } from 'typedi';
 import { IUserInputDTO } from '../../interfaces/IUser';
 import { AppLogger } from '../../app.logger';
@@ -6,19 +7,30 @@ import AuthService from '../../services/auth';
 import middlewares from '../middlewares';
 import checkRole from '../middlewares/checkRole';
 import { celebrate, Joi } from 'celebrate';
+import { Storage } from '@google-cloud/storage';
+import { format } from 'util';
 
-const {
-	isAuth,
-	attachCurrentUser,
-	getCache,
-	setCache,
-	clearCache,
-} = middlewares;
+const { isAuth, attachCurrentUser, getCache, setCache, clearCache } =
+	middlewares;
 
 const logger = new AppLogger('User');
 const user = Router();
 
 const path = 'USERS';
+
+// Instantiate a storage client
+const storage = new Storage();
+// Multer is required to process file uploads and make them available via
+// req.files.
+const upload = multer({
+	storage: multer.memoryStorage(),
+	limits: {
+		fileSize: 5 * 1024 * 1024,
+	},
+});
+
+// A bucket is a container for objects (files).
+const bucket = storage.bucket('almond-profile-photos');
 
 export default (app: Router): void => {
 	app.use('/', user);
@@ -130,7 +142,6 @@ export default (app: Router): void => {
 				photo: Joi.string(),
 			}),
 		}),
-
 		async (req: Request, res: Response) => {
 			try {
 				logger.debug('[peopleId] Calling PatchUserDetails endpoint');
@@ -138,6 +149,7 @@ export default (app: Router): void => {
 					params: { id },
 				} = req;
 				const userService = Container.get(AuthService);
+				logger.warn(JSON.stringify(req.body));
 				const user = await userService.UpdateUserDetails(id, req.body);
 				return res.status(200).send({
 					success: true,
@@ -166,7 +178,7 @@ export default (app: Router): void => {
 		isAuth,
 		attachCurrentUser,
 		checkRole('User'),
-		clearCache(path),
+		// clearCache(path),
 		celebrate({
 			body: Joi.object({
 				role: Joi.string(),
@@ -197,6 +209,60 @@ export default (app: Router): void => {
 						message: 'Server Error. Could not complete the request',
 					})
 					.status(500);
+			}
+		},
+	);
+
+	/**
+	 * @api {PUT} api/role/:id
+	 * @description Edit a role
+	 * @access Private
+	 */
+	user.post(
+		'/upload_photo',
+		// isAuth,
+		// attachCurrentUser,
+		upload.single('file'),
+		async (req: any, res: Response, next: NextFunction) => {
+			logger.debug('[uploadPhoto] Calling PostUploadPhoto endpoint');
+			try {
+				if (!req.file) {
+					res.status(400).send('No file uploaded');
+					return;
+				}
+
+				// Create a new blob in the bucket and upload file data
+				const blob = bucket.file(req.file.originalname);
+				const blobStream = blob.createWriteStream();
+
+				blobStream.on('error', (err) => {
+					logger.error('🔥 error: %o', err.stack);
+					res.status(400).send({
+						success: false,
+						message: 'Blob Error. Could not complete the request',
+					});
+					next(err);
+				});
+
+				blobStream.on('finish', () => {
+					// The public url can be used directly to access the file via HTTP
+					const publicUrl = format(
+						`https://storage.googleapis.com/${bucket.name}/${blob.name}`,
+					);
+					res.status(201).send({
+						success: true,
+						message: 'Image stored successful.',
+						data: publicUrl,
+					});
+				});
+
+				blobStream.end(req.file.buffer);
+			} catch (e) {
+				logger.error('🔥 error: %o', e.stack);
+				return res.status(500).send({
+					success: false,
+					message: 'Server Error. Could not complete the request',
+				});
 			}
 		},
 	);

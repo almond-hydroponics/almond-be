@@ -38,7 +38,7 @@ const User = new mongoose.Schema(
 		photo: {
 			type: String,
 			default:
-				'https://res.cloudinary.com/almondgreen/image/upload/v1608196073/Almond/avatar_lwhtoy.jpg',
+				'https://storage.googleapis.com/static.almondhydroponics.com/static/images/avatar_male.svg',
 		},
 		isVerified: {
 			type: Boolean,

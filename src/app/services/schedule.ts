@@ -40,7 +40,10 @@ export default class ScheduleService {
 		}
 	}
 
-	public async GetSchedules(user: IUser, device: string): Promise<ISchedule[]> {
+	public async GetSchedules(
+		user: IUser,
+		device: string,
+	): Promise<ISchedule[]> {
 		try {
 			this.logger.debug(
 				`[getSchedules] Fetching schedules records for ${device}`,

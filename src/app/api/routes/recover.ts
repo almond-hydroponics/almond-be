@@ -41,7 +41,12 @@ export default (app: Router): void => {
 						'Google accounts can not restore password.',
 					);
 				} else {
-					HttpResponse.sendResponse(res, 200, true, 'Email sent successfully.');
+					HttpResponse.sendResponse(
+						res,
+						200,
+						true,
+						'Email sent successfully.',
+					);
 				}
 			} catch (e) {
 				logger.error('🔥 error: %o', e.message);
@@ -60,9 +65,10 @@ export default (app: Router): void => {
 		async (req: Request, res: Response, next: NextFunction) => {
 			try {
 				const recoverServiceInstance = Container.get(RecoverService);
-				const response = await recoverServiceInstance.ConfirmResetPasswordToken(
-					req.body.token,
-				);
+				const response =
+					await recoverServiceInstance.ConfirmResetPasswordToken(
+						req.body.token,
+					);
 
 				if (!response) {
 					HttpResponse.sendResponse(

@@ -11,7 +11,9 @@ const {
 	nodeMailer: { username, host, password, port },
 } = config;
 
-export async function mail(options: SendMailOptions): Promise<SentMessageInfo> {
+export async function mail(
+	options: SendMailOptions,
+): Promise<SentMessageInfo> {
 	const { OAuth2 } = google.auth;
 
 	const oauth2Client = new OAuth2(

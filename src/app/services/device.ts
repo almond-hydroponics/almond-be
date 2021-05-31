@@ -69,8 +69,6 @@ export default class DeviceService {
 			const userRecord: IUser = await this.userModel
 				.findByIdAndUpdate(
 					user._id,
-					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-					// @ts-expect-error
 					{ $push: { devices: { $each: [_id] } } },
 					{ new: true },
 				)
