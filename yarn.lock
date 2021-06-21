@@ -8904,10 +8904,10 @@ url-template@^2.0.8:
   resolved "https://registry.yarnpkg.com/url-template/-/url-template-2.0.8.tgz#fc565a3cccbff7730c775f5641f9555791439f21"
   integrity sha1-/FZaPMy/93MMd19WQflVV5FDnyE=
 
-user-agents@1.0.668:
-  version "1.0.668"
-  resolved "https://registry.yarnpkg.com/user-agents/-/user-agents-1.0.668.tgz#35ea2e69a51b7a992d271c290dd259670981cc1a"
-  integrity sha512-hZsxSk8k3jwKc1lHKh2ldb71umSUAXve5gASawWmDK6IDV1HyJppjWnxjPcOxGKvmjWFci+U+7O46cAWMEfzgw==
+user-agents@1.0.669:
+  version "1.0.669"
+  resolved "https://registry.yarnpkg.com/user-agents/-/user-agents-1.0.669.tgz#eb6c4d2d0ba9575ae16e37770a97f28ac23c217f"
+  integrity sha512-SmzspnvFRK/hQmVKPWPfhR0Lbrljs7zWeYZX37e8rtNqDPs4jwnLRoH62DVnLjK+/J5Phcn9SEB6g15IBcf6CQ==
   dependencies:
     dot-json "^1.2.2"
     lodash.clonedeep "^4.5.0"
