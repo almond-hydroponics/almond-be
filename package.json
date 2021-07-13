@@ -99,7 +99,7 @@
 		"swagger-ui-express": "4.1.6",
 		"twing": "^5.0.2",
 		"typedi": "^0.10.0",
-		"user-agents": "1.0.668",
+		"user-agents": "1.0.691",
 		"validator": "13.6.0",
 		"winston": "^3.3.3"
 	},
